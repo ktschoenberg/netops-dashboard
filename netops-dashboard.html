@@ -1907,6 +1907,7 @@ function setDateRange(range){
   if(!activeView) return;
   const id = activeView.id;
   if(id==='view-director') buildDirectorView();
+  else if(id==='view-team'){ builtViews.delete('team'); buildTeamView(); }
   else if(id==='view-changeschedule') buildChangeSchedulePage();
 }
 let activeRole = 'director';
@@ -1945,34 +1946,64 @@ function openTeamPage(){
 
 function buildTeamView(){
   const page=document.getElementById('teamPage');
-  const totalHrs=Object.values(LOA_ENG).reduce((s,e)=>s+e.totalHrs,0).toFixed(0);
-  const totalLoaTickets=Object.values(LOA_ENG).reduce((s,e)=>s+e.ticketCount,0);
-  const avgHrsPerTicket=(parseFloat(totalHrs)/totalLoaTickets).toFixed(1);
-  const peakMonth=LOA_MONTH_LABELS[Object.values(LOA_TEAM_MONTHLY).indexOf(Math.max(...Object.values(LOA_TEAM_MONTHLY)))];
-  const engColors={'Jason Candler':'#F79009','Khaled Shalati':'#2E90FA','Patrick Djemba Tchounke':'#6941C6','Yadwinder Singh':'#12B76A','Harry Midy':'#EE46BC','Shaun Dees':'#667085'};
+  const Tf=getActiveT();
+  const f=getDateFilter();
 
+  // Filter LOE monthly data to the selected date range
+  const startM=f?f.start.slice(0,7):null;
+  const endM=f?f.end.slice(0,7):null;
+  const filtLOAMonths=startM?LOA_MONTHS.filter(m=>m>=startM&&m<=endM):LOA_MONTHS;
+
+  // Compute filtered per-engineer LOE data
+  const filtLOA={};
+  Object.entries(LOA_ENG).forEach(function([name,eng]){
+    const filtHrs=filtLOAMonths.reduce((s,m)=>s+(eng.monthly[m]||0),0);
+    const filtMonthly={};
+    filtLOAMonths.forEach(m=>{filtMonthly[m]=eng.monthly[m]||0;});
+    filtLOA[name]={totalHrs:filtHrs,ticketCount:Tf.filter(t=>t.who===name).length,monthly:filtMonthly};
+  });
+
+  // Filtered team monthly totals for trend chart
+  const filtTeamMonthly={};
+  filtLOAMonths.forEach(m=>{filtTeamMonthly[m]=LOA_TEAM_MONTHLY[m]||0;});
+
+  // Store for chart functions
+  window._filtLOA=filtLOA;
+  window._filtTeamMonthly=filtTeamMonthly;
+  window._filtLOAMonths=filtLOAMonths;
+
+  // KPIs
+  const totalHrs=Object.values(filtLOA).reduce((s,e)=>s+e.totalHrs,0).toFixed(0);
+  const totalLoaTickets=Tf.length;
+  const avgHrsPerTicket=totalLoaTickets>0?(parseFloat(totalHrs)/totalLoaTickets).toFixed(1):'—';
+  let peakMonth='—',peakHrs=0;
+  filtLOAMonths.forEach(m=>{
+    const h=filtTeamMonthly[m]||0;
+    if(h>peakHrs){peakHrs=h;peakMonth=LOA_MONTH_LABELS[LOA_MONTHS.indexOf(m)]||m;}
+  });
+  const rangeLabel=f?(f.start.slice(0,7)+' – '+f.end.slice(0,7)):'Sep 2024 – May 2026';
+
+  // Spark always shows last 6 months for context
   const sparkMonthKeys=['2025-12','2026-01','2026-02','2026-03','2026-04','2026-05'];
   const sparkMonthLabels=["Dec'25","Jan'26","Feb'26","Mar'26","Apr'26","May'26"];
 
-  const engCardsHtml = TEAM_META.map(function(m){
-    const loa=LOA_ENG[m.name]||{totalHrs:0,ticketCount:0,monthly:{}};
+  const engCardsHtml=TEAM_META.map(function(m){
+    const loa=filtLOA[m.name]||{totalHrs:0,ticketCount:0,monthly:{}};
+    const loaAll=LOA_ENG[m.name]||{monthly:{}};
     const avgH=loa.ticketCount>0?(loa.totalHrs/loa.ticketCount).toFixed(1):'—';
-    const myT=T.filter(t=>t.who===m.name);
-    const openC=myT.filter(t=>t.state==='open').length;
+    const openC=Tf.filter(t=>t.who===m.name&&t.state==='open').length;
     const parts=m.name.split(' ');
     const displayName=parts[0]+' '+parts[parts.length-1];
-    const recentMonths=['2026-02','2026-03','2026-04','2026-05'];
-    const recentHrs=recentMonths.reduce((s,mo)=>s+(loa.monthly&&loa.monthly[mo]?loa.monthly[mo]:0),0).toFixed(1);
-    const sparkVals=sparkMonthKeys.map(mo=>loa.monthly?loa.monthly[mo]||0:0);
+    const sparkVals=sparkMonthKeys.map(mo=>loaAll.monthly?loaAll.monthly[mo]||0:0);
     const sparkMax=Math.max(...sparkVals,1);
     const sparkBars=sparkVals.map(function(v,i){
       const h=Math.max(3,Math.round(v/sparkMax*28));
       return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">'
-        +'<div style="width:100%;height:'+h+'px;background:'+(engColors[m.name]||'#667085')+';border-radius:2px;min-height:3px;align-self:flex-end"></div>'
+        +'<div style="width:100%;height:'+h+'px;background:'+(m.color||'#667085')+';border-radius:2px;min-height:3px;align-self:flex-end"></div>'
         +'<div style="font-size:9px;color:var(--g400)">'+sparkMonthLabels[i].slice(0,1)+'</div>'
         +'</div>';
     }).join('');
-    return '<div class="card" style="padding:18px 20px;cursor:pointer;transition:outline .1s" data-eng-card="'+m.name+'" onclick="openTechProfile(\''+m.name+'\')">'
+    return '<div class="card" style="padding:18px 20px;cursor:pointer" data-eng-card="'+m.name+'" onclick="openTechProfile(\''+m.name+'\')">'
       +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">'
       +'<div style="width:40px;height:40px;border-radius:50%;background:'+m.color+';display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0">'+m.init+'</div>'
       +'<div style="flex:1;min-width:0">'
@@ -1980,86 +2011,78 @@ function buildTeamView(){
       +'<div style="font-size:11px;color:var(--g500)">ITO Network L3'+(openC>0?' · <span style="color:var(--red600);font-weight:600">'+openC+' open</span>':'')+'</div>'
       +'</div></div>'
       +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">'
-      +'<div style="background:var(--g100);border-radius:var(--r6);padding:10px 12px"><div style="font-size:18px;font-weight:800;color:var(--g900)">'+loa.totalHrs.toFixed(0)+'h</div><div style="font-size:11px;color:var(--g500);margin-top:2px">Total hrs logged</div></div>'
-      +'<div style="background:var(--g100);border-radius:var(--r6);padding:10px 12px"><div style="font-size:18px;font-weight:800;color:var(--g900)">'+loa.ticketCount+'</div><div style="font-size:11px;color:var(--g500);margin-top:2px">Tickets (LOE)</div></div>'
+      +'<div style="background:var(--g100);border-radius:var(--r6);padding:10px 12px"><div style="font-size:18px;font-weight:800;color:var(--g900)">'+loa.totalHrs.toFixed(0)+'h</div><div style="font-size:11px;color:var(--g500);margin-top:2px">Hrs ('+rangeLabel+')</div></div>'
+      +'<div style="background:var(--g100);border-radius:var(--r6);padding:10px 12px"><div style="font-size:18px;font-weight:800;color:var(--g900)">'+loa.ticketCount+'</div><div style="font-size:11px;color:var(--g500);margin-top:2px">Tickets in range</div></div>'
       +'<div style="background:var(--g100);border-radius:var(--r6);padding:10px 12px"><div style="font-size:18px;font-weight:800;color:var(--g900)">'+avgH+'h</div><div style="font-size:11px;color:var(--g500);margin-top:2px">Avg hrs/ticket</div></div>'
-      +'<div style="background:var(--g100);border-radius:var(--r6);padding:10px 12px"><div style="font-size:18px;font-weight:800;color:var(--g900)">'+recentHrs+'h</div><div style="font-size:11px;color:var(--g500);margin-top:2px">Feb–May 2026</div></div>'
+      +'<div style="background:var(--g100);border-radius:var(--r6);padding:10px 12px"><div style="font-size:18px;font-weight:800;color:var(--g900)">'+LOA_ENG[m.name].totalHrs.toFixed(0)+'h</div><div style="font-size:11px;color:var(--g500);margin-top:2px">All-time hrs</div></div>'
       +'</div>'
       +'<div style="margin-bottom:10px">'
-      +'<div style="font-size:9px;font-weight:700;color:var(--g400);letter-spacing:.05em;margin-bottom:4px">DEC \'25 – MAY \'26</div>'
+      +'<div style="font-size:9px;font-weight:700;color:var(--g400);letter-spacing:.05em;margin-bottom:4px">DEC \'25 – MAY \'26 TREND</div>'
       +'<div style="display:flex;align-items:flex-end;gap:3px;height:40px">'+sparkBars+'</div>'
       +'</div>'
       +'<div style="font-size:11px;color:var(--g400);text-align:center;padding-top:8px;border-top:1px solid var(--g200)">Click to view ticket details →</div>'
       +'</div>';
   }).join('');
 
-  page.innerHTML=`
-    <div class="sec-head" style="margin-bottom:16px">
-      <div>
-        <div class="sec-title">Team Performance</div>
-        <div class="sec-sub">Actual hours from ServiceNow LOE · Sep 2024 – May 2026 · ITO Network L3 · <span style="background:var(--g100);border-radius:4px;padding:1px 7px;font-size:10.5px;font-weight:700;color:var(--g600)">Data through May 2026</span></div>
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px">
-      <div class="digest-card"><div class="d-label">Total Hours Logged</div><div class="d-num">${totalHrs}h</div><div class="d-change">6 engineers · Sep 2024 – May 2026</div></div>
-      <div class="digest-card"><div class="d-label">Tickets Worked (LOE)</div><div class="d-num">${totalLoaTickets}</div><div class="d-change">Unique tickets with time entries</div></div>
-      <div class="digest-card"><div class="d-label">Avg Hours / Ticket</div><div class="d-num">${avgHrsPerTicket}h</div><div class="d-change">Across all ticket types</div></div>
-      <div class="digest-card"><div class="d-label">Peak Month</div><div class="d-num">${peakMonth}</div><div class="d-change">${Math.max(...Object.values(LOA_TEAM_MONTHLY)).toFixed(0)}h · highest output · <span style="font-weight:700">thru May'26</span></div></div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px">
-      <div class="card">
-        <div class="card-header"><div><div class="card-title">Hours by Engineer</div><div class="card-sub">Total logged hours Sep 2024 – May 2026</div></div></div>
-        <div style="height:220px"><canvas id="teamHoursChart"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><div><div class="card-title">Monthly Hours Trend</div><div class="card-sub">Team total hours logged per month</div></div></div>
-        <div style="height:220px"><canvas id="teamTrendChart"></canvas></div>
-      </div>
-    </div>
-    <div class="sec-head"><div>
-      <div class="sec-title" style="font-size:14px">Engineer Breakdown</div>
-      <div class="sec-sub">Actual hours from LOE data · click any card to view tickets</div>
-    </div></div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px">
-      ${engCardsHtml}
-    </div>
-    <div class="sec-head"><div>
-      <div class="sec-title" style="font-size:14px">Hours vs Tickets — Efficiency View</div>
-      <div class="sec-sub">Click an engineer in the chart above to filter · click any row to drill in</div>
-    </div></div>
-    <div id="teamEngFilterChip" style="margin-bottom:8px"></div>
-    <div class="table-card" style="margin-bottom:22px">
-      <div class="tw"><table id="teamEffTable">
-        <thead><tr><th>Engineer</th><th>Total Hrs (LOE)</th><th>Tickets (LOE)</th><th>Avg Hrs/Ticket</th><th>Recent Hrs (Feb–May 26)</th><th>Incident Tickets (T)</th><th>Actual Hrs on Record</th></tr></thead>
-        <tbody>
-          ${TEAM_META.map(m=>{
-            const loa=LOA_ENG[m.name]||{totalHrs:0,ticketCount:0,monthly:{}};
-            const avgH=loa.ticketCount>0?(loa.totalHrs/loa.ticketCount).toFixed(1):'—';
-            const recentHrs=['2026-02','2026-03','2026-04','2026-05'].reduce((s,mo)=>s+(loa.monthly[mo]||0),0).toFixed(1);
-            const myT=T.filter(t=>t.who===m.name).length;
-            const myTHrs=T.filter(t=>t.who===m.name).reduce((s,t)=>s+(LOA_TICKET_HRS[t.num]||0),0).toFixed(1);
-            const parts=m.name.split(' ');
-            return `<tr data-eng="${m.name}" onclick="openTechProfile('${m.name}')">
-              <td style="font-weight:700;color:var(--g900)">${parts[0]} ${parts[parts.length-1]}</td>
-              <td style="font-weight:700">${loa.totalHrs.toFixed(0)}h</td>
-              <td>${loa.ticketCount}</td>
-              <td><span style="font-weight:700;color:${parseFloat(avgH)<=4?'var(--green600)':parseFloat(avgH)<=8?'var(--orange600)':'var(--red600)'}">${avgH}h</span></td>
-              <td>${recentHrs}h</td>
-              <td>${myT}</td>
-              <td>${parseFloat(myTHrs)>0?myTHrs+'h':'—'}</td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table></div>
-    </div>
-  `;
+  const drBtns='<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">'
+    +'<button class="dr-btn '+(window._dateRange==='thisweek'?'active':'')+'" data-dr="thisweek" onclick="setDateRange(\'thisweek\')">This Week</button>'
+    +'<button class="dr-btn '+(window._dateRange==='lastweek'?'active':'')+'" data-dr="lastweek" onclick="setDateRange(\'lastweek\')">Last Week</button>'
+    +'<button class="dr-btn '+(window._dateRange==='30d'?'active':'')+'" data-dr="30d" onclick="setDateRange(\'30d\')">30 Days</button>'
+    +'<button class="dr-btn '+(window._dateRange==='60d'?'active':'')+'" data-dr="60d" onclick="setDateRange(\'60d\')">60 Days</button>'
+    +'<button class="dr-btn '+(window._dateRange==='90d'?'active':'')+'" data-dr="90d" onclick="setDateRange(\'90d\')">90 Days</button>'
+    +'<button class="dr-btn '+(window._dateRange==='6m'?'active':'')+'" data-dr="6m" onclick="setDateRange(\'6m\')">6 Months</button>'
+    +'<button class="dr-btn '+(window._dateRange==='ttd'?'active':'')+'" data-dr="ttd" onclick="setDateRange(\'ttd\')">YTD</button>'
+    +'<button class="dr-btn '+(window._dateRange==='1y'?'active':'')+'" data-dr="1y" onclick="setDateRange(\'1y\')">1 Year</button>'
+    +'<button class="dr-btn '+(window._dateRange==='all'?'active':'')+'" data-dr="all" onclick="setDateRange(\'all\')">All Data</button>'
+    +'</div>';
+
+  page.innerHTML='<div class="sec-head" style="margin-bottom:16px;align-items:center">'
+    +'<div class="sec-title">Team Performance</div>'
+    +drBtns
+    +'</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px">'
+    +'<div class="digest-card"><div class="d-label">Total Hours Logged</div><div class="d-num">'+totalHrs+'h</div><div class="d-change">'+rangeLabel+'</div></div>'
+    +'<div class="digest-card"><div class="d-label">Tickets in Range</div><div class="d-num">'+totalLoaTickets+'</div><div class="d-change">From selected date range</div></div>'
+    +'<div class="digest-card"><div class="d-label">Avg Hours / Ticket</div><div class="d-num">'+avgHrsPerTicket+'h</div><div class="d-change">Across all ticket types</div></div>'
+    +'<div class="digest-card"><div class="d-label">Peak Month</div><div class="d-num">'+peakMonth+'</div><div class="d-change">'+peakHrs.toFixed(0)+'h · highest output in range</div></div>'
+    +'</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px">'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">Hours by Engineer</div><div class="card-sub">'+rangeLabel+'</div></div></div><div style="height:220px"><canvas id="teamHoursChart"></canvas></div></div>'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">Monthly Hours Trend</div><div class="card-sub">Team total hours logged per month</div></div></div><div style="height:220px"><canvas id="teamTrendChart"></canvas></div></div>'
+    +'</div>'
+    +'<div class="sec-head"><div><div class="sec-title" style="font-size:14px">Engineer Breakdown</div>'
+    +'<div class="sec-sub">Hours and tickets for selected range · click any card to view tickets</div></div></div>'
+    +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px">'+engCardsHtml+'</div>'
+    +'<div class="sec-head"><div><div class="sec-title" style="font-size:14px">Efficiency View</div>'
+    +'<div class="sec-sub">Click an engineer in the chart above to filter · click any row to drill in</div></div></div>'
+    +'<div id="teamEngFilterChip" style="margin-bottom:8px"></div>'
+    +'<div class="table-card" style="margin-bottom:22px"><div class="tw"><table id="teamEffTable">'
+    +'<thead><tr><th>Engineer</th><th>Hrs (range)</th><th>Tickets (range)</th><th>Avg Hrs/Ticket</th><th>All-time Hrs</th><th>All-time Tickets</th></tr></thead>'
+    +'<tbody>'
+    +TEAM_META.map(function(m){
+      const loa=filtLOA[m.name]||{totalHrs:0,ticketCount:0};
+      const loaAll=LOA_ENG[m.name]||{totalHrs:0,ticketCount:0};
+      const avgH=loa.ticketCount>0?(loa.totalHrs/loa.ticketCount).toFixed(1):'—';
+      const parts=m.name.split(' ');
+      return '<tr data-eng="'+m.name+'" onclick="openTechProfile(\''+m.name+'\')" style="cursor:pointer">'
+        +'<td style="font-weight:700;color:var(--g900)">'+parts[0]+' '+parts[parts.length-1]+'</td>'
+        +'<td style="font-weight:700">'+loa.totalHrs.toFixed(0)+'h</td>'
+        +'<td>'+loa.ticketCount+'</td>'
+        +'<td><span style="font-weight:700;color:'+(parseFloat(avgH)<=4?'var(--green600)':parseFloat(avgH)<=8?'var(--orange600)':'var(--red600)')+'">'+avgH+'h</span></td>'
+        +'<td>'+loaAll.totalHrs.toFixed(0)+'h</td>'
+        +'<td>'+loaAll.ticketCount+'</td>'
+        +'</tr>';
+    }).join('')
+    +'</tbody></table></div></div>';
+
   buildTeamHoursChart();
   buildTeamTrendChart();
 }
 
 function buildTeamHoursChart(){
   const names=TEAM_META.map(m=>{const p=m.name.split(' ');return p[0]+' '+p[p.length-1];});
-  const hrs=TEAM_META.map(m=>(LOA_ENG[m.name]||{totalHrs:0}).totalHrs);
+  const filtLOA=window._filtLOA||LOA_ENG;
+  const hrs=TEAM_META.map(m=>(filtLOA[m.name]||{totalHrs:0}).totalHrs);
   const colors=TEAM_META.map(()=>'#F79009');
   window._teamHoursChart=new Chart(document.getElementById('teamHoursChart'),{
     type:'bar',
@@ -2114,12 +2137,14 @@ function setTeamEngFilter(name){
 }
 
 function buildTeamTrendChart(){
-  const engColors={'Jason Candler':'#F79009','Khaled Shalati':'#2E90FA','Patrick Djemba Tchounke':'#6941C6','Yadwinder Singh':'#12B76A','Harry Midy':'#EE46BC','Shaun Dees':'#667085'};
-  const teamVals=LOA_MONTHS.map(m=>LOA_TEAM_MONTHLY[m]||0);
+  const filtMonths=window._filtLOAMonths||LOA_MONTHS;
+  const filtTeamMonthly=window._filtTeamMonthly||LOA_TEAM_MONTHLY;
+  const teamVals=filtMonths.map(m=>filtTeamMonthly[m]||0);
+  const trendLabels=filtMonths.map(m=>LOA_MONTH_LABELS[LOA_MONTHS.indexOf(m)]||m);
   new Chart(document.getElementById('teamTrendChart'),{
     type:'line',
     data:{
-      labels:LOA_MONTH_LABELS,
+      labels:trendLabels,
       datasets:[{
         label:'Team Total',data:teamVals,
         borderColor:'#F79009',backgroundColor:'rgba(247,144,9,.10)',
