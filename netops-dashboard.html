@@ -1695,12 +1695,11 @@ function setTicketTypeFilter(type){
   if(!top||top.view!=='tickets') return;
   const base={...top.props.filter};
   if(type==='all') delete base.type; else base.type=type;
-  const lbl=type==='INC'?'INC — Incidents':type==='ADR'?'ADR Records':'All Tickets';
-  top.props={label:lbl,filter:base};
+  top.props={...top.props, filter:base};
   renderPanel();
 }
 function renderTicketList(filter){
-  let list = [...T];
+  let list = getActiveT();
   if(filter.type)     list = list.filter(t=>t.type===filter.type);
   if(filter.state)    list = list.filter(t=>t.state===filter.state);
   if(filter.month)    list = list.filter(t=>t.month===filter.month);
@@ -1876,6 +1875,14 @@ function getActiveCHG(){
   return CHG_DATA.filter(c=>c.start>=f.start && c.start<=f.end);
 }
 
+function buildDateRangeBtns(){
+  const r=window._dateRange;
+  return [['thisweek','This Week'],['lastweek','Last Week'],['30d','30 Days'],
+          ['60d','60 Days'],['90d','90 Days'],['6m','6 Months'],
+          ['ttd','YTD'],['1y','1 Year'],['all','All Data']]
+    .map(([v,l])=>`<button class="dr-btn${r===v?' active':''}" data-dr="${v}" onclick="setDateRange('${v}')">${l}</button>`)
+    .join('');
+}
 function setDateRange(range){
   window._dateRange = range;
   document.querySelectorAll('[data-dr]').forEach(btn=>{
@@ -1928,12 +1935,10 @@ function buildTeamView(){
   const Tf=getActiveT();
   const f=getDateFilter();
 
-  // Filter LOE monthly data to the selected date range
   const startM=f?f.start.slice(0,7):null;
   const endM=f?f.end.slice(0,7):null;
   const filtLOAMonths=startM?LOA_MONTHS.filter(m=>m>=startM&&m<=endM):LOA_MONTHS;
 
-  // Compute filtered per-engineer LOE data
   const filtLOA={};
   Object.entries(LOA_ENG).forEach(function([name,eng]){
     const filtHrs=filtLOAMonths.reduce((s,m)=>s+(eng.monthly[m]||0),0);
@@ -1942,16 +1947,13 @@ function buildTeamView(){
     filtLOA[name]={totalHrs:filtHrs,ticketCount:Tf.filter(t=>t.who===name).length,monthly:filtMonthly};
   });
 
-  // Filtered team monthly totals for trend chart
   const filtTeamMonthly={};
   filtLOAMonths.forEach(m=>{filtTeamMonthly[m]=LOA_TEAM_MONTHLY[m]||0;});
 
-  // Store for chart functions
   window._filtLOA=filtLOA;
   window._filtTeamMonthly=filtTeamMonthly;
   window._filtLOAMonths=filtLOAMonths;
 
-  // KPIs
   const totalHrs=Object.values(filtLOA).reduce((s,e)=>s+e.totalHrs,0).toFixed(0);
   const totalLoaTickets=Tf.length;
   const avgHrsPerTicket=totalLoaTickets>0?(parseFloat(totalHrs)/totalLoaTickets).toFixed(1):'—';
@@ -1962,9 +1964,14 @@ function buildTeamView(){
   });
   const rangeLabel=f?(f.start.slice(0,7)+' – '+f.end.slice(0,7)):'Sep 2024 – May 2026';
 
-  // Spark always shows last 6 months for context
-  const sparkMonthKeys=['2025-12','2026-01','2026-02','2026-03','2026-04','2026-05'];
-  const sparkMonthLabels=["Dec'25","Jan'26","Feb'26","Mar'26","Apr'26","May'26"];
+  const _sToday=new Date();
+  const _sMN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const sparkMonthKeys=[],sparkMonthLabels=[];
+  for(let i=5;i>=0;i--){
+    const d=new Date(_sToday.getFullYear(),_sToday.getMonth()-i,1);
+    sparkMonthKeys.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));
+    sparkMonthLabels.push(_sMN[d.getMonth()]+"'"+(d.getFullYear()%100).toString().padStart(2,'0'));
+  }
 
   const engCardsHtml=TEAM_META.map(function(m){
     const loa=filtLOA[m.name]||{totalHrs:0,ticketCount:0,monthly:{}};
@@ -2003,17 +2010,7 @@ function buildTeamView(){
       +'</div>';
   }).join('');
 
-  const drBtns='<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">'
-    +'<button class="dr-btn '+(window._dateRange==='thisweek'?'active':'')+'" data-dr="thisweek" onclick="setDateRange(\'thisweek\')">This Week</button>'
-    +'<button class="dr-btn '+(window._dateRange==='lastweek'?'active':'')+'" data-dr="lastweek" onclick="setDateRange(\'lastweek\')">Last Week</button>'
-    +'<button class="dr-btn '+(window._dateRange==='30d'?'active':'')+'" data-dr="30d" onclick="setDateRange(\'30d\')">30 Days</button>'
-    +'<button class="dr-btn '+(window._dateRange==='60d'?'active':'')+'" data-dr="60d" onclick="setDateRange(\'60d\')">60 Days</button>'
-    +'<button class="dr-btn '+(window._dateRange==='90d'?'active':'')+'" data-dr="90d" onclick="setDateRange(\'90d\')">90 Days</button>'
-    +'<button class="dr-btn '+(window._dateRange==='6m'?'active':'')+'" data-dr="6m" onclick="setDateRange(\'6m\')">6 Months</button>'
-    +'<button class="dr-btn '+(window._dateRange==='ttd'?'active':'')+'" data-dr="ttd" onclick="setDateRange(\'ttd\')">YTD</button>'
-    +'<button class="dr-btn '+(window._dateRange==='1y'?'active':'')+'" data-dr="1y" onclick="setDateRange(\'1y\')">1 Year</button>'
-    +'<button class="dr-btn '+(window._dateRange==='all'?'active':'')+'" data-dr="all" onclick="setDateRange(\'all\')">All Data</button>'
-    +'</div>';
+  const drBtns='<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">'+buildDateRangeBtns()+'</div>';
 
   page.innerHTML='<div class="sec-head" style="margin-bottom:12px">'
     +'<div class="sec-title">Team Performance</div>'
@@ -2063,6 +2060,7 @@ function buildTeamHoursChart(){
   const filtLOA=window._filtLOA||LOA_ENG;
   const hrs=TEAM_META.map(m=>(filtLOA[m.name]||{totalHrs:0}).totalHrs);
   const colors=TEAM_META.map(()=>'#F79009');
+  Chart.getChart('teamHoursChart')?.destroy();
   window._teamHoursChart=new Chart(document.getElementById('teamHoursChart'),{
     type:'bar',
     data:{labels:names,datasets:[{label:'Hours',data:hrs,backgroundColor:colors,borderRadius:4,borderSkipped:false}]},
@@ -2083,23 +2081,19 @@ function setTeamEngFilter(name){
   window._teamEngFilter=(window._teamEngFilter===name)?null:name;
   const f=window._teamEngFilter;
   const engColors={'Jason Candler':'#F79009','Khaled Shalati':'#2E90FA','Patrick Djemba Tchounke':'#6941C6','Yadwinder Singh':'#12B76A','Harry Midy':'#EE46BC','Shaun Dees':'#667085'};
-  // Filter efficiency table rows
   document.querySelectorAll('#teamEffTable tbody tr').forEach(row=>{
     row.style.opacity=(!f||row.dataset.eng===f)?'1':'0.25';
   });
-  // Highlight engineer cards
   document.querySelectorAll('[data-eng-card]').forEach(card=>{
     card.style.outline=(f&&card.dataset.engCard===f)?'2px solid #2E90FA':'';
     card.style.outlineOffset='2px';
   });
-  // Update chart bar colors
   if(window._teamHoursChart){
     window._teamHoursChart.data.datasets[0].backgroundColor=TEAM_META.map(m=>
       (!f||m.name===f)?'#F79009':'#F7900944'
     );
     window._teamHoursChart.update('none');
   }
-  // Update filter chip
   const chip=document.getElementById('teamEngFilterChip');
   if(chip){
     if(f){
@@ -2120,6 +2114,7 @@ function buildTeamTrendChart(){
   const filtTeamMonthly=window._filtTeamMonthly||LOA_TEAM_MONTHLY;
   const teamVals=filtMonths.map(m=>filtTeamMonthly[m]||0);
   const trendLabels=filtMonths.map(m=>LOA_MONTH_LABELS[LOA_MONTHS.indexOf(m)]||m);
+  Chart.getChart('teamTrendChart')?.destroy();
   new Chart(document.getElementById('teamTrendChart'),{
     type:'line',
     data:{
@@ -2702,7 +2697,8 @@ function teamMTTR(name){
   if(!mine.length) return '0.0';
   return (mine.reduce((s,t)=>s+estMTTR(t),0)/mine.length).toFixed(1);
 }
-const GLOBAL_MTTR=(T.filter(t=>t.state!=='open').reduce((s,t)=>s+estMTTR(t),0)/T.filter(t=>t.state!=='open').length).toFixed(1);
+const _allClosed=T.filter(t=>t.state!=='open');
+const GLOBAL_MTTR=(_allClosed.reduce((s,t)=>s+estMTTR(t),0)/_allClosed.length).toFixed(1);
 
 /* ═══════════════════════════════════════
    DIRECTOR VIEW
@@ -2728,7 +2724,6 @@ function buildDirectorView(){
   const gaugeColor=stabScore>=90?'#12B76A':stabScore>=75?'#F79009':'#D92D20';
   const stabLabel=stabScore>=90?'Excellent':stabScore>=75?'Good':'Needs Attention';
 
-  // MoM deltas: April vs March (only for full dataset)
   const showMoM = (window._dateRange==='all');
   const curM='2026-04', prevM='2026-03';
   const curVolM=T.filter(t=>t.month===curM).length;
@@ -2741,15 +2736,14 @@ function buildDirectorView(){
   const resDiff=(parseFloat(curResM)-parseFloat(prevResM)).toFixed(1);
   const resDeltaStr=showMoM?(parseFloat(resDiff)>=0?'↑ +':'↓ ')+Math.abs(resDiff)+'% Apr vs Mar':'';
   const resDeltaColor=parseFloat(resDiff)>=0?'var(--green600)':'var(--red600)';
-  const curMTTR=T.filter(t=>t.month===curM&&t.state!=='open').length>0
-    ?(T.filter(t=>t.month===curM&&t.state!=='open').reduce((s,t)=>s+estMTTR(t),0)/T.filter(t=>t.month===curM&&t.state!=='open').length).toFixed(1):'—';
-  const prevMTTR=T.filter(t=>t.month===prevM&&t.state!=='open').length>0
-    ?(T.filter(t=>t.month===prevM&&t.state!=='open').reduce((s,t)=>s+estMTTR(t),0)/T.filter(t=>t.month===prevM&&t.state!=='open').length).toFixed(1):'—';
+  const _curClosed=T.filter(t=>t.month===curM&&t.state!=='open');
+  const _prevClosed=T.filter(t=>t.month===prevM&&t.state!=='open');
+  const curMTTR=_curClosed.length>0?(_curClosed.reduce((s,t)=>s+estMTTR(t),0)/_curClosed.length).toFixed(1):'—';
+  const prevMTTR=_prevClosed.length>0?(_prevClosed.reduce((s,t)=>s+estMTTR(t),0)/_prevClosed.length).toFixed(1):'—';
   const mttrDiff=curMTTR!=='—'&&prevMTTR!=='—'?(parseFloat(curMTTR)-parseFloat(prevMTTR)).toFixed(1):'—';
   const mttrDeltaStr=showMoM?(mttrDiff==='—'?'No comparison':(parseFloat(mttrDiff)<=0?'↓ '+(Math.abs(mttrDiff))+'d faster Apr':'↑ +'+mttrDiff+'d slower Apr')):'';
   const mttrDeltaColor=mttrDiff==='—'?'var(--g400)':parseFloat(mttrDiff)<=0?'var(--green600)':'var(--red600)';
 
-  // Ticket activity heatmap — 6 monthly mini-grids
   const heatDayMap={};
   Tf.forEach(t=>{if(t.opened) heatDayMap[t.opened]=(heatDayMap[t.opened]||0)+1;});
   const _hf=getDateFilter();
@@ -2757,7 +2751,6 @@ function buildDirectorView(){
   const _hToday=new Date();
   const _hTodayStr=_hToday.toISOString().slice(0,10);
 
-  // Current month + last 5
   const heatMonthDefs=[];
   for(let i=5;i>=0;i--){
     const d=new Date(_hToday.getFullYear(),_hToday.getMonth()-i,1);
@@ -2812,17 +2805,7 @@ function buildDirectorView(){
   page.innerHTML=`
     <div class="sec-head" style="margin-bottom:16px;align-items:center">
       <div class="sec-title">Executive View</div>
-      <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
-        <button class="dr-btn ${window._dateRange==='thisweek'?'active':''}" data-dr="thisweek" onclick="setDateRange('thisweek')">This Week</button>
-        <button class="dr-btn ${window._dateRange==='lastweek'?'active':''}" data-dr="lastweek" onclick="setDateRange('lastweek')">Last Week</button>
-        <button class="dr-btn ${window._dateRange==='30d'?'active':''}" data-dr="30d" onclick="setDateRange('30d')">30 Days</button>
-        <button class="dr-btn ${window._dateRange==='60d'?'active':''}" data-dr="60d" onclick="setDateRange('60d')">60 Days</button>
-        <button class="dr-btn ${window._dateRange==='90d'?'active':''}" data-dr="90d" onclick="setDateRange('90d')">90 Days</button>
-        <button class="dr-btn ${window._dateRange==='6m'?'active':''}" data-dr="6m" onclick="setDateRange('6m')">6 Months</button>
-        <button class="dr-btn ${window._dateRange==='ttd'?'active':''}" data-dr="ttd" onclick="setDateRange('ttd')">YTD</button>
-        <button class="dr-btn ${window._dateRange==='1y'?'active':''}" data-dr="1y" onclick="setDateRange('1y')">1 Year</button>
-        <button class="dr-btn ${window._dateRange==='all'?'active':''}" data-dr="all" onclick="setDateRange('all')">All Data</button>
-      </div>
+      <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">${buildDateRangeBtns()}</div>
     </div>
     <div style="display:grid;grid-template-columns:260px 1fr 1fr 1fr;gap:16px;margin-bottom:22px;align-items:stretch">
       <div class="digest-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
@@ -2957,6 +2940,7 @@ function buildDirectorView(){
 function buildMTTRChart(){
   const names=TEAM_META.map(m=>{const p=m.name.split(' ');return p[0]+' '+p[p.length-1];});
   const vals=TEAM_META.map(m=>parseFloat(teamMTTR(m.name)));
+  Chart.getChart('mttrChart')?.destroy();
   new Chart(document.getElementById('mttrChart'),{
     type:'bar',
     data:{labels:names,datasets:[{label:'Avg MTTR (days)',data:vals,backgroundColor:'#F79009',borderRadius:4,borderSkipped:false}]},
@@ -2982,6 +2966,7 @@ function buildRatioDonut(){
   const Tf=getActiveT();
   const inc=Tf.filter(t=>t.type==='INC').length;
   const adr=Tf.filter(t=>t.type==='ADR').length;
+  Chart.getChart('ratioDonut')?.destroy();
   new Chart(document.getElementById('ratioDonut'),{
     type:'doughnut',
     data:{
@@ -3001,6 +2986,7 @@ function buildRatioDonut(){
 function buildCapacityChart(){
   const Tf=getActiveT();
   const totals=MONTHS.map(m=>Tf.filter(t=>t.month===m).length);
+  Chart.getChart('capacityChart')?.destroy();
   new Chart(document.getElementById('capacityChart'),{
     type:'line',
     data:{
