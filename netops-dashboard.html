@@ -463,16 +463,6 @@ tbody tr:hover td{background:var(--g100)}
       <input type="file" id="importInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleImportFile(event)">
     </div>
   </div>
-  <div class="filterbar" id="filterBar">
-    <span class="dr-lbl">Date Range:</span>
-    <button class="dr-btn active" data-dr="all" onclick="setDateRange('all')">All Data</button>
-    <button class="dr-btn" data-dr="thisweek" onclick="setDateRange('thisweek')">This Week</button>
-    <button class="dr-btn" data-dr="lastweek" onclick="setDateRange('lastweek')">Last Week</button>
-    <button class="dr-btn" data-dr="30d" onclick="setDateRange('30d')">30 Days</button>
-    <button class="dr-btn" data-dr="60d" onclick="setDateRange('60d')">60 Days</button>
-    <button class="dr-btn" data-dr="90d" onclick="setDateRange('90d')">90 Days</button>
-    <div class="dr-range-info" id="drRangeInfo"></div>
-  </div>
 
   <div id="view-manager" class="view">
   <div class="page">
@@ -1876,6 +1866,18 @@ function getDateFilter(){
     const lSun = new Date(mon); lSun.setDate(mon.getDate()-1);
     return {start:fmt(lMon), end:fmt(lSun)};
   }
+  if(range === 'ttd'){
+    const start = new Date(today.getFullYear(), 0, 1);
+    return {start:fmt(start), end:todayStr};
+  }
+  if(range === '6m'){
+    const start = new Date(today); start.setMonth(today.getMonth()-6);
+    return {start:fmt(start), end:todayStr};
+  }
+  if(range === '1y'){
+    const start = new Date(today); start.setFullYear(today.getFullYear()-1);
+    return {start:fmt(start), end:todayStr};
+  }
   const days = range==='30d'?30:range==='60d'?60:90;
   const start = new Date(today); start.setDate(today.getDate()-days);
   return {start:fmt(start), end:todayStr};
@@ -1899,8 +1901,6 @@ function setDateRange(range){
     btn.classList.toggle('active', btn.dataset.dr===range);
   });
   const f = getDateFilter();
-  const info = document.getElementById('drRangeInfo');
-  if(info) info.textContent = f ? 'Showing: '+f.start+' – '+f.end : '';
   // Rebuild active data-sensitive views
   const activeView = document.querySelector('.view.active');
   if(!activeView) return;
@@ -2796,9 +2796,18 @@ function buildDirectorView(){
 
 
   page.innerHTML=`
-    <div class="sec-head" style="margin-bottom:16px">
-      <div>
-        <div class="sec-title">Director Overview</div>
+    <div class="sec-head" style="margin-bottom:16px;align-items:center">
+      <div class="sec-title">Director Overview</div>
+      <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+        <button class="dr-btn ${window._dateRange==='thisweek'?'active':''}" data-dr="thisweek" onclick="setDateRange('thisweek')">This Week</button>
+        <button class="dr-btn ${window._dateRange==='lastweek'?'active':''}" data-dr="lastweek" onclick="setDateRange('lastweek')">Last Week</button>
+        <button class="dr-btn ${window._dateRange==='30d'?'active':''}" data-dr="30d" onclick="setDateRange('30d')">30 Days</button>
+        <button class="dr-btn ${window._dateRange==='60d'?'active':''}" data-dr="60d" onclick="setDateRange('60d')">60 Days</button>
+        <button class="dr-btn ${window._dateRange==='90d'?'active':''}" data-dr="90d" onclick="setDateRange('90d')">90 Days</button>
+        <button class="dr-btn ${window._dateRange==='6m'?'active':''}" data-dr="6m" onclick="setDateRange('6m')">6 Months</button>
+        <button class="dr-btn ${window._dateRange==='ttd'?'active':''}" data-dr="ttd" onclick="setDateRange('ttd')">TTD</button>
+        <button class="dr-btn ${window._dateRange==='1y'?'active':''}" data-dr="1y" onclick="setDateRange('1y')">1 Year</button>
+        <button class="dr-btn ${window._dateRange==='all'?'active':''}" data-dr="all" onclick="setDateRange('all')">All Data</button>
       </div>
     </div>
     <div style="display:grid;grid-template-columns:260px 1fr 1fr 1fr;gap:16px;margin-bottom:22px;align-items:stretch">
