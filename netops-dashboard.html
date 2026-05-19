@@ -1725,6 +1725,7 @@ function renderTechProfile(name){
 
 /* ── Filtered Ticket List ── */
 function openFilteredPanel({label,filter}){ pushPanel('tickets',{label,filter}); }
+function glanceRowClick(el){ openFilteredPanel({label:el.dataset.glanceLabel, filter:{month:el.dataset.glanceMonth}}); }
 function renderTicketList(filter){
   let list = [...T];
   if(filter.type)     list = list.filter(t=>t.type===filter.type);
@@ -2709,7 +2710,8 @@ function buildDirectorView(){
   const closed=Tf.filter(t=>t.state!=='open');
   const resRate=(closed.length/Tf.length*100).toFixed(1);
   const noiseRatio=Math.round(Tf.filter(t=>t.cat==='Monitoring Alerts').length/Tf.length*100);
-  const stabScore=Math.min(100,Math.round(parseFloat(resRate)*0.4+30+(parseFloat(GLOBAL_MTTR)<=4?20:10)+(noiseRatio<=25?10:5)));
+  const filtMTTR=closed.length>0?(closed.reduce((s,t)=>s+estMTTR(t),0)/closed.length).toFixed(1):GLOBAL_MTTR;
+  const stabScore=Math.min(100,Math.round(parseFloat(resRate)*0.4+30+(parseFloat(filtMTTR)<=4?20:10)+(noiseRatio<=25?10:5)));
   const gaugeColor=stabScore>=90?'#12B76A':stabScore>=75?'#F79009':'#D92D20';
   const stabLabel=stabScore>=90?'Excellent':stabScore>=75?'Good':'Needs Attention';
 
@@ -2869,27 +2871,27 @@ function buildDirectorView(){
     <div class="bench-grid">
       <div class="bench-card">
         <div class="bench-lbl">Resolution Rate</div>
-        <div class="bench-row"><span class="bench-name">This Team</span><span class="bench-val">98.3%</span></div>
-        <div class="btrack"><div class="bfill" style="width:98%;background:var(--green500)"></div></div>
-        <div class="bench-row"><span class="bench-name">Industry Avg</span><span class="bench-val">93%</span></div>
+        <div class="bench-row"><span class="bench-name">This Team</span><span class="bench-val">${resRate}%</span></div>
+        <div class="btrack"><div class="bfill" style="width:${Math.min(100,Math.round(parseFloat(resRate)))}%;background:var(--green500)"></div></div>
+        <div class="bench-row"><span class="bench-name">Industry Avg <sup style="font-size:9px;color:var(--g400)">1</sup></span><span class="bench-val">93%</span></div>
         <div class="btrack"><div class="bfill" style="width:93%;background:var(--g300)"></div></div>
-        <div style="margin-top:8px"><span style="background:var(--green50);color:var(--green700);font-size:11px;font-weight:700;padding:2px 8px;border-radius:var(--rfull)">+5.3% above avg</span></div>
+        <div style="margin-top:8px"><span style="background:${parseFloat(resRate)>=93?'var(--green50)':'var(--orange50)'};color:${parseFloat(resRate)>=93?'var(--green700)':'var(--orange700)'};font-size:11px;font-weight:700;padding:2px 8px;border-radius:var(--rfull)">${parseFloat(resRate)>=93?'+':''}${(parseFloat(resRate)-93).toFixed(1)}% vs avg</span></div>
       </div>
       <div class="bench-card">
         <div class="bench-lbl">Avg MTTR (days)</div>
-        <div class="bench-row"><span class="bench-name">This Team</span><span class="bench-val">${GLOBAL_MTTR}d</span></div>
-        <div class="btrack"><div class="bfill" style="width:${Math.min(100,Math.round(parseFloat(GLOBAL_MTTR)/5*100))}%;background:var(--green500)"></div></div>
-        <div class="bench-row"><span class="bench-name">Industry Avg</span><span class="bench-val">3.8d</span></div>
+        <div class="bench-row"><span class="bench-name">This Team</span><span class="bench-val">${filtMTTR}d</span></div>
+        <div class="btrack"><div class="bfill" style="width:${Math.min(100,Math.round(parseFloat(filtMTTR)/5*100))}%;background:var(--green500)"></div></div>
+        <div class="bench-row"><span class="bench-name">Industry Avg <sup style="font-size:9px;color:var(--g400)">2</sup></span><span class="bench-val">3.8d</span></div>
         <div class="btrack"><div class="bfill" style="width:76%;background:var(--g300)"></div></div>
-        <div style="margin-top:8px"><span style="background:var(--green50);color:var(--green700);font-size:11px;font-weight:700;padding:2px 8px;border-radius:var(--rfull)">Faster than benchmark</span></div>
+        <div style="margin-top:8px"><span style="background:${parseFloat(filtMTTR)<=3.8?'var(--green50)':'var(--orange50)'};color:${parseFloat(filtMTTR)<=3.8?'var(--green700)':'var(--orange700)'};font-size:11px;font-weight:700;padding:2px 8px;border-radius:var(--rfull)">${parseFloat(filtMTTR)<=3.8?'Faster than benchmark':'Above benchmark'}</span></div>
       </div>
       <div class="bench-card">
         <div class="bench-lbl">Alert Noise Ratio</div>
-        <div class="bench-row"><span class="bench-name">This Team</span><span class="bench-val">20%</span></div>
-        <div class="btrack"><div class="bfill" style="width:20%;background:var(--orange500)"></div></div>
-        <div class="bench-row"><span class="bench-name">Industry Avg</span><span class="bench-val">15%</span></div>
+        <div class="bench-row"><span class="bench-name">This Team</span><span class="bench-val">${noiseRatio}%</span></div>
+        <div class="btrack"><div class="bfill" style="width:${noiseRatio}%;background:var(--orange500)"></div></div>
+        <div class="bench-row"><span class="bench-name">Industry Avg <sup style="font-size:9px;color:var(--g400)">3</sup></span><span class="bench-val">15%</span></div>
         <div class="btrack"><div class="bfill" style="width:15%;background:var(--g300)"></div></div>
-        <div style="margin-top:8px"><span style="background:var(--orange50);color:var(--orange700);font-size:11px;font-weight:700;padding:2px 8px;border-radius:var(--rfull)">+5% above avg · reduce noise</span></div>
+        <div style="margin-top:8px"><span style="background:${noiseRatio<=15?'var(--green50)':'var(--orange50)'};color:${noiseRatio<=15?'var(--green700)':'var(--orange700)'};font-size:11px;font-weight:700;padding:2px 8px;border-radius:var(--rfull)">${noiseRatio<=15?'Within benchmark':'+'+( noiseRatio-15)+'% above avg · reduce noise'}</span></div>
       </div>
     </div>
     <div class="sec-head">
@@ -2924,12 +2926,11 @@ function buildDirectorView(){
         <tbody id="mttrTeamTbl"></tbody>
       </table></div>
     </div>
-    <div style="padding:12px 4px 4px;font-size:11px;color:var(--g400);line-height:1.7;border-top:1px solid var(--g200)">
-      <sup>*</sup> Benchmark figures are derived from publicly available NOC and IT operations research:
-      <strong>Resolution Rate</strong> industry average (93%) sourced from HDI 2024 Technical Support Practices &amp; Salary Report;
-      <strong>MTTR</strong> average (3.8 days) from Gartner IT Infrastructure &amp; Operations benchmarking data (2023);
-      <strong>Alert Noise Ratio</strong> baseline (15%) from Everbridge State of IT Alerting report (2023).
-      Figures represent L3 network operations benchmarks and may vary by industry vertical and team size.
+    <div style="padding:14px 4px 4px;font-size:11px;color:var(--g400);line-height:2;border-top:1px solid var(--g200)">
+      <div><sup>1</sup> <strong>Resolution Rate</strong> industry average (93%) — HDI 2024 Technical Support Practices &amp; Salary Report.</div>
+      <div><sup>2</sup> <strong>Avg MTTR</strong> industry average (3.8 days) — Gartner IT Infrastructure &amp; Operations Benchmarking Data (2023).</div>
+      <div><sup>3</sup> <strong>Alert Noise Ratio</strong> baseline (15%) — Everbridge State of IT Alerting Report (2023).</div>
+      <div style="margin-top:4px;color:var(--g300)">Figures represent L3 network operations benchmarks and may vary by industry vertical and team size. Benchmark comparisons reflect the currently selected date range.</div>
     </div>
   `;
   buildMTTRChart();
@@ -3061,33 +3062,57 @@ function buildDirTeamTable(){
 
 function buildDirGlance(){
   const el=document.getElementById('dirGlance');
-  const glanceData=[
-    {m:'2026-02',label:'February 2026',note:'Steady baseline. Hardware and VLAN config work. No significant incidents.'},
-    {m:'2026-03',label:'March 2026',note:'2.3× spike. March 13 Juniper alert storm (8 tickets, 1 root cause). SNMP DDoS contained same day. All resolved in-month.'},
-    {m:'2026-04',label:'April 2026',note:'Return to baseline. Verizon DWDM reroute executed without incident. SFP hardware work + 2 VLAN requests.'},
-    {m:'2026-05',label:'May 2026 (partial)',note:'Quiet period so far. 1 open ADR in progress at 7 days. On track for clean close.'},
-  ];
-  el.innerHTML=`
-    <div class="table-card" style="margin-bottom:22px">
-      <div class="tw"><table>
-        <thead><tr><th>Month</th><th>Total</th><th>INC</th><th>ADR</th><th>Key Events</th></tr></thead>
-        <tbody>
-          ${glanceData.map(g=>{
-            const total=T.filter(t=>t.month===g.m).length;
-            const inc=T.filter(t=>t.month===g.m&&t.type==='INC').length;
-            const adr=T.filter(t=>t.month===g.m&&t.type==='ADR').length;
-            return `<tr onclick="openFilteredPanel({label:'${g.label}',filter:{month:'${g.m}'}})">
-              <td style="font-weight:700;color:var(--g900);white-space:nowrap">${g.label}</td>
-              <td style="font-weight:800;font-size:14px;color:var(--g900)">${total}</td>
-              <td style="font-weight:600;color:var(--orange600)">${inc}</td>
-              <td style="font-weight:600;color:var(--g600)">${adr}</td>
-              <td style="font-size:12px;color:var(--g600);line-height:1.5">${g.note}</td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table></div>
-    </div>
-  `;
+  const today=new Date();
+  const pad=n=>String(n).padStart(2,'0');
+  const MNAMES=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  // Build last 6 months including current
+  const months=[];
+  for(let i=5;i>=0;i--){
+    const d=new Date(today.getFullYear(),today.getMonth()-i,1);
+    const mKey=d.getFullYear()+'-'+pad(d.getMonth()+1);
+    const isCurrent=i===0;
+    const shortLabel=MNAMES[d.getMonth()]+' '+d.getFullYear();
+    const label=shortLabel+(isCurrent?' (partial)':'');
+    months.push({mKey,label,shortLabel,isCurrent});
+  }
+  // Compute avg monthly volume for spike detection
+  const totalTickets=T.length;
+  const allMonths=[...new Set(T.map(t=>t.month))].length||1;
+  const avgMonthly=totalTickets/allMonths;
+
+  const rows=months.map(({mKey,label,shortLabel,isCurrent})=>{
+    const mt=T.filter(t=>t.month===mKey);
+    const total=mt.length;
+    const inc=mt.filter(t=>t.type==='INC').length;
+    const adr=mt.filter(t=>t.type==='ADR').length;
+    // Auto-generate note
+    const cats={};
+    mt.forEach(t=>{cats[t.cat]=(cats[t.cat]||0)+1;});
+    const topCat=Object.entries(cats).sort((a,b)=>b[1]-a[1])[0];
+    const openCt=mt.filter(t=>t.state==='open'||t.state==='restored').length;
+    let note='';
+    if(total===0){ note='No tickets recorded.'; }
+    else {
+      if(isCurrent) note+='Partial month. ';
+      if(total>avgMonthly*1.5) note+='Volume spike ('+Math.round(total/avgMonthly*10)/10+'× avg). ';
+      else if(total<avgMonthly*0.7) note+='Quiet period. ';
+      else note+='Normal volume. ';
+      if(topCat) note+='Top category: '+topCat[0]+' ('+topCat[1]+'). ';
+      if(openCt>0&&isCurrent) note+=openCt+' ticket'+(openCt>1?'s':'')+' still open.';
+    }
+    return '<tr style="cursor:pointer" data-glance-month="'+mKey+'" data-glance-label="'+shortLabel+' tickets" onclick="glanceRowClick(this)">'
+      +'<td style="font-weight:700;color:var(--g900);white-space:nowrap">'+label+'</td>'
+      +'<td style="font-weight:800;font-size:14px;color:var(--g900)">'+total+'</td>'
+      +'<td style="font-weight:600;color:var(--orange600)">'+inc+'</td>'
+      +'<td style="font-weight:600;color:var(--g600)">'+adr+'</td>'
+      +'<td style="font-size:12px;color:var(--g600);line-height:1.5">'+note+'</td>'
+      +'</tr>';
+  }).join('');
+
+  el.innerHTML='<div class="table-card" style="margin-bottom:22px"><div class="tw"><table>'
+    +'<thead><tr><th>Month</th><th>Total</th><th>INC</th><th>ADR</th><th>Key Events</th></tr></thead>'
+    +'<tbody>'+rows+'</tbody>'
+    +'</table></div></div>';
 }
 
 
