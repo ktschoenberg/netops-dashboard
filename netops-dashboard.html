@@ -390,35 +390,6 @@ tbody tr:hover td{background:var(--g100)}
       </svg>
       Training Opportunities
     </button>
-    <button class="s-item" id="navOnCall" onclick="openOnCallPage()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-        <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-      </svg>
-      On-Call Schedule
-      <span class="s-pill" style="background:var(--g200);color:var(--g500);font-size:9px;padding:1px 5px">AUTO</span>
-    </button>
-    <button class="s-item" id="navChangeSched" onclick="openChangeSchedulePage()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-        <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
-      </svg>
-      Change Schedule
-      <span class="s-pill blue" id="chgOpenPill">15</span>
-    </button>
-    <button class="s-item" onclick="openFilteredPanel({label:'INC — Incidents',filter:{type:'INC'}})">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
-      </svg>
-      Incidents
-    </button>
-    <button class="s-item" onclick="openFilteredPanel({label:'ADR Records',filter:{type:'ADR'}})">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-      </svg>
-      ADR Records
-    </button>
   </nav>
 
   <div class="s-foot">
@@ -710,13 +681,6 @@ tbody tr:hover td{background:var(--g100)}
     <div class="page" id="teamPage"></div>
   </div>
 
-  <div id="view-oncall" class="view">
-    <div class="page" id="oncallPage"></div>
-  </div>
-
-  <div id="view-changeschedule" class="view">
-    <div class="page" id="changeSchedPage"></div>
-  </div>
 </main>
 
 <!-- ══ SLIDE PANEL ══ -->
@@ -1726,6 +1690,15 @@ function renderTechProfile(name){
 /* ── Filtered Ticket List ── */
 function openFilteredPanel({label,filter}){ pushPanel('tickets',{label,filter}); }
 function glanceRowClick(el){ openFilteredPanel({label:el.dataset.glanceLabel, filter:{month:el.dataset.glanceMonth}}); }
+function setTicketTypeFilter(type){
+  const top=panelStack[panelStack.length-1];
+  if(!top||top.view!=='tickets') return;
+  const base={...top.props.filter};
+  if(type==='all') delete base.type; else base.type=type;
+  const lbl=type==='INC'?'INC — Incidents':type==='ADR'?'ADR Records':'All Tickets';
+  top.props={label:lbl,filter:base};
+  renderPanel();
+}
 function renderTicketList(filter){
   let list = [...T];
   if(filter.type)     list = list.filter(t=>t.type===filter.type);
@@ -1749,10 +1722,17 @@ function renderTicketList(filter){
     </div>
   `).join('');
 
+  const activeType = filter.type||'all';
+  const typeBtns = '<div style="display:flex;gap:5px;margin-bottom:12px">'
+    +'<button class="dr-btn'+(activeType==='all'?' active':'')+'" onclick="setTicketTypeFilter(\'all\')">All</button>'
+    +'<button class="dr-btn'+(activeType==='INC'?' active':'')+'" onclick="setTicketTypeFilter(\'INC\')">INC</button>'
+    +'<button class="dr-btn'+(activeType==='ADR'?' active':'')+'" onclick="setTicketTypeFilter(\'ADR\')">ADR</button>'
+    +'</div>';
+
   return `
+    ${typeBtns}
     <div class="pl-filter-row">
       <span class="pl-count">${list.length} tickets <span>matching filter</span></span>
-      ${filter.type?typeBadge(filter.type):''}
       ${filter.state?stateBadge(filter.state):''}
       ${filter.category?`<span class="badge b-cat">${filter.category}</span>`:''}
       ${filter.month?`<span class="badge b-cat">${MONTH_LABELS[MONTHS.indexOf(filter.month)]||filter.month}</span>`:''}
@@ -1908,7 +1888,6 @@ function setDateRange(range){
   const id = activeView.id;
   if(id==='view-director') buildDirectorView();
   else if(id==='view-team'){ builtViews.delete('team'); buildTeamView(); }
-  else if(id==='view-changeschedule') buildChangeSchedulePage();
 }
 let activeRole = 'director';
 
@@ -1999,7 +1978,7 @@ function buildTeamView(){
     const sparkBars=sparkVals.map(function(v,i){
       const h=Math.max(3,Math.round(v/sparkMax*28));
       return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">'
-        +'<div style="width:100%;height:'+h+'px;background:'+(m.color||'#667085')+';border-radius:2px;min-height:3px;align-self:flex-end"></div>'
+        +'<div style="width:100%;height:'+h+'px;background:#F79009;border-radius:2px;min-height:3px;align-self:flex-end"></div>'
         +'<div style="font-size:9px;color:var(--g400)">'+sparkMonthLabels[i].slice(0,1)+'</div>'
         +'</div>';
     }).join('');
