@@ -2706,7 +2706,16 @@ const GLOBAL_MTTR=(T.filter(t=>t.state!=='open').reduce((s,t)=>s+estMTTR(t),0)/T
 function buildDirectorView(){
   const page=document.getElementById('dirPage');
   const Tf=getActiveT();
-  if(!Tf.length){ page.innerHTML='<div style="padding:40px 28px;color:var(--g500);font-size:14px">No tickets found in selected date range.</div>'; return; }
+  if(!Tf.length){
+    const f=getDateFilter();
+    page.innerHTML='<div style="padding:60px 28px;text-align:center">'
+      +'<div style="font-size:32px;margin-bottom:12px">📭</div>'
+      +'<div style="font-size:15px;font-weight:700;color:var(--g700);margin-bottom:6px">No tickets in this range</div>'
+      +'<div style="font-size:13px;color:var(--g400);margin-bottom:20px">'+(f?f.start+' – '+f.end:'Selected period')+'</div>'
+      +'<button class="btn btn-primary" onclick="setDateRange(\'all\')">View All Data</button>'
+      +'</div>';
+    return;
+  }
   const closed=Tf.filter(t=>t.state!=='open');
   const resRate=(closed.length/Tf.length*100).toFixed(1);
   const noiseRatio=Math.round(Tf.filter(t=>t.cat==='Monitoring Alerts').length/Tf.length*100);
@@ -2806,7 +2815,7 @@ function buildDirectorView(){
         <button class="dr-btn ${window._dateRange==='60d'?'active':''}" data-dr="60d" onclick="setDateRange('60d')">60 Days</button>
         <button class="dr-btn ${window._dateRange==='90d'?'active':''}" data-dr="90d" onclick="setDateRange('90d')">90 Days</button>
         <button class="dr-btn ${window._dateRange==='6m'?'active':''}" data-dr="6m" onclick="setDateRange('6m')">6 Months</button>
-        <button class="dr-btn ${window._dateRange==='ttd'?'active':''}" data-dr="ttd" onclick="setDateRange('ttd')">TTD</button>
+        <button class="dr-btn ${window._dateRange==='ttd'?'active':''}" data-dr="ttd" onclick="setDateRange('ttd')">YTD</button>
         <button class="dr-btn ${window._dateRange==='1y'?'active':''}" data-dr="1y" onclick="setDateRange('1y')">1 Year</button>
         <button class="dr-btn ${window._dateRange==='all'?'active':''}" data-dr="all" onclick="setDateRange('all')">All Data</button>
       </div>
