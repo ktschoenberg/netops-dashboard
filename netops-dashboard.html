@@ -2857,6 +2857,20 @@ function buildDirectorView(){
         <div style="height:210px"><canvas id="capacityChart"></canvas></div>
       </div>
     </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px">
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">Monthly Ticket Volume</div><div class="card-sub">INC and ADR by month · click any bar to drill in</div></div>
+        </div>
+        <div style="height:240px"><canvas id="dirVolChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">By Category</div><div class="card-sub">Ticket count by work type · click any bar to drill in</div></div>
+        </div>
+        <div style="height:240px"><canvas id="dirCatChart"></canvas></div>
+      </div>
+    </div>
     <div class="sec-head">
       <div>
         <div class="sec-title">Benchmark Comparisons</div>
@@ -2932,6 +2946,8 @@ function buildDirectorView(){
   buildMTTRChart();
   buildRatioDonut();
   buildCapacityChart();
+  buildDirVolumeChart();
+  buildDirCatChart();
   buildRecurringTable();
   buildDirTeamTable();
   buildDirGlance();
@@ -3004,6 +3020,73 @@ function buildCapacityChart(){
         x:{grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:11}}},
         y:{grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11},stepSize:5}}
       }
+    }
+  });
+}
+
+function buildDirVolumeChart(){
+  const Tf=getActiveT();
+  const monthMap={};
+  Tf.forEach(t=>{
+    if(!monthMap[t.month]) monthMap[t.month]={INC:0,ADR:0};
+    monthMap[t.month][t.type]=(monthMap[t.month][t.type]||0)+1;
+  });
+  const months=Object.keys(monthMap).sort();
+  const labels=months.map(m=>LOA_MONTH_LABELS[LOA_MONTHS.indexOf(m)]||m);
+  Chart.getChart('dirVolChart')?.destroy();
+  new Chart(document.getElementById('dirVolChart'),{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {label:'INC',data:months.map(m=>monthMap[m].INC||0),backgroundColor:'#F79009',borderRadius:{topLeft:4,topRight:4},borderSkipped:false},
+        {label:'ADR',data:months.map(m=>monthMap[m].ADR||0),backgroundColor:'#EAECF0',borderRadius:{topLeft:4,topRight:4},borderSkipped:false}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:true,position:'bottom',labels:{color:'#667085',font:{size:11},boxWidth:10,padding:12}},
+        tooltip:{...TT,callbacks:{footer:items=>'Total: '+items.reduce((s,i)=>s+i.raw,0)}}
+      },
+      scales:{
+        x:{stacked:true,grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:11}}},
+        y:{stacked:true,grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11},stepSize:5}}
+      },
+      onClick(e,els){
+        if(!els.length) return;
+        const m=months[els[0].index];
+        openFilteredPanel({label:(labels[els[0].index]+' tickets'),filter:{month:m}});
+      },
+      onHover(e,els){e.native.target.style.cursor=els.length?'pointer':'default';}
+    }
+  });
+}
+
+function buildDirCatChart(){
+  const Tf=getActiveT();
+  const cats={};
+  Tf.forEach(t=>{cats[t.cat]=(cats[t.cat]||0)+1;});
+  const sorted=Object.entries(cats).sort((a,b)=>b[1]-a[1]);
+  const labels=sorted.map(([n])=>n);
+  const data=sorted.map(([,v])=>v);
+  Chart.getChart('dirCatChart')?.destroy();
+  new Chart(document.getElementById('dirCatChart'),{
+    type:'bar',
+    data:{labels,datasets:[{label:'Tickets',data,backgroundColor:'#F79009',borderRadius:4,borderSkipped:false}]},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{...TT}},
+      scales:{
+        x:{grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11}}},
+        y:{grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:11}}}
+      },
+      onClick(e,els){
+        if(!els.length) return;
+        const cat=labels[els[0].index];
+        openFilteredPanel({label:cat,filter:{category:cat}});
+      },
+      onHover(e,els){e.native.target.style.cursor=els.length?'pointer':'default';}
     }
   });
 }
