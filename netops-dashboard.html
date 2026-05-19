@@ -2015,10 +2015,10 @@ function buildTeamView(){
     +'<button class="dr-btn '+(window._dateRange==='all'?'active':'')+'" data-dr="all" onclick="setDateRange(\'all\')">All Data</button>'
     +'</div>';
 
-  page.innerHTML='<div class="sec-head" style="margin-bottom:16px;align-items:center">'
+  page.innerHTML='<div class="sec-head" style="margin-bottom:12px">'
     +'<div class="sec-title">Team Performance</div>'
-    +drBtns
     +'</div>'
+    +'<div style="margin-bottom:16px">'+drBtns+'</div>'
     +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px">'
     +'<div class="digest-card"><div class="d-label">Total Hours Logged</div><div class="d-num">'+totalHrs+'h</div><div class="d-change">'+rangeLabel+'</div></div>'
     +'<div class="digest-card"><div class="d-label">Tickets in Range</div><div class="d-num">'+totalLoaTickets+'</div><div class="d-change">From selected date range</div></div>'
