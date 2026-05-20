@@ -367,7 +367,6 @@ tbody tr:hover td{background:var(--g100)}
         <polyline points="14 2 14 8 20 8"/>
       </svg>
       All Tickets
-      <span class="s-pill blue">59</span>
     </button>
     <button class="s-item" onclick="openFilteredPanel({label:'Open Tickets',filter:{state:'open'}})">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -416,10 +415,6 @@ tbody tr:hover td{background:var(--g100)}
       <div class="tb-title">Ticket Operations Dashboard</div>
       <div class="tb-crumb">ITO Network L3 &nbsp;·&nbsp; ServiceNow</div>
     </div>
-    <div class="seg-ctrl" id="roleSeg">
-      <button class="seg-btn active" data-role="director" onclick="setRole('director')">Leadership</button>
-      <button class="seg-btn" data-role="manager" onclick="setRole('manager')">Team Manager</button>
-    </div>
     <div class="tb-sep"></div>
     <div class="tb-right">
       <div class="live-pill"><span class="live-dot"></span>Updated May 19, 2026</div>
@@ -441,129 +436,10 @@ tbody tr:hover td{background:var(--g100)}
     </div>
   </div>
 
-  <div id="view-manager" class="view">
-  <div class="page">
-
-    <!-- Alert Banner -->
-    <div class="alert-bar" id="alertBar" onclick="openTicketDetail('ADR2057625')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-      </svg>
-      <span><strong>1 open ticket:</strong> ADR2057625 · Circuit decommission notice · Assigned Jason Candler · Opened May 12, 2026 · 7 days</span>
-      <span class="alert-link">View details →</span>
-    </div>
-
-    <!-- KPI Grid -->
-    <div class="kpi-grid" id="kpiGrid">
-      <div class="kpi" onclick="openFilteredPanel({label:'All Tickets',filter:{}})">
-        <div class="kpi-top">
-          <div class="kpi-label">Total Tickets</div>
-          <div class="kpi-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14 2 14 8 20 8"/>
-            </svg>
-          </div>
-        </div>
-        <div class="kpi-num">59</div>
-        <div class="kpi-foot"><span class="chip chip-g">Feb – May 2026</span><span>ITO Network L3</span></div>
-      </div>
-
-      <div class="kpi" onclick="openFilteredPanel({label:'Open Tickets',filter:{state:'open'}})">
-        <div class="kpi-top">
-          <div class="kpi-label">Currently Open</div>
-          <div class="kpi-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-          </div>
-        </div>
-        <div class="kpi-num orange">1</div>
-        <div class="kpi-foot"><span class="chip chip-orange">ADR2057625</span><span>7 days open</span></div>
-      </div>
-
-      <div class="kpi" onclick="openFilteredPanel({label:'Closed Tickets',filter:{state:'closed'}})">
-        <div class="kpi-top">
-          <div class="kpi-label">Resolution Rate</div>
-          <div class="kpi-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-              <polyline points="22 4 12 14.01 9 11.01"/>
-            </svg>
-          </div>
-        </div>
-        <div class="kpi-num">98.3<sup>%</sup></div>
-        <div class="kpi-foot"><span class="chip chip-green">58 resolved</span><span>1 pending</span></div>
-      </div>
-
-      <div class="kpi" onclick="openFilteredPanel({label:'March 2026 — Peak Month',filter:{month:'2026-03'}})">
-        <div class="kpi-top">
-          <div class="kpi-label">Peak Month</div>
-          <div class="kpi-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-              <polyline points="17 6 23 6 23 12"/>
-            </svg>
-          </div>
-        </div>
-        <div class="kpi-num">30</div>
-        <div class="kpi-foot"><span class="chip chip-g">March 2026</span><span>2.3× avg</span></div>
-      </div>
-    </div>
-
-    <!-- Weekly Digest -->
-    <div class="digest-row">
-      <div class="digest-card">
-        <div class="d-label">This Week (May 12–19)</div>
-        <div class="d-num">1</div>
-        <div class="d-change">vs <span class="warn">8 last week</span> · volume dropped 87%</div>
-      </div>
-      <div class="digest-card">
-        <div class="d-label">Oldest Open Ticket</div>
-        <div class="d-num">7d</div>
-        <div class="d-change">ADR2057625 · <span class="warn">open since May 12, 2026</span></div>
-      </div>
-      <div class="digest-card">
-        <div class="d-label">Est. MTTR (Period)</div>
-        <div class="d-num">2.8d</div>
-        <div class="d-change">Across 58 closed tickets · <span class="good">within 4-day target</span></div>
-      </div>
-    </div>
-
-    <!-- Charts row -->
-    <div class="charts-row">
-      <div class="card">
-        <div class="card-header">
-          <div>
-            <div class="card-title">Monthly Ticket Volume</div>
-            <div class="card-sub">INC incidents vs ADR change requests · click a bar to drill in</div>
-          </div>
-          <div class="legend">
-            <div class="leg-item"><div class="leg-sw" style="background:#F79009"></div>INC</div>
-            <div class="leg-item"><div class="leg-sw" style="background:#EAECF0;border:1px solid #D0D5DD"></div>ADR</div>
-          </div>
-        </div>
-        <div style="height:220px"><canvas id="volChart"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <div>
-            <div class="card-title">By Category</div>
-            <div class="card-sub">Click any row to filter</div>
-          </div>
-        </div>
-        <div id="catBars"></div>
-      </div>
-    </div>
-
-
-  </div>
-  </div><!-- /view-manager -->
-
   <div id="view-director" class="view active">
     <div class="page" id="dirPage"></div>
   </div>
+
 
   <div id="view-training" class="view">
     <div class="page" id="trainingPage"></div>
@@ -1793,30 +1669,17 @@ function setDateRange(range){
   else if(id==='view-team'){ builtViews.delete('team'); buildTeamView(); }
   else if(id==='view-transition'){ builtViews.delete('transition'); buildTransitionPage(); }
 }
-let activeRole = 'director';
-
 function setSidebarActive(id){
   document.querySelectorAll('.s-item').forEach(b=>b.classList.remove('active'));
   document.getElementById(id)?.classList.add('active');
 }
 
 function goDashboard(){
-  setRole('director');
-}
-
-function setRole(role){
-  activeRole = role;
-  document.querySelectorAll('#roleSeg .seg-btn').forEach(b=>{
-    b.classList.toggle('active', b.dataset.role===role);
-  });
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.getElementById('view-'+role).classList.add('active');
+  document.getElementById('view-director').classList.add('active');
   setSidebarActive('navDashboard');
   window.scrollTo({top:0,behavior:'smooth'});
-  if(!builtViews.has(role)){
-    builtViews.add(role);
-    if(role==='director') buildDirectorView();
-  }
+  if(!builtViews.has('director')){ builtViews.add('director'); buildDirectorView(); }
 }
 
 function openTeamPage(){
@@ -1925,6 +1788,7 @@ function buildTeamView(){
     +'</div>'
     +'<div class="sec-head"><div><div class="sec-title" style="font-size:14px">Engineer Breakdown</div>'
     +'<div class="sec-sub">Hours and tickets for selected range · click any card to view tickets</div></div></div>'
+    +'<div style="margin-bottom:12px"><div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">'+buildDateRangeBtns()+'</div></div>'
     +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px">'+engCardsHtml+'</div>'
     +'<div class="sec-head"><div><div class="sec-title" style="font-size:14px">Efficiency View</div>'
     +'<div class="sec-sub">Click an engineer in the chart above to filter · click any row to drill in</div></div></div>'
@@ -3277,15 +3141,8 @@ function refreshMonthArrays(){
 
 function rebuildDashboard(){
   refreshMonthArrays();
-  buildKPIs();
-  buildAlertBar();
-  document.getElementById('catBars').innerHTML='';
-  buildCatBars();
-  const vc=Chart.getChart('volChart');
-  if(vc)vc.destroy();
-  buildVolumeChart();
   builtViews.clear();
-  builtViews.add('director');
+  buildDirectorView();
   const now=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   document.querySelector('.live-pill').innerHTML=`<span class="live-dot"></span>Updated ${now}`;
 }
@@ -3862,10 +3719,6 @@ function buildTransMttrChart(labels,l3Data,l2Data){
 /* ═══════════════════════════════════════
    INIT
 ═══════════════════════════════════════ */
-buildKPIs();
-buildAlertBar();
-buildVolumeChart();
-buildCatBars();
 buildDirectorView();
 </script>
 </body>
