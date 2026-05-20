@@ -359,7 +359,7 @@ tbody tr:hover td{background:var(--g100)}
         <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
         <rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
       </svg>
-      Dashboard <em style="font-weight:400;color:var(--orange600)">(beta)</em>
+      Dashboard <em style="font-weight:400;color:#FDB022">(beta)</em>
     </button>
     <button class="s-item" onclick="openFilteredPanel({label:'All Tickets',filter:{}})">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -3415,7 +3415,7 @@ function buildTransitionPage(){
     +'<div style="height:260px"><canvas id="transCIChart"></canvas></div></div>'
     +'</div></div>'
 
-    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">Level of Effort (TTW – Total Time Worked)</div>'
+    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">TTW – Total Time Worked (LOE)</div>'
     +'<div class="sec-sub">Hours logged per situation · from ServiceNow TTW records</div></div></div>'
     +_drRow('loe')
     +'<div id="transLoeContent">'
