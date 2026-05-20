@@ -418,12 +418,11 @@ tbody tr:hover td{background:var(--g100)}
     <div class="tb-sep"></div>
     <div class="tb-right">
       <div class="live-pill"><span class="live-dot"></span>Updated May 19, 2026</div>
-      <button class="btn btn-ghost btn-sm" onclick="exportCSV()">
+      <button class="btn btn-ghost btn-sm" onclick="exportPDF()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-          <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
         </svg>
-        Export
+        Export PDF
       </button>
       <button class="btn btn-primary btn-sm" onclick="triggerImport()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -3059,15 +3058,117 @@ function scrollTo(id){
   else document.getElementById(id)?.scrollIntoView({behavior:'smooth'});
 }
 
-/* ── Export CSV ── */
-function exportCSV(){
-  const hdr = 'Number,Type,Description,Assignee,Opened,Month,State,Category\n';
-  const rows = T.map(t=>`"${t.num}","${t.type}","${t.desc}","${t.who}","${t.opened}","${t.month}","${t.state}","${t.cat}"`).join('\n');
-  const blob = new Blob([hdr+rows],{type:'text/csv'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'ITO_NetworkL3_Tickets_Feb-May2026.csv';
-  a.click();
+/* ── Export PDF ── */
+function exportPDF(){
+  const activeView = document.querySelector('.view.active');
+  if(!activeView) return;
+
+  const PAGE_TITLES = {
+    'view-director' : 'Network Operations Dashboard',
+    'view-team'     : 'Team Performance',
+    'view-training' : 'Training Opportunities',
+    'view-transition': 'NOC Escalations',
+  };
+  const pageTitle = PAGE_TITLES[activeView.id] || 'Network Operations Dashboard';
+  const now = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+
+  // Snapshot every canvas in the active view before cloning
+  const canvasMap = {};
+  activeView.querySelectorAll('canvas').forEach(c=>{
+    try{ canvasMap[c.id||('_c'+Math.random())] = c.toDataURL('image/png'); c.dataset.printId = c.id||'_'; }catch(e){}
+  });
+
+  // Deep clone the rendered content
+  const clone = activeView.cloneNode(true);
+
+  // Replace canvas elements with captured images
+  clone.querySelectorAll('canvas').forEach(c=>{
+    const src = canvasMap[c.dataset.printId||c.id];
+    const ph = c.closest('[style*="height"]') || c.parentElement;
+    const h = ph ? (ph.style.height||'220px') : '220px';
+    if(src){
+      const img = document.createElement('img');
+      img.src = src;
+      img.style.cssText = `width:100%;height:${h};object-fit:contain;display:block;`;
+      c.replaceWith(img);
+    } else {
+      c.remove();
+    }
+  });
+
+  // Strip interactive + overlay elements
+  clone.querySelectorAll('button,.btn,input,select,.panel-overlay,.panel,.dr-btn,[onclick*="setDateRange"],[onclick*="triggerImport"]').forEach(el=>el.remove());
+
+  // Strip date-range pill row (first child of dirPage if it's the pill row)
+  clone.querySelectorAll('[data-dr]').forEach(el=>el.closest('div')?.remove());
+
+  // Get the page's full inline CSS
+  const css = document.querySelector('style')?.textContent || '';
+
+  const printHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>${pageTitle} — ${now}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+@page { size: A4 landscape; margin: 14mm 13mm; }
+*, *::before, *::after { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+${css}
+body { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; background: #fff; margin: 0; padding: 0; color: #101828; }
+/* ── PDF header ── */
+.pdf-hdr { display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 10px; border-bottom: 2px solid #F2F4F7; margin-bottom: 18px; page-break-after: avoid; }
+.pdf-hdr-left { display: flex; flex-direction: column; gap: 2px; }
+.pdf-hdr-org { font-size: 10px; font-weight: 600; color: #667085; text-transform: uppercase; letter-spacing: .06em; }
+.pdf-hdr-title { font-size: 16px; font-weight: 700; color: #101828; }
+.pdf-hdr-date { font-size: 11px; color: #667085; }
+/* ── Layout fixes for print ── */
+.view { display: block !important; position: static !important; padding: 0 !important; }
+.page { padding: 0 !important; }
+main { padding: 0 !important; }
+/* Prevent orphaned cards */
+.card, .digest-card, .table-card, .bench-card, .icard, .kpi, .tc { break-inside: avoid; }
+.sec-head { break-after: avoid; }
+/* Flatten grid for narrow print columns */
+.charts-3 { grid-template-columns: repeat(3,1fr) !important; }
+.bench-grid { grid-template-columns: repeat(3,1fr) !important; }
+/* Hide scrollbars and overflow */
+.tw { overflow: visible !important; }
+table { width: 100%; font-size: 11px; }
+th, td { padding: 5px 8px !important; font-size: 11px !important; }
+/* Scale down large number displays */
+.d-num { font-size: 22px !important; }
+.sv { font-size: 22px !important; }
+/* Collapse insights two-col to full width on very narrow pages */
+.insights-wrap { grid-template-columns: 1fr 1fr; gap: 12px; }
+.icard p { font-size: 11px !important; }
+/* Remove hover states and shadows for clean print */
+.card, .digest-card { box-shadow: none !important; }
+</style>
+</head>
+<body>
+<div class="pdf-hdr">
+  <div class="pdf-hdr-left">
+    <div class="pdf-hdr-org">ITO Network L3 &nbsp;·&nbsp; Network Operations Report Center</div>
+    <div class="pdf-hdr-title">${pageTitle}</div>
+  </div>
+  <div class="pdf-hdr-date">${now}</div>
+</div>
+${clone.innerHTML}
+<script>
+  window.addEventListener('load', function(){
+    setTimeout(function(){ window.print(); }, 600);
+  });
+<\/script>
+</body>
+</html>`;
+
+  const win = window.open('', '_blank', 'width=1280,height=900');
+  if(!win){ alert('Pop-up blocked — please allow pop-ups for this page and try again.'); return; }
+  win.document.open();
+  win.document.write(printHTML);
+  win.document.close();
 }
 
 /* ═══════════════════════════════════════
