@@ -1550,8 +1550,7 @@ function renderTicketDetail(num){
 const builtViews = new Set(['director']);
 window._dateRange = 'all';
 
-function getDateFilter(){
-  const range = window._dateRange || 'all';
+function getDateFilter(range=window._dateRange||'all'){
   if(range === 'all') return null;
   const today = new Date();
   const pad = n => String(n).padStart(2,'0');
@@ -1596,6 +1595,31 @@ function getActiveCHG(){
   const f = getDateFilter();
   if(!f) return CHG_DATA;
   return CHG_DATA.filter(c=>c.start>=f.start && c.start<=f.end);
+}
+
+window._transDR = window._transDR || {vol:'all',cat:'all',loe:'all',esc:'all',mttr:'all'};
+
+function buildTransSectionBtns(section){
+  const r=window._transDR[section];
+  return [['thisweek','This Week'],['lastweek','Last Week'],['30d','30 Days'],
+          ['60d','60 Days'],['90d','90 Days'],['6m','6 Months'],
+          ['ttd','YTD'],['1y','1 Year'],['all','All Data']]
+    .map(([v,l])=>`<button class="dr-btn${r===v?' active':''}" data-tsec="${section}" data-tv="${v}" onclick="setTransDate('${section}','${v}')">${l}</button>`)
+    .join('');
+}
+function setTransDate(section, range){
+  window._transDR[section]=range;
+  document.querySelectorAll(`[data-tsec="${section}"]`).forEach(b=>b.classList.toggle('active',b.dataset.tv===range));
+  ({vol:rebuildTransVol,cat:rebuildTransCat,loe:rebuildTransLoe,esc:rebuildTransEsc,mttr:rebuildTransMttr})[section]?.();
+}
+function transSectionData(section){
+  const f=getDateFilter(window._transDR[section]);
+  const Tf=f?T.filter(t=>t.opened>=f.start&&t.opened<=f.end):T;
+  const CHGf=f?CHG_DATA.filter(c=>c.start>=f.start&&c.start<=f.end):CHG_DATA;
+  const startM=f?f.start.slice(0,7):null,endM=f?f.end.slice(0,7):null;
+  const filtMonths=startM?MONTHS.filter(m=>m>=startM&&m<=endM):MONTHS;
+  const filtLabels=filtMonths.map(m=>LOA_MONTH_LABELS[MONTHS.indexOf(m)]||m);
+  return {Tf,CHGf,filtMonths,filtLabels};
 }
 
 function buildDateRangeBtns(){
@@ -3322,56 +3346,79 @@ function openTransitionPage(){
   if(!builtViews.has('transition')){builtViews.add('transition');buildTransitionPage();}
 }
 
+const _transNote=msg=>'<div style="background:var(--orange50);border:1px solid var(--orange200);border-radius:var(--r8);padding:10px 14px;font-size:12px;color:var(--orange700);margin-bottom:16px;display:flex;align-items:flex-start;gap:8px"><span>⚠️</span><span>'+msg+'</span></div>';
+const _transSample=msg=>'<div style="background:#FFF8E1;border:1px solid #FFD54F;border-radius:var(--r8);padding:10px 14px;font-size:12px;color:#5D4037;margin-bottom:16px;display:flex;align-items:flex-start;gap:8px"><span>📊</span><span><strong>Sample Data:</strong> '+msg+'</span></div>';
+const _sampleTag='<span style="font-size:9px;background:#FFF3CD;color:#856404;border-radius:4px;padding:1px 5px;font-weight:700;vertical-align:middle;margin-left:4px">SAMPLE</span>';
+const _drRow=section=>'<div style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">'+buildTransSectionBtns(section)+'</div></div>';
+
 function buildTransitionPage(){
   const page=document.getElementById('transPage');
-  const Tf=getActiveT();
-  const CHGf=getActiveCHG();
-  const f=getDateFilter();
-  const startM=f?f.start.slice(0,7):null;
-  const endM=f?f.end.slice(0,7):null;
-  const filtMonths=startM?MONTHS.filter(m=>m>=startM&&m<=endM):MONTHS;
-  const filtLabels=filtMonths.map(m=>LOA_MONTH_LABELS[MONTHS.indexOf(m)]||m);
+  page.innerHTML=
+    '<div class="sec-head" style="margin-bottom:20px"><div class="sec-title">NOC to L3 Transition</div></div>'
 
+    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">Ticket Volume</div>'
+    +'<div class="sec-sub">INC + ADR from ServiceNow import · CHG from change records</div></div></div>'
+    +_drRow('vol')
+    +_transNote('INC and ADR counts are live from imported ticket data. CHG counts come from the change record export. <strong>Assignment group filter</strong> requires L2 ticket data — not currently available.')
+    +'<div id="transVolContent"></div>'
+
+    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">Tickets by Category &amp; Impacted CI</div>'
+    +'<div class="sec-sub">Breakdown by work category (INC/ADR) and configuration item (CHG)</div></div></div>'
+    +_drRow('cat')
+    +_transNote('INC and ADR use <em>ticket category</em> as a proxy for product. To map to actual products, add <em>u_product</em> or <em>business_service</em> to the INC/ADR export. CI data requires the <em>cmdb_ci</em> field in the INC/ADR export (present in CHG records only).')
+    +'<div id="transCatContent">'
+    +'<div style="display:grid;grid-template-columns:3fr 2fr;gap:16px;margin-bottom:22px">'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">INC vs ADR by Category</div><div class="card-sub">Top categories by ticket volume · click any bar to drill in</div></div>'
+    +'<div style="display:flex;gap:10px;align-items:center">'
+    +'<div style="display:flex;gap:4px;align-items:center"><div style="width:10px;height:10px;border-radius:2px;background:#F79009"></div><span style="font-size:11px;color:var(--g500)">INC</span></div>'
+    +'<div style="display:flex;gap:4px;align-items:center"><div style="width:10px;height:10px;border-radius:2px;background:#D0D5DD;border:1px solid #98A2B3"></div><span style="font-size:11px;color:var(--g500)">ADR</span></div>'
+    +'</div></div><div style="height:260px"><canvas id="transCatChart"></canvas></div></div>'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">CHG by Impacted CI</div><div class="card-sub">Top configuration items · live from CHG records</div></div></div>'
+    +'<div style="height:260px"><canvas id="transCIChart"></canvas></div></div>'
+    +'</div></div>'
+
+    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">Level of Effort (TTW – Total Time Worked)</div>'
+    +'<div class="sec-sub">Hours logged per category for selected date range</div></div></div>'
+    +_drRow('loe')
+    +_transNote('<strong>Data source:</strong> Hours from imported LOE records (LOA_TICKET_HRS). CHG ticket hours are not tracked in the current LOE dataset — add CHG numbers to the LOE import to enable. <strong>LOE by Situation:</strong> Requires a situation/priority field in the ServiceNow export — not present in current data.')
+    +'<div id="transLoeContent">'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px">'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">LOE – Incidents by Category</div><div class="card-sub">Total hours logged per INC category · live data</div></div></div>'
+    +'<div style="height:220px"><canvas id="transLoeInc"></canvas></div></div>'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">LOE – ADR/RITM by Category</div><div class="card-sub">Total hours logged per ADR category · live data</div></div></div>'
+    +'<div style="height:220px"><canvas id="transLoeAdr"></canvas></div></div>'
+    +'</div></div>'
+
+    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">NOC L2 → L3 Escalations</div>'
+    +'<div class="sec-sub">Tickets escalated from ITO Network L2 to ITO Network L3</div></div></div>'
+    +_drRow('esc')
+    +_transSample('Escalation records are not in the current data export. Charts below use generated sample data to illustrate the intended layout. To populate with actuals, provide a ServiceNow export containing: ticket number, escalation date, originating assignment group (ITO Network L2), and ticket type.')
+    +'<div id="transEscContent"></div>'
+
+    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">MTTR Comparison – L2 vs L3</div>'
+    +'<div class="sec-sub">Mean time to resolve · L3 live from ticket data · L2 uses industry benchmark</div></div></div>'
+    +_drRow('mttr')
+    +_transNote('<strong>L2 MTTR '+_sampleTag+':</strong> L2 ticket data (with resolution timestamps) is not in the current import. The L2 MTTR stat and chart below use a 0.8-day industry benchmark for NOC L2 network operations with realistic monthly variation. Import L2 ticket data to replace with actuals.')
+    +'<div id="transMttrContent"></div>';
+
+  rebuildTransVol();
+  rebuildTransCat();
+  rebuildTransLoe();
+  rebuildTransEsc();
+  rebuildTransMttr();
+}
+
+function rebuildTransVol(){
+  ['transVolInc','transVolAdr','transVolChg'].forEach(id=>Chart.getChart(id)?.destroy());
+  const {Tf,CHGf,filtMonths,filtLabels}=transSectionData('vol');
   const incCount=Tf.filter(t=>t.type==='INC').length;
   const adrCount=Tf.filter(t=>t.type==='ADR').length;
   const chgCount=CHGf.length;
   const incClosed=Tf.filter(t=>t.type==='INC'&&t.state!=='open').length;
   const adrClosed=Tf.filter(t=>t.type==='ADR'&&t.state!=='open').length;
   const chgClosed=CHGf.filter(c=>c.state==='closed').length;
-
-  const loeInc={},loeAdr={};
-  Tf.filter(t=>t.type==='INC').forEach(t=>{const h=LOA_TICKET_HRS[t.num]||0;loeInc[t.cat]=(loeInc[t.cat]||0)+h;});
-  Tf.filter(t=>t.type==='ADR').forEach(t=>{const h=LOA_TICKET_HRS[t.num]||0;loeAdr[t.cat]=(loeAdr[t.cat]||0)+h;});
-
-  const escMonths=filtMonths.filter(m=>SAMPLE_ESC[m]);
-  const escLabels=escMonths.map(m=>LOA_MONTH_LABELS[MONTHS.indexOf(m)]||m);
-  const escIncData=escMonths.map(m=>SAMPLE_ESC[m].inc);
-  const escAdrData=escMonths.map(m=>SAMPLE_ESC[m].adr);
-  const totalEscInc=escIncData.reduce((a,b)=>a+b,0);
-  const totalEscAdr=escAdrData.reduce((a,b)=>a+b,0);
-
-  const l3MttrByMonth=filtMonths.map(m=>{
-    const mc=Tf.filter(t=>t.month===m&&t.state!=='open');
-    return mc.length>0?parseFloat((mc.reduce((s,t)=>s+estMTTR(t),0)/mc.length).toFixed(1)):null;
-  });
-  const l2MttrByMonth=filtMonths.map(m=>SAMPLE_L2_MTTR[m]||0.8);
-  const l3Closed=Tf.filter(t=>t.state!=='open');
-  const l3MttrAll=l3Closed.length>0?(l3Closed.reduce((s,t)=>s+estMTTR(t),0)/l3Closed.length).toFixed(1):'—';
-  const l2Vals=l2MttrByMonth.filter(v=>v>0);
-  const l2MttrAvg=l2Vals.length>0?(l2Vals.reduce((a,b)=>a+b,0)/l2Vals.length).toFixed(1):'0.8';
-
-  const noteHtml=msg=>'<div style="background:var(--orange50);border:1px solid var(--orange200);border-radius:var(--r8);padding:10px 14px;font-size:12px;color:var(--orange700);margin-bottom:16px;display:flex;align-items:flex-start;gap:8px"><span>⚠️</span><span>'+msg+'</span></div>';
-  const sampleHtml=msg=>'<div style="background:#FFF8E1;border:1px solid #FFD54F;border-radius:var(--r8);padding:10px 14px;font-size:12px;color:#5D4037;margin-bottom:16px;display:flex;align-items:flex-start;gap:8px"><span>📊</span><span><strong>Sample Data:</strong> '+msg+'</span></div>';
-  const sampleTag='<span style="font-size:9px;background:#FFF3CD;color:#856404;border-radius:4px;padding:1px 5px;font-weight:700;vertical-align:middle;margin-left:4px">SAMPLE</span>';
-
-  page.innerHTML=
-    '<div class="sec-head" style="margin-bottom:12px"><div class="sec-title">NOC to L3 Transition</div></div>'
-    +'<div style="margin-bottom:20px"><div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">'+buildDateRangeBtns()+'</div></div>'
-
-    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">Ticket Volume</div>'
-    +'<div class="sec-sub">Total tickets in selected range · INC + ADR from ServiceNow import · CHG from change records</div></div></div>'
-    +noteHtml('INC and ADR counts are live from imported ticket data. CHG counts come from the change record export. All three respond to the date filter above. <strong>Assignment group filter</strong> requires L2 ticket data — not currently available.')
-    +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px">'
+  document.getElementById('transVolContent').innerHTML=
+    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px">'
     +'<div class="digest-card" style="cursor:pointer" onclick="openFilteredPanel({label:\'All Tickets\',filter:{}})">'
     +'<div class="d-label">Total Tickets</div><div class="d-num">'+(incCount+adrCount+chgCount)+'</div>'
     +'<div class="d-change">INC + ADR + CHG combined</div></div>'
@@ -3389,72 +3436,68 @@ function buildTransitionPage(){
     +'<div class="card"><div class="card-header"><div><div class="card-title">Incidents (INC)</div></div></div><div style="height:200px"><canvas id="transVolInc"></canvas></div></div>'
     +'<div class="card"><div class="card-header"><div><div class="card-title">ADR / RITM</div></div></div><div style="height:200px"><canvas id="transVolAdr"></canvas></div></div>'
     +'<div class="card"><div class="card-header"><div><div class="card-title">Changes (CHG)</div></div></div><div style="height:200px"><canvas id="transVolChg"></canvas></div></div>'
-    +'</div>'
-
-    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">Tickets by Category &amp; Impacted CI</div>'
-    +'<div class="sec-sub">Breakdown by work category (INC/ADR) and configuration item (CHG)</div></div></div>'
-    +noteHtml('INC and ADR use <em>ticket category</em> as a proxy for product. To map to actual products, add <em>u_product</em> or <em>business_service</em> to the INC/ADR export. CI data requires the <em>cmdb_ci</em> field in the INC/ADR export (present in CHG records only).')
-    +'<div style="display:grid;grid-template-columns:3fr 2fr;gap:16px;margin-bottom:22px">'
-    +'<div class="card"><div class="card-header"><div><div class="card-title">INC vs ADR by Category</div><div class="card-sub">Top categories by ticket volume · click any bar to drill in</div></div>'
-    +'<div style="display:flex;gap:10px;align-items:center">'
-    +'<div style="display:flex;gap:4px;align-items:center"><div style="width:10px;height:10px;border-radius:2px;background:#F79009"></div><span style="font-size:11px;color:var(--g500)">INC</span></div>'
-    +'<div style="display:flex;gap:4px;align-items:center"><div style="width:10px;height:10px;border-radius:2px;background:#D0D5DD;border:1px solid #98A2B3"></div><span style="font-size:11px;color:var(--g500)">ADR</span></div>'
-    +'</div></div><div style="height:260px"><canvas id="transCatChart"></canvas></div></div>'
-    +'<div class="card"><div class="card-header"><div><div class="card-title">CHG by Impacted CI</div><div class="card-sub">Top configuration items · live from CHG records</div></div></div>'
-    +'<div style="height:260px"><canvas id="transCIChart"></canvas></div></div>'
-    +'</div>'
-    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">Level of Effort (TTW – Total Time Worked)</div>'
-    +'<div class="sec-sub">Hours logged per category for selected date range</div></div></div>'
-    +noteHtml('<strong>Data source:</strong> Hours from imported LOE records (LOA_TICKET_HRS). CHG ticket hours are not tracked in the current LOE dataset — add CHG numbers to the LOE import to enable. <strong>LOE by Situation:</strong> Requires a situation/priority field in the ServiceNow export — not present in current data. <strong>LOE by Impacted CI for INC/ADR:</strong> Requires the <em>cmdb_ci</em> field in the INC/ADR export.')
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px">'
-    +'<div class="card"><div class="card-header"><div><div class="card-title">LOE – Incidents by Category</div><div class="card-sub">Total hours logged per INC category · live data</div></div></div>'
-    +'<div style="height:220px"><canvas id="transLoeInc"></canvas></div></div>'
-    +'<div class="card"><div class="card-header"><div><div class="card-title">LOE – ADR/RITM by Category</div><div class="card-sub">Total hours logged per ADR category · live data</div></div></div>'
-    +'<div style="height:220px"><canvas id="transLoeAdr"></canvas></div></div>'
-    +'</div>'
-
-    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">NOC L2 → L3 Escalations</div>'
-    +'<div class="sec-sub">Tickets escalated from ITO Network L2 to ITO Network L3</div></div></div>'
-    +sampleHtml('Escalation records are not in the current data export. Charts below use generated sample data to illustrate the intended layout. To populate with actuals, provide a ServiceNow export containing: ticket number, escalation date, originating assignment group (ITO Network L2), and ticket type.')
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">'
-    +'<div class="digest-card"><div class="d-label">Total INC Escalated '+sampleTag+'</div>'
+    +'</div>';
+  buildTransVolChart(filtMonths,filtLabels,Tf,CHGf);
+}
+function rebuildTransCat(){
+  const {Tf,CHGf}=transSectionData('cat');
+  buildTransCategoryChart(Tf);
+  buildTransCIChart(CHGf);
+}
+function rebuildTransLoe(){
+  const {Tf}=transSectionData('loe');
+  const loeInc={},loeAdr={};
+  Tf.filter(t=>t.type==='INC').forEach(t=>{const h=LOA_TICKET_HRS[t.num]||0;loeInc[t.cat]=(loeInc[t.cat]||0)+h;});
+  Tf.filter(t=>t.type==='ADR').forEach(t=>{const h=LOA_TICKET_HRS[t.num]||0;loeAdr[t.cat]=(loeAdr[t.cat]||0)+h;});
+  buildTransLoeCharts(loeInc,loeAdr);
+}
+function rebuildTransEsc(){
+  ['transEscInc','transEscAdr'].forEach(id=>Chart.getChart(id)?.destroy());
+  const {filtMonths}=transSectionData('esc');
+  const escMonths=filtMonths.filter(m=>SAMPLE_ESC[m]);
+  const escLabels=escMonths.map(m=>LOA_MONTH_LABELS[MONTHS.indexOf(m)]||m);
+  const escIncData=escMonths.map(m=>SAMPLE_ESC[m].inc);
+  const escAdrData=escMonths.map(m=>SAMPLE_ESC[m].adr);
+  const totalEscInc=escIncData.reduce((a,b)=>a+b,0);
+  const totalEscAdr=escAdrData.reduce((a,b)=>a+b,0);
+  document.getElementById('transEscContent').innerHTML=
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">'
+    +'<div class="digest-card"><div class="d-label">Total INC Escalated '+_sampleTag+'</div>'
     +'<div class="d-num">'+totalEscInc+'</div><div class="d-change">From NOC L2 · selected range</div></div>'
-    +'<div class="digest-card"><div class="d-label">Total ADR/RITM Escalated '+sampleTag+'</div>'
+    +'<div class="digest-card"><div class="d-label">Total ADR/RITM Escalated '+_sampleTag+'</div>'
     +'<div class="d-num">'+totalEscAdr+'</div><div class="d-change">From NOC L2 · selected range</div></div>'
     +'</div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px">'
-    +'<div class="card"><div class="card-header"><div>'
-    +'<div class="card-title">INC Escalations per Month '+sampleTag+'</div>'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">INC Escalations per Month '+_sampleTag+'</div>'
     +'<div class="card-sub">Monthly INC tickets escalated from L2 to L3</div></div></div>'
     +'<div style="height:200px"><canvas id="transEscInc"></canvas></div></div>'
-    +'<div class="card"><div class="card-header"><div>'
-    +'<div class="card-title">ADR/RITM Escalations per Month '+sampleTag+'</div>'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">ADR/RITM Escalations per Month '+_sampleTag+'</div>'
     +'<div class="card-sub">Monthly ADR/RITM tickets escalated from L2 to L3</div></div></div>'
     +'<div style="height:200px"><canvas id="transEscAdr"></canvas></div></div>'
-    +'</div>'
-
-    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">MTTR Comparison – L2 vs L3</div>'
-    +'<div class="sec-sub">Mean time to resolve · L3 live from ticket data · L2 uses industry benchmark</div></div></div>'
-    +noteHtml('<strong>L2 MTTR '+sampleTag+':</strong> L2 ticket data (with resolution timestamps) is not in the current import. The L2 MTTR stat and chart below use a 0.8-day industry benchmark for NOC L2 network operations with realistic monthly variation. Import L2 ticket data to replace with actuals. <strong>Filter by assignment group</strong> for L2 also requires that data.')
-    +'<div style="display:grid;grid-template-columns:1fr 1fr 2fr;gap:16px;margin-bottom:22px">'
-    +'<div class="digest-card"><div class="d-label">L3 Avg MTTR</div>'
-    +'<div class="d-num">'+l3MttrAll+'d</div>'
+    +'</div>';
+  buildTransEscCharts(escLabels,escIncData,escAdrData);
+}
+function rebuildTransMttr(){
+  Chart.getChart('transMttr')?.destroy();
+  const {Tf,filtMonths,filtLabels}=transSectionData('mttr');
+  const l3ByMonth=filtMonths.map(m=>{const mc=Tf.filter(t=>t.month===m&&t.state!=='open');return mc.length>0?parseFloat((mc.reduce((s,t)=>s+estMTTR(t),0)/mc.length).toFixed(1)):null;});
+  const l2ByMonth=filtMonths.map(m=>SAMPLE_L2_MTTR[m]||0.8);
+  const l3Closed=Tf.filter(t=>t.state!=='open');
+  const l3Avg=l3Closed.length>0?(l3Closed.reduce((s,t)=>s+estMTTR(t),0)/l3Closed.length).toFixed(1):'—';
+  const l2Vals=l2ByMonth.filter(v=>v>0);
+  const l2Avg=l2Vals.length>0?(l2Vals.reduce((a,b)=>a+b,0)/l2Vals.length).toFixed(1):'0.8';
+  document.getElementById('transMttrContent').innerHTML=
+    '<div style="display:grid;grid-template-columns:1fr 1fr 2fr;gap:16px;margin-bottom:22px">'
+    +'<div class="digest-card"><div class="d-label">L3 Avg MTTR</div><div class="d-num">'+l3Avg+'d</div>'
     +'<div class="d-change"><span class="good">Live data · ITO Network L3</span></div></div>'
-    +'<div class="digest-card"><div class="d-label">L2 Avg MTTR '+sampleTag+'</div>'
-    +'<div class="d-num">'+l2MttrAvg+'d</div>'
+    +'<div class="digest-card"><div class="d-label">L2 Avg MTTR '+_sampleTag+'</div><div class="d-num">'+l2Avg+'d</div>'
     +'<div class="d-change">Industry benchmark · replace with L2 import</div></div>'
     +'<div class="card"><div class="card-header"><div><div class="card-title">L2 vs L3 MTTR by Month</div>'
     +'<div class="card-sub">L3 live data · L2 sample benchmark</div></div>'
     +'<span style="font-size:10px;background:#FFF3CD;color:#856404;border-radius:4px;padding:2px 7px;font-weight:700;white-space:nowrap;align-self:center">L2 SAMPLE</span>'
     +'</div><div style="height:160px"><canvas id="transMttr"></canvas></div></div>'
     +'</div>';
-
-  buildTransVolChart(filtMonths,filtLabels,Tf,CHGf);
-  buildTransCategoryChart(Tf);
-  buildTransCIChart(CHGf);
-  buildTransLoeCharts(loeInc,loeAdr);
-  buildTransEscCharts(escLabels,escIncData,escAdrData);
-  buildTransMttrChart(filtLabels,l3MttrByMonth,l2MttrByMonth);
+  buildTransMttrChart(filtLabels,l3ByMonth,l2ByMonth);
 }
 
 function buildTransVolChart(filtMonths,filtLabels,Tf,CHGf){
