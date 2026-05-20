@@ -390,6 +390,12 @@ tbody tr:hover td{background:var(--g100)}
       </svg>
       Training Opportunities
     </button>
+    <button class="s-item" id="navTransition" onclick="openTransitionPage()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+      </svg>
+      NOC to L3 Transition
+    </button>
   </nav>
 
   <div class="s-foot">
@@ -561,6 +567,10 @@ tbody tr:hover td{background:var(--g100)}
 
   <div id="view-training" class="view">
     <div class="page" id="trainingPage"></div>
+  </div>
+
+  <div id="view-transition" class="view">
+    <div class="page" id="transPage"></div>
   </div>
 
   <div id="view-team" class="view">
@@ -1781,6 +1791,7 @@ function setDateRange(range){
   const id = activeView.id;
   if(id==='view-director') buildDirectorView();
   else if(id==='view-team'){ builtViews.delete('team'); buildTeamView(); }
+  else if(id==='view-transition'){ builtViews.delete('transition'); buildTransitionPage(); }
 }
 let activeRole = 'director';
 
@@ -3544,6 +3555,308 @@ function applyImport(mode){
   }
   closeImportModal();
   rebuildDashboard();
+}
+
+/* ═══════════════════════════════════════
+   NOC TO L3 TRANSITION PAGE
+═══════════════════════════════════════ */
+const SAMPLE_ESC = {
+  '2024-05':{inc:8,adr:3},'2024-06':{inc:6,adr:2},'2024-07':{inc:9,adr:4},
+  '2024-08':{inc:7,adr:3},'2024-09':{inc:10,adr:4},'2024-10':{inc:12,adr:5},
+  '2024-11':{inc:8,adr:3},'2024-12':{inc:6,adr:2},'2025-01':{inc:11,adr:4},
+  '2025-02':{inc:9,adr:3},'2025-03':{inc:14,adr:6},'2025-04':{inc:10,adr:4},
+  '2025-05':{inc:8,adr:3},'2025-06':{inc:7,adr:2},'2025-07':{inc:9,adr:4},
+  '2025-08':{inc:11,adr:4},'2025-09':{inc:8,adr:3},'2025-10':{inc:13,adr:5},
+  '2025-11':{inc:10,adr:4},'2025-12':{inc:7,adr:2},'2026-01':{inc:15,adr:6},
+  '2026-02':{inc:18,adr:7},'2026-03':{inc:22,adr:8},'2026-04':{inc:14,adr:5},
+  '2026-05':{inc:4,adr:2}
+};
+const SAMPLE_L2_MTTR = {
+  '2024-05':0.9,'2024-06':0.7,'2024-07':1.0,'2024-08':0.8,'2024-09':0.9,
+  '2024-10':0.8,'2024-11':0.7,'2024-12':0.8,'2025-01':1.1,'2025-02':0.9,
+  '2025-03':1.2,'2025-04':0.8,'2025-05':0.9,'2025-06':0.7,'2025-07':0.8,
+  '2025-08':0.9,'2025-09':0.8,'2025-10':1.0,'2025-11':0.8,'2025-12':0.7,
+  '2026-01':1.1,'2026-02':1.0,'2026-03':1.3,'2026-04':0.9,'2026-05':0.8
+};
+
+function openTransitionPage(){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-transition').classList.add('active');
+  setSidebarActive('navTransition');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(!builtViews.has('transition')){builtViews.add('transition');buildTransitionPage();}
+}
+
+function buildTransitionPage(){
+  const page=document.getElementById('transPage');
+  const Tf=getActiveT();
+  const CHGf=getActiveCHG();
+  const f=getDateFilter();
+  const startM=f?f.start.slice(0,7):null;
+  const endM=f?f.end.slice(0,7):null;
+  const filtMonths=startM?MONTHS.filter(m=>m>=startM&&m<=endM):MONTHS;
+  const filtLabels=filtMonths.map(m=>LOA_MONTH_LABELS[MONTHS.indexOf(m)]||m);
+
+  const incCount=Tf.filter(t=>t.type==='INC').length;
+  const adrCount=Tf.filter(t=>t.type==='ADR').length;
+  const chgCount=CHGf.length;
+  const incClosed=Tf.filter(t=>t.type==='INC'&&t.state!=='open').length;
+  const adrClosed=Tf.filter(t=>t.type==='ADR'&&t.state!=='open').length;
+  const chgClosed=CHGf.filter(c=>c.state==='closed').length;
+
+  const loeInc={},loeAdr={};
+  Tf.filter(t=>t.type==='INC').forEach(t=>{const h=LOA_TICKET_HRS[t.num]||0;loeInc[t.cat]=(loeInc[t.cat]||0)+h;});
+  Tf.filter(t=>t.type==='ADR').forEach(t=>{const h=LOA_TICKET_HRS[t.num]||0;loeAdr[t.cat]=(loeAdr[t.cat]||0)+h;});
+
+  const escMonths=filtMonths.filter(m=>SAMPLE_ESC[m]);
+  const escLabels=escMonths.map(m=>LOA_MONTH_LABELS[MONTHS.indexOf(m)]||m);
+  const escIncData=escMonths.map(m=>SAMPLE_ESC[m].inc);
+  const escAdrData=escMonths.map(m=>SAMPLE_ESC[m].adr);
+  const totalEscInc=escIncData.reduce((a,b)=>a+b,0);
+  const totalEscAdr=escAdrData.reduce((a,b)=>a+b,0);
+
+  const l3MttrByMonth=filtMonths.map(m=>{
+    const mc=Tf.filter(t=>t.month===m&&t.state!=='open');
+    return mc.length>0?parseFloat((mc.reduce((s,t)=>s+estMTTR(t),0)/mc.length).toFixed(1)):null;
+  });
+  const l2MttrByMonth=filtMonths.map(m=>SAMPLE_L2_MTTR[m]||0.8);
+  const l3Closed=Tf.filter(t=>t.state!=='open');
+  const l3MttrAll=l3Closed.length>0?(l3Closed.reduce((s,t)=>s+estMTTR(t),0)/l3Closed.length).toFixed(1):'—';
+  const l2Vals=l2MttrByMonth.filter(v=>v>0);
+  const l2MttrAvg=l2Vals.length>0?(l2Vals.reduce((a,b)=>a+b,0)/l2Vals.length).toFixed(1):'0.8';
+
+  const noteHtml=msg=>'<div style="background:var(--orange50);border:1px solid var(--orange200);border-radius:var(--r8);padding:10px 14px;font-size:12px;color:var(--orange700);margin-bottom:16px;display:flex;align-items:flex-start;gap:8px"><span>⚠️</span><span>'+msg+'</span></div>';
+  const sampleHtml=msg=>'<div style="background:#FFF8E1;border:1px solid #FFD54F;border-radius:var(--r8);padding:10px 14px;font-size:12px;color:#5D4037;margin-bottom:16px;display:flex;align-items:flex-start;gap:8px"><span>📊</span><span><strong>Sample Data:</strong> '+msg+'</span></div>';
+  const sampleTag='<span style="font-size:9px;background:#FFF3CD;color:#856404;border-radius:4px;padding:1px 5px;font-weight:700;vertical-align:middle;margin-left:4px">SAMPLE</span>';
+
+  page.innerHTML=
+    '<div class="sec-head" style="margin-bottom:12px"><div class="sec-title">NOC to L3 Transition</div></div>'
+    +'<div style="margin-bottom:20px"><div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">'+buildDateRangeBtns()+'</div></div>'
+
+    // Section 1: Volume
+    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">Ticket Volume</div>'
+    +'<div class="sec-sub">Total tickets in selected range · INC + ADR from ServiceNow import · CHG from change records</div></div></div>'
+    +noteHtml('INC and ADR counts are live from imported ticket data. CHG counts come from the change record export. All three respond to the date filter above. <strong>Assignment group filter</strong> requires L2 ticket data — not currently available.')
+    +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px">'
+    +'<div class="digest-card" style="cursor:pointer" onclick="openFilteredPanel({label:\'All Tickets\',filter:{}})">'
+    +'<div class="d-label">Total Tickets</div><div class="d-num">'+(incCount+adrCount+chgCount)+'</div>'
+    +'<div class="d-change">INC + ADR + CHG combined</div></div>'
+    +'<div class="digest-card" style="cursor:pointer" onclick="openFilteredPanel({label:\'INC — Incidents\',filter:{type:\'INC\'}})">'
+    +'<div class="d-label">Incidents (INC)</div><div class="d-num">'+incCount+'</div>'
+    +'<div class="d-change">'+incClosed+' resolved · '+(incCount-incClosed)+' open</div></div>'
+    +'<div class="digest-card" style="cursor:pointer" onclick="openFilteredPanel({label:\'ADR Records\',filter:{type:\'ADR\'}})">'
+    +'<div class="d-label">ADR / RITM</div><div class="d-num">'+adrCount+'</div>'
+    +'<div class="d-change">'+adrClosed+' closed · '+(adrCount-adrClosed)+' open</div></div>'
+    +'<div class="digest-card">'
+    +'<div class="d-label">Changes (CHG)</div><div class="d-num">'+chgCount+'</div>'
+    +'<div class="d-change">'+chgClosed+' closed · '+(chgCount-chgClosed)+' open</div></div>'
+    +'</div>'
+    +'<div class="card" style="margin-bottom:22px">'
+    +'<div class="card-header"><div><div class="card-title">Monthly Ticket Volume</div>'
+    +'<div class="card-sub">INC, ADR, and CHG per month · click any bar to drill into INC/ADR tickets</div></div>'
+    +'<div style="display:flex;gap:12px;align-items:center">'
+    +'<div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:2px;background:#F79009"></div><span style="font-size:11px;color:var(--g500)">INC</span></div>'
+    +'<div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:2px;background:#EAECF0;border:1px solid #D0D5DD"></div><span style="font-size:11px;color:var(--g500)">ADR</span></div>'
+    +'<div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:2px;background:#2E90FA"></div><span style="font-size:11px;color:var(--g500)">CHG</span></div>'
+    +'</div></div>'
+    +'<div style="height:220px"><canvas id="transVolChart"></canvas></div></div>'
+
+    // Section 2: Product & CI
+    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">Tickets by Product &amp; Impacted CI</div>'
+    +'<div class="sec-sub">Distribution by work category and configuration item</div></div></div>'
+    +noteHtml('<strong>Product:</strong> INC and ADR use <em>ticket category</em> as a proxy for product (Connectivity &amp; Performance, Hardware &amp; Physical, etc.) — a dedicated product field is not in the current ServiceNow export. To map to actual products, add a <em>u_product</em> or <em>business_service</em> column to the INC/ADR export. <strong>Impacted CI for INC/ADR:</strong> CI data is present in CHG records (shown below) but not in the current INC/ADR export — add the <em>cmdb_ci</em> field to enable it.')
+    +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px">'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">INC by Category</div><div class="card-sub">Proxy for product · live data</div></div></div>'
+    +'<div style="height:220px;display:flex;align-items:center;justify-content:center"><canvas id="transIncPie"></canvas></div></div>'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">ADR / RITM by Category</div><div class="card-sub">Proxy for product · live data</div></div></div>'
+    +'<div style="height:220px;display:flex;align-items:center;justify-content:center"><canvas id="transAdrPie"></canvas></div></div>'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">CHG by Impacted CI</div><div class="card-sub">Live from CHG records · ci field</div></div></div>'
+    +'<div style="height:220px;display:flex;align-items:center;justify-content:center"><canvas id="transCIPie"></canvas></div></div>'
+    +'</div>'
+
+    // Section 3: LOE
+    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">Level of Effort (TTW – Total Time Worked)</div>'
+    +'<div class="sec-sub">Hours logged per category for selected date range</div></div></div>'
+    +noteHtml('<strong>Data source:</strong> Hours from imported LOE records (LOA_TICKET_HRS). CHG ticket hours are not tracked in the current LOE dataset — add CHG numbers to the LOE import to enable. <strong>LOE by Situation:</strong> Requires a situation/priority field in the ServiceNow export — not present in current data. <strong>LOE by Impacted CI for INC/ADR:</strong> Requires the <em>cmdb_ci</em> field in the INC/ADR export.')
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px">'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">LOE – Incidents by Category</div><div class="card-sub">Total hours logged per INC category · live data</div></div></div>'
+    +'<div style="height:220px"><canvas id="transLoeInc"></canvas></div></div>'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">LOE – ADR/RITM by Category</div><div class="card-sub">Total hours logged per ADR category · live data</div></div></div>'
+    +'<div style="height:220px"><canvas id="transLoeAdr"></canvas></div></div>'
+    +'</div>'
+
+    // Section 4: Escalations
+    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">NOC L2 → L3 Escalations</div>'
+    +'<div class="sec-sub">Tickets escalated from ITO Network L2 to ITO Network L3</div></div></div>'
+    +sampleHtml('Escalation records are not in the current data export. Charts below use generated sample data to illustrate the intended layout. To populate with actuals, provide a ServiceNow export containing: ticket number, escalation date, originating assignment group (ITO Network L2), and ticket type.')
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">'
+    +'<div class="digest-card"><div class="d-label">Total INC Escalated '+sampleTag+'</div>'
+    +'<div class="d-num">'+totalEscInc+'</div><div class="d-change">From NOC L2 · selected range</div></div>'
+    +'<div class="digest-card"><div class="d-label">Total ADR/RITM Escalated '+sampleTag+'</div>'
+    +'<div class="d-num">'+totalEscAdr+'</div><div class="d-change">From NOC L2 · selected range</div></div>'
+    +'</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px">'
+    +'<div class="card"><div class="card-header"><div>'
+    +'<div class="card-title">INC Escalations per Month '+sampleTag+'</div>'
+    +'<div class="card-sub">Monthly INC tickets escalated from L2 to L3</div></div></div>'
+    +'<div style="height:200px"><canvas id="transEscInc"></canvas></div></div>'
+    +'<div class="card"><div class="card-header"><div>'
+    +'<div class="card-title">ADR/RITM Escalations per Month '+sampleTag+'</div>'
+    +'<div class="card-sub">Monthly ADR/RITM tickets escalated from L2 to L3</div></div></div>'
+    +'<div style="height:200px"><canvas id="transEscAdr"></canvas></div></div>'
+    +'</div>'
+
+    // Section 5: MTTR
+    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">MTTR Comparison – L2 vs L3</div>'
+    +'<div class="sec-sub">Mean time to resolve · L3 live from ticket data · L2 uses industry benchmark</div></div></div>'
+    +noteHtml('<strong>L2 MTTR '+sampleTag+':</strong> L2 ticket data (with resolution timestamps) is not in the current import. The L2 MTTR stat and chart below use a 0.8-day industry benchmark for NOC L2 network operations with realistic monthly variation. Import L2 ticket data to replace with actuals. <strong>Filter by assignment group</strong> for L2 also requires that data.')
+    +'<div style="display:grid;grid-template-columns:1fr 1fr 2fr;gap:16px;margin-bottom:22px">'
+    +'<div class="digest-card"><div class="d-label">L3 Avg MTTR</div>'
+    +'<div class="d-num">'+l3MttrAll+'d</div>'
+    +'<div class="d-change"><span class="good">Live data · ITO Network L3</span></div></div>'
+    +'<div class="digest-card"><div class="d-label">L2 Avg MTTR '+sampleTag+'</div>'
+    +'<div class="d-num">'+l2MttrAvg+'d</div>'
+    +'<div class="d-change">Industry benchmark · replace with L2 import</div></div>'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">L2 vs L3 MTTR by Month</div>'
+    +'<div class="card-sub">L3 live data · L2 sample benchmark</div></div>'
+    +'<span style="font-size:10px;background:#FFF3CD;color:#856404;border-radius:4px;padding:2px 7px;font-weight:700;white-space:nowrap;align-self:center">L2 SAMPLE</span>'
+    +'</div><div style="height:160px"><canvas id="transMttr"></canvas></div></div>'
+    +'</div>';
+
+  buildTransVolChart(filtMonths,filtLabels,Tf,CHGf);
+  buildTransProductCharts(Tf);
+  buildTransCIChart(CHGf);
+  buildTransLoeCharts(loeInc,loeAdr);
+  buildTransEscCharts(escLabels,escIncData,escAdrData);
+  buildTransMttrChart(filtLabels,l3MttrByMonth,l2MttrByMonth);
+}
+
+function buildTransVolChart(filtMonths,filtLabels,Tf,CHGf){
+  const incD=filtMonths.map(m=>Tf.filter(t=>t.month===m&&t.type==='INC').length);
+  const adrD=filtMonths.map(m=>Tf.filter(t=>t.month===m&&t.type==='ADR').length);
+  const chgD=filtMonths.map(m=>CHGf.filter(c=>c.month===m).length);
+  Chart.getChart('transVolChart')?.destroy();
+  new Chart(document.getElementById('transVolChart'),{
+    type:'bar',
+    data:{labels:filtLabels,datasets:[
+      {label:'INC',data:incD,backgroundColor:'#F79009',borderRadius:{topLeft:4,topRight:4},borderSkipped:false},
+      {label:'ADR',data:adrD,backgroundColor:'#EAECF0',borderRadius:{topLeft:4,topRight:4},borderSkipped:false},
+      {label:'CHG',data:chgD,backgroundColor:'#2E90FA',borderRadius:{topLeft:4,topRight:4},borderSkipped:false}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{...TT,callbacks:{footer:items=>'Total: '+items.reduce((s,i)=>s+i.raw,0)}}},
+      scales:{
+        x:{stacked:true,grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:11}}},
+        y:{stacked:true,grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11},stepSize:5}}
+      },
+      onClick(e,els){
+        if(!els.length)return;
+        const m=filtMonths[els[0].index];
+        openFilteredPanel({label:(filtLabels[els[0].index]+' tickets'),filter:{month:m}});
+      },
+      onHover(e,els){e.native.target.style.cursor=els.length?'pointer':'default';}
+    }
+  });
+}
+
+function buildTransProductCharts(Tf){
+  const PIE_COLORS=['#F79009','#2E90FA','#12B76A','#6941C6','#EE46BC','#667085','#F04438','#0086C9'];
+  ['INC','ADR'].forEach(type=>{
+    const id=type==='INC'?'transIncPie':'transAdrPie';
+    const cats={};
+    Tf.filter(t=>t.type===type).forEach(t=>{cats[t.cat]=(cats[t.cat]||0)+1;});
+    const sorted=Object.entries(cats).sort((a,b)=>b[1]-a[1]);
+    Chart.getChart(id)?.destroy();
+    if(!sorted.length){document.getElementById(id).parentElement.innerHTML='<div style="text-align:center;color:var(--g400);font-size:12px;padding:30px">No data in range</div>';return;}
+    new Chart(document.getElementById(id),{
+      type:'doughnut',
+      data:{labels:sorted.map(([n])=>n),datasets:[{data:sorted.map(([,v])=>v),backgroundColor:PIE_COLORS.slice(0,sorted.length),borderWidth:1,borderColor:'#fff'}]},
+      options:{
+        responsive:true,maintainAspectRatio:false,cutout:'55%',
+        plugins:{legend:{position:'bottom',labels:{color:'#667085',font:{size:10},boxWidth:8,padding:6}},tooltip:{...TT}},
+        onClick(e,els){
+          if(!els.length)return;
+          const cat=sorted[els[0].index][0];
+          openFilteredPanel({label:cat,filter:{category:cat,type}});
+        }
+      }
+    });
+  });
+}
+
+function buildTransCIChart(CHGf){
+  const ciMap={};
+  CHGf.forEach(c=>{if(c.ci)ciMap[c.ci]=(ciMap[c.ci]||0)+1;});
+  const sorted=Object.entries(ciMap).sort((a,b)=>b[1]-a[1]);
+  const COLORS=['#2E90FA','#F79009','#12B76A','#6941C6','#EE46BC','#667085','#F04438'];
+  Chart.getChart('transCIPie')?.destroy();
+  if(!sorted.length){const el=document.getElementById('transCIPie');if(el)el.parentElement.innerHTML='<div style="text-align:center;color:var(--g400);font-size:12px;padding:30px">No CHG data in range</div>';return;}
+  new Chart(document.getElementById('transCIPie'),{
+    type:'doughnut',
+    data:{labels:sorted.map(([n])=>n),datasets:[{data:sorted.map(([,v])=>v),backgroundColor:COLORS.slice(0,sorted.length),borderWidth:1,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'bottom',labels:{color:'#667085',font:{size:10},boxWidth:8,padding:6}},tooltip:{...TT}}}
+  });
+}
+
+function buildTransLoeCharts(loeInc,loeAdr){
+  [['transLoeInc',loeInc,'#F79009'],['transLoeAdr',loeAdr,'#2E90FA']].forEach(([id,loe,color])=>{
+    const sorted=Object.entries(loe).sort((a,b)=>b[1]-a[1]);
+    Chart.getChart(id)?.destroy();
+    if(!sorted.length){const el=document.getElementById(id);if(el)el.parentElement.innerHTML='<div style="text-align:center;color:var(--g400);font-size:12px;padding:30px">No LOE data in range</div>';return;}
+    new Chart(document.getElementById(id),{
+      type:'bar',
+      data:{labels:sorted.map(([n])=>n),datasets:[{label:'Hours',data:sorted.map(([,v])=>parseFloat(v.toFixed(1))),backgroundColor:color,borderRadius:4,borderSkipped:false}]},
+      options:{
+        indexAxis:'y',responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:i=>i.raw.toFixed(1)+'h'}}},
+        scales:{
+          x:{grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11}}},
+          y:{grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:10}}}
+        }
+      }
+    });
+  });
+}
+
+function buildTransEscCharts(labels,incData,adrData){
+  [['transEscInc',incData,'#F79009'],['transEscAdr',adrData,'#2E90FA']].forEach(([id,data,color])=>{
+    Chart.getChart(id)?.destroy();
+    new Chart(document.getElementById(id),{
+      type:'bar',
+      data:{labels,datasets:[{label:'Escalated',data,backgroundColor:color,borderRadius:4,borderSkipped:false}]},
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{...TT}},
+        scales:{
+          x:{grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:11}}},
+          y:{grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11},stepSize:2}}
+        }
+      }
+    });
+  });
+}
+
+function buildTransMttrChart(labels,l3Data,l2Data){
+  Chart.getChart('transMttr')?.destroy();
+  new Chart(document.getElementById('transMttr'),{
+    type:'bar',
+    data:{labels,datasets:[
+      {label:'L3 MTTR (live)',data:l3Data,backgroundColor:'#F79009',borderRadius:4,borderSkipped:false},
+      {label:'L2 MTTR (sample)',data:l2Data,backgroundColor:'#EAECF0',borderRadius:4,borderSkipped:false}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:true,position:'bottom',labels:{color:'#667085',font:{size:11},boxWidth:10,padding:10}},
+        tooltip:{...TT,callbacks:{label:i=>i.raw!=null?i.raw.toFixed(1)+'d':'—'}}
+      },
+      scales:{
+        x:{grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:11}}},
+        y:{grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11},callback:v=>v+'d'}}
+      }
+    }
+  });
 }
 
 /* ═══════════════════════════════════════
