@@ -3479,8 +3479,8 @@ function rebuildTransLoe(){
 function rebuildTransEsc(){
   ['transEscInc','transEscAdr'].forEach(id=>Chart.getChart(id)?.destroy());
   const {filtMonths,filtLabels}=transSectionData('esc');
-  const escLabels=[],escIncData=[],escAdrData=[];
-  filtMonths.forEach((m,i)=>{const d=TRANS_ESC[m];if(!d)return;escLabels.push(filtLabels[i]);escIncData.push(d.inc);escAdrData.push(d.adr);});
+  const escLabels=[],escIncData=[],escAdrData=[],escMonths_arr=[];
+  filtMonths.forEach((m,i)=>{const d=TRANS_ESC[m];if(!d)return;escLabels.push(filtLabels[i]);escIncData.push(d.inc);escAdrData.push(d.adr);escMonths_arr.push(m);});
   const totalEscInc=escIncData.reduce((a,b)=>a+b,0);
   const totalEscAdr=escAdrData.reduce((a,b)=>a+b,0);
   document.getElementById('transEscContent').innerHTML=
@@ -3498,7 +3498,7 @@ function rebuildTransEsc(){
     +'<div class="card-sub">Monthly ADR/RITM tickets escalated from L2 to L3</div></div></div>'
     +'<div style="height:200px"><canvas id="transEscAdr"></canvas></div></div>'
     +'</div>';
-  buildTransEscCharts(escLabels,escIncData,escAdrData);
+  buildTransEscCharts(escLabels,escIncData,escAdrData,escMonths_arr);
 }
 function rebuildTransMttr(){
   ['transMttrL2','transMttrL3'].forEach(id=>Chart.getChart(id)?.destroy());
@@ -3523,7 +3523,7 @@ function rebuildTransMttr(){
     +'<div class="card-sub">Median resolution time · days</div></div></div>'
     +'<div style="height:200px"><canvas id="transMttrL3"></canvas></div></div>'
     +'</div>';
-  buildTransMttrCharts(filtLabels,l2Data,l3Data);
+  buildTransMttrCharts(filtLabels,l2Data,l3Data,filtMonths);
 }
 function buildTransVolChart(filtMonths,filtLabels){
   const configs=[
@@ -3542,7 +3542,9 @@ function buildTransVolChart(filtMonths,filtLabels){
         scales:{
           x:{grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:10},maxRotation:45,minRotation:45}},
           y:{grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11}}}
-        }
+        },
+        onClick(e,els){if(!els.length)return;openTransVolPanel(filtMonths[els[0].index],filtLabels[els[0].index]);},
+        onHover(e,els){e.native.target.style.cursor=els.length?'pointer':'default';}
       }
     });
   });
@@ -3573,19 +3575,21 @@ function buildTransCategoryChart(incCats,adrCats){
   });
 }
 
-function openTransSituationPanel(situation){
-  const filtMonths=window._transDR?.cat==='all'?TRANS_MONTHS:transSectionData('cat').filtMonths;
+function openTransSituationPanel(situation, type='inc', months){
+  const filtMonths=months||(transSectionData('cat').filtMonths);
   const monthLabels=filtMonths.map(m=>TRANS_MONTH_LABELS[TRANS_MONTHS.indexOf(m)]);
-  let totalInc=0,totalHrs=0;
+  const isInc=type==='inc';
+  let total=0,totalHrs=0;
   const rows=filtMonths.map((m,i)=>{
-    const cnt=TRANS_CATS[m]?.inc[situation]||0;
-    const hrs=TRANS_TTW[m]?.inc[situation]||0;
-    totalInc+=cnt; totalHrs+=hrs;
+    const cnt=(isInc?TRANS_CATS[m]?.inc:TRANS_CATS[m]?.adr)?.[situation]||0;
+    const hrs=(isInc?TRANS_TTW[m]?.inc:TRANS_TTW[m]?.adr)?.[situation]||0;
+    total+=cnt; totalHrs+=hrs;
     return {label:monthLabels[i],cnt,hrs};
   }).filter(r=>r.cnt>0||r.hrs>0);
-  const avgHrs=totalInc>0?(totalHrs/totalInc).toFixed(1):'—';
-  const allIncTotal=filtMonths.reduce((s,m)=>s+Object.values(TRANS_CATS[m]?.inc||{}).reduce((a,b)=>a+b,0),0);
-  const pct=allIncTotal>0?Math.round(totalInc/allIncTotal*100):0;
+  const avgHrs=total>0?(totalHrs/total).toFixed(1):'—';
+  const allTotal=filtMonths.reduce((s,m)=>s+Object.values((isInc?TRANS_CATS[m]?.inc:TRANS_CATS[m]?.adr)||{}).reduce((a,b)=>a+b,0),0);
+  const pct=allTotal>0?Math.round(total/allTotal*100):0;
+  const typeLabel=isInc?'INC':'ADR/RITM';
   const tableRows=rows.map(r=>`
     <tr style="border-bottom:1px solid #F2F4F7">
       <td style="padding:7px 10px;font-size:12px;color:var(--g700)">${r.label}</td>
@@ -3595,26 +3599,175 @@ function openTransSituationPanel(situation){
   const body=`
     <div style="padding:20px 20px 0">
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">
-        <div class="digest-card"><div class="d-label">INC Tickets</div><div class="d-num" style="font-size:24px">${totalInc}</div><div class="d-change">${pct}% of all INC</div></div>
+        <div class="digest-card"><div class="d-label">${typeLabel} Tickets</div><div class="d-num" style="font-size:24px">${total}</div><div class="d-change">${pct}% of all ${typeLabel}</div></div>
         <div class="digest-card"><div class="d-label">Total TTW</div><div class="d-num" style="font-size:24px">${totalHrs.toFixed(1)}h</div><div class="d-change">hours logged</div></div>
-        <div class="digest-card"><div class="d-label">Avg TTW / INC</div><div class="d-num" style="font-size:24px">${avgHrs}${avgHrs!=='—'?'h':''}</div><div class="d-change">per ticket</div></div>
+        <div class="digest-card"><div class="d-label">Avg TTW / Ticket</div><div class="d-num" style="font-size:24px">${avgHrs}${avgHrs!=='—'?'h':''}</div><div class="d-change">per ticket</div></div>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Monthly Breakdown</div>
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr style="background:#F9FAFB">
+          <th style="padding:7px 10px;font-size:11px;color:var(--g500);text-align:left;font-weight:500">Month</th>
+          <th style="padding:7px 10px;font-size:11px;color:var(--g500);text-align:right;font-weight:500">${typeLabel}</th>
+          <th style="padding:7px 10px;font-size:11px;color:var(--g500);text-align:right;font-weight:500">TTW (hrs)</th>
+        </tr></thead>
+        <tbody>${tableRows}</tbody>
+        <tfoot><tr style="background:#F9FAFB;font-weight:600">
+          <td style="padding:7px 10px;font-size:12px;color:var(--g700)">Total</td>
+          <td style="padding:7px 10px;font-size:12px;color:var(--g900);text-align:right">${total}</td>
+          <td style="padding:7px 10px;font-size:12px;color:var(--g600);text-align:right">${totalHrs.toFixed(1)}h</td>
+        </tr></tfoot>
+      </table>
+    </div>`;
+  pushPanel('html',{title:situation,body});
+}
+
+function openTransVolPanel(month,label){
+  const d=TRANS_VOL[month]||{};
+  const total=(d.inc||0)+(d.adrRitm||0)+(d.chg||0);
+  const escD=TRANS_ESC[month]||{inc:0,adr:0};
+  const row=(lbl,val,open,closed,color)=>`
+    <tr style="border-bottom:1px solid #F2F4F7">
+      <td style="padding:8px 10px;font-size:12px;font-weight:600;color:${color||'var(--g900)'}">${lbl}</td>
+      <td style="padding:8px 10px;font-size:12px;text-align:right;font-weight:700;color:var(--g900)">${val}</td>
+      <td style="padding:8px 10px;font-size:12px;text-align:right;color:var(--orange600)">${open} open</td>
+      <td style="padding:8px 10px;font-size:12px;text-align:right;color:var(--g500)">${closed} closed</td>
+    </tr>`;
+  const body=`
+    <div style="padding:20px 20px 0">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+        <div class="digest-card"><div class="d-label">Total Tickets</div><div class="d-num" style="font-size:28px">${total}</div><div class="d-change">INC + ADR/RITM + CHG</div></div>
+        <div class="digest-card"><div class="d-label">L2→L3 Escalations</div><div class="d-num" style="font-size:28px">${escD.inc+escD.adr}</div><div class="d-change">${escD.inc} INC · ${escD.adr} ADR</div></div>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Breakdown</div>
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr style="background:#F9FAFB">
+          <th style="padding:8px 10px;font-size:11px;color:var(--g500);text-align:left;font-weight:500">Type</th>
+          <th style="padding:8px 10px;font-size:11px;color:var(--g500);text-align:right;font-weight:500">Total</th>
+          <th style="padding:8px 10px;font-size:11px;color:var(--g500);text-align:right;font-weight:500">Open</th>
+          <th style="padding:8px 10px;font-size:11px;color:var(--g500);text-align:right;font-weight:500">Closed</th>
+        </tr></thead>
+        <tbody>
+          ${row('Incidents (INC)',d.inc||0,d.incOpen||0,(d.inc||0)-(d.incOpen||0),'#F79009')}
+          ${row('ADR / RITM',d.adrRitm||0,d.adrRitmOpen||0,(d.adrRitm||0)-(d.adrRitmOpen||0),'#98A2B3')}
+          ${row('Changes (CHG)',d.chg||0,d.chgOpen||0,(d.chg||0)-(d.chgOpen||0),'#D0D5DD')}
+        </tbody>
+        <tfoot><tr style="background:#F9FAFB;font-weight:600">
+          <td style="padding:8px 10px;font-size:12px;color:var(--g700)">Total</td>
+          <td style="padding:8px 10px;font-size:12px;color:var(--g900);text-align:right">${total}</td>
+          <td colspan="2"></td>
+        </tr></tfoot>
+      </table>
+    </div>`;
+  pushPanel('html',{title:label+' · Volume',body});
+}
+
+function openTransBizPanel(service){
+  if(service==='Other')return;
+  const filtMonths=transSectionData('cat').filtMonths;
+  const monthLabels=filtMonths.map(m=>TRANS_MONTH_LABELS[TRANS_MONTHS.indexOf(m)]);
+  let total=0;
+  const rows=filtMonths.map((m,i)=>{
+    const cnt=TRANS_BIZ[m]?.[service]||0;
+    total+=cnt;
+    return {label:monthLabels[i],cnt};
+  }).filter(r=>r.cnt>0);
+  const allTotal=filtMonths.reduce((s,m)=>s+Object.values(TRANS_BIZ[m]||{}).reduce((a,b)=>a+b,0),0);
+  const pct=allTotal>0?Math.round(total/allTotal*100):0;
+  const tableRows=rows.map(r=>`
+    <tr style="border-bottom:1px solid #F2F4F7">
+      <td style="padding:7px 10px;font-size:12px;color:var(--g700)">${r.label}</td>
+      <td style="padding:7px 10px;font-size:12px;color:var(--g900);text-align:right;font-weight:600">${r.cnt}</td>
+    </tr>`).join('');
+  const body=`
+    <div style="padding:20px 20px 0">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+        <div class="digest-card"><div class="d-label">INC Tickets</div><div class="d-num" style="font-size:28px">${total}</div><div class="d-change">${pct}% of INC volume</div></div>
+        <div class="digest-card"><div class="d-label">Active Months</div><div class="d-num" style="font-size:28px">${rows.length}</div><div class="d-change">months with activity</div></div>
       </div>
       <div style="font-size:12px;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Monthly Breakdown</div>
       <table style="width:100%;border-collapse:collapse">
         <thead><tr style="background:#F9FAFB">
           <th style="padding:7px 10px;font-size:11px;color:var(--g500);text-align:left;font-weight:500">Month</th>
           <th style="padding:7px 10px;font-size:11px;color:var(--g500);text-align:right;font-weight:500">INC</th>
-          <th style="padding:7px 10px;font-size:11px;color:var(--g500);text-align:right;font-weight:500">TTW (hrs)</th>
         </tr></thead>
         <tbody>${tableRows}</tbody>
         <tfoot><tr style="background:#F9FAFB;font-weight:600">
           <td style="padding:7px 10px;font-size:12px;color:var(--g700)">Total</td>
-          <td style="padding:7px 10px;font-size:12px;color:var(--g900);text-align:right">${totalInc}</td>
-          <td style="padding:7px 10px;font-size:12px;color:var(--g600);text-align:right">${totalHrs.toFixed(1)}h</td>
+          <td style="padding:7px 10px;font-size:12px;color:var(--g900);text-align:right">${total}</td>
         </tr></tfoot>
       </table>
     </div>`;
-  pushPanel('html',{title:situation,body});
+  pushPanel('html',{title:service,body});
+}
+
+function openTransEscPanel(month,label,months){
+  const d=TRANS_ESC[month]||{inc:0,adr:0};
+  const vol=TRANS_VOL[month]||{};
+  const totalVol=(vol.inc||0)+(vol.adrRitm||0);
+  const totalEsc=d.inc+d.adr;
+  const rate=totalVol>0?((totalEsc/totalVol)*100).toFixed(1):'—';
+  const allMonthRows=months.map((m,i)=>{
+    const e=TRANS_ESC[m]||{inc:0,adr:0};
+    const lbl=TRANS_MONTH_LABELS[TRANS_MONTHS.indexOf(m)];
+    return `<tr style="border-bottom:1px solid #F2F4F7${m===month?';background:#FFF9F0':''}">
+      <td style="padding:7px 10px;font-size:12px;color:var(--g700);${m===month?'font-weight:600':''}">
+        ${m===month?'▶ ':''  }${lbl}</td>
+      <td style="padding:7px 10px;font-size:12px;color:#F79009;text-align:right;font-weight:${m===month?700:400}">${e.inc}</td>
+      <td style="padding:7px 10px;font-size:12px;color:#98A2B3;text-align:right;font-weight:${m===month?700:400}">${e.adr}</td>
+    </tr>`;
+  }).join('');
+  const body=`
+    <div style="padding:20px 20px 0">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">
+        <div class="digest-card"><div class="d-label">INC Escalated</div><div class="d-num" style="font-size:24px">${d.inc}</div><div class="d-change">L2 → L3</div></div>
+        <div class="digest-card"><div class="d-label">ADR Escalated</div><div class="d-num" style="font-size:24px">${d.adr}</div><div class="d-change">L2 → L3</div></div>
+        <div class="digest-card"><div class="d-label">Escalation Rate</div><div class="d-num" style="font-size:24px">${rate}${rate!=='—'?'%':''}</div><div class="d-change">of INC+ADR volume</div></div>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">All Months</div>
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr style="background:#F9FAFB">
+          <th style="padding:7px 10px;font-size:11px;color:var(--g500);text-align:left;font-weight:500">Month</th>
+          <th style="padding:7px 10px;font-size:11px;color:var(--g500);text-align:right;font-weight:500">INC</th>
+          <th style="padding:7px 10px;font-size:11px;color:var(--g500);text-align:right;font-weight:500">ADR</th>
+        </tr></thead>
+        <tbody>${allMonthRows}</tbody>
+      </table>
+    </div>`;
+  pushPanel('html',{title:label+' · Escalations',body});
+}
+
+function openTransMttrPanel(month,label,months){
+  const l2=TRANS_L2_MTTR[month],l3=TRANS_L3_MTTR[month];
+  const idx=months.indexOf(month);
+  const prevM=idx>0?months[idx-1]:null;
+  const prevL2=prevM?TRANS_L2_MTTR[prevM]:null,prevL3=prevM?TRANS_L3_MTTR[prevM]:null;
+  const delta=(cur,prev,unit)=>prev==null?'':`<span style="color:${cur<=prev?'var(--green600)':'var(--orange600)'}">vs ${prev.toFixed(1)}${unit} prev</span>`;
+  const allMonthRows=months.map(m=>{
+    const lbl=TRANS_MONTH_LABELS[TRANS_MONTHS.indexOf(m)];
+    return `<tr style="border-bottom:1px solid #F2F4F7${m===month?';background:#FFF9F0':''}">
+      <td style="padding:7px 10px;font-size:12px;color:var(--g700);${m===month?'font-weight:600':''}">
+        ${m===month?'▶ ':''}${lbl}</td>
+      <td style="padding:7px 10px;font-size:12px;color:#F79009;text-align:right;font-weight:${m===month?700:400}">${TRANS_L2_MTTR[m]?.toFixed(1)??'—'}h</td>
+      <td style="padding:7px 10px;font-size:12px;color:#98A2B3;text-align:right;font-weight:${m===month?700:400}">${TRANS_L3_MTTR[m]?.toFixed(1)??'—'}d</td>
+    </tr>`;
+  }).join('');
+  const body=`
+    <div style="padding:20px 20px 0">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+        <div class="digest-card"><div class="d-label">L2 Median MTTR</div><div class="d-num" style="font-size:24px">${l2?.toFixed(1)??'—'}h</div><div class="d-change">${delta(l2,prevL2,'h')}&nbsp;</div></div>
+        <div class="digest-card"><div class="d-label">L3 Median MTTR</div><div class="d-num" style="font-size:24px">${l3?.toFixed(1)??'—'}d</div><div class="d-change">${delta(l3,prevL3,'d')}&nbsp;</div></div>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">All Months</div>
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr style="background:#F9FAFB">
+          <th style="padding:7px 10px;font-size:11px;color:var(--g500);text-align:left;font-weight:500">Month</th>
+          <th style="padding:7px 10px;font-size:11px;color:var(--g500);text-align:right;font-weight:500">L2 (hrs)</th>
+          <th style="padding:7px 10px;font-size:11px;color:var(--g500);text-align:right;font-weight:500">L3 (days)</th>
+        </tr></thead>
+        <tbody>${allMonthRows}</tbody>
+      </table>
+    </div>`;
+  pushPanel('html',{title:label+' · MTTR',body});
 }
 
 function buildTransBizChart(bizMap){
@@ -3635,13 +3788,16 @@ function buildTransBizChart(bizMap){
       scales:{
         x:{grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11}}},
         y:{grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:10}}}
-      }
+      },
+      onClick(e,els){if(!els.length||labels[els[0].index]==='Other')return;openTransBizPanel(labels[els[0].index]);},
+      onHover(e,els){e.native.target.style.cursor=els.length&&labels[els[0].index]!=='Other'?'pointer':'default';}
     }
   });
 }
 
 function buildTransLoeCharts(incTTW,adrTTW){
   [['transLoeInc',incTTW,'#F79009'],['transLoeAdr',adrTTW,'#D0D5DD']].forEach(([id,loe,color])=>{
+    const type=id==='transLoeInc'?'inc':'adr';
     const sorted=Object.entries(loe).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).slice(0,12);
     Chart.getChart(id)?.destroy();
     if(!sorted.length){const el=document.getElementById(id);if(el)el.parentElement.innerHTML='<div style="text-align:center;color:var(--g400);font-size:12px;padding:30px">No TTW data in range</div>';return;}
@@ -3654,13 +3810,15 @@ function buildTransLoeCharts(incTTW,adrTTW){
         scales:{
           x:{grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11}}},
           y:{grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:10}}}
-        }
+        },
+        onClick(e,els){if(!els.length)return;openTransSituationPanel(sorted[els[0].index][0],type,transSectionData('loe').filtMonths);},
+        onHover(e,els){e.native.target.style.cursor=els.length?'pointer':'default';}
       }
     });
   });
 }
 
-function buildTransEscCharts(labels,incData,adrData){
+function buildTransEscCharts(labels,incData,adrData,months){
   [['transEscInc',incData,'#F79009'],['transEscAdr',adrData,'#D0D5DD']].forEach(([id,data,color])=>{
     Chart.getChart(id)?.destroy();
     new Chart(document.getElementById(id),{
@@ -3672,13 +3830,15 @@ function buildTransEscCharts(labels,incData,adrData){
         scales:{
           x:{grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:11}}},
           y:{grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11},stepSize:2}}
-        }
+        },
+        onClick(e,els){if(!els.length)return;openTransEscPanel(months[els[0].index],labels[els[0].index],months);},
+        onHover(e,els){e.native.target.style.cursor=els.length?'pointer':'default';}
       }
     });
   });
 }
 
-function buildTransMttrCharts(labels,l2Data,l3Data){
+function buildTransMttrCharts(labels,l2Data,l3Data,months){
   [['transMttrL2',l2Data,'#F79009','h'],['transMttrL3',l3Data,'#D0D5DD','d']].forEach(([id,data,color,unit])=>{
     Chart.getChart(id)?.destroy();
     new Chart(document.getElementById(id),{
@@ -3690,7 +3850,9 @@ function buildTransMttrCharts(labels,l2Data,l3Data){
         scales:{
           x:{grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:10},maxRotation:45}},
           y:{grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11},callback:v=>v+unit}}
-        }
+        },
+        onClick(e,els){if(!els.length||data[els[0].index]==null)return;openTransMttrPanel(months[els[0].index],labels[els[0].index],months);},
+        onHover(e,els){e.native.target.style.cursor=els.length&&data[els[0].index]!=null?'pointer':'default';}
       }
     });
   });
