@@ -3398,7 +3398,7 @@ function buildTransitionPage(){
     +'<div class="card"><div class="card-header"><div><div class="card-title">INC vs ADR by Category</div><div class="card-sub">Top categories by ticket volume · click any bar to drill in</div></div>'
     +'<div style="display:flex;gap:10px;align-items:center">'
     +'<div style="display:flex;gap:4px;align-items:center"><div style="width:10px;height:10px;border-radius:2px;background:#F79009"></div><span style="font-size:11px;color:var(--g500)">INC</span></div>'
-    +'<div style="display:flex;gap:4px;align-items:center"><div style="width:10px;height:10px;border-radius:2px;background:#2E90FA"></div><span style="font-size:11px;color:var(--g500)">ADR</span></div>'
+    +'<div style="display:flex;gap:4px;align-items:center"><div style="width:10px;height:10px;border-radius:2px;background:#D0D5DD;border:1px solid #98A2B3"></div><span style="font-size:11px;color:var(--g500)">ADR</span></div>'
     +'</div></div><div style="height:260px"><canvas id="transCatChart"></canvas></div></div>'
     +'<div class="card"><div class="card-header"><div><div class="card-title">CHG by Impacted CI</div><div class="card-sub">Top configuration items · live from CHG records</div></div></div>'
     +'<div style="height:260px"><canvas id="transCIChart"></canvas></div></div>'
@@ -3461,7 +3461,7 @@ function buildTransVolChart(filtMonths,filtLabels,Tf,CHGf){
   const configs=[
     {id:'transVolInc',color:'#F79009',data:filtMonths.map(m=>Tf.filter(t=>t.month===m&&t.type==='INC').length),type:'INC'},
     {id:'transVolAdr',color:'#D0D5DD',data:filtMonths.map(m=>Tf.filter(t=>t.month===m&&t.type==='ADR').length),type:'ADR'},
-    {id:'transVolChg',color:'#2E90FA',data:filtMonths.map(m=>CHGf.filter(c=>c.month===m).length),type:null}
+    {id:'transVolChg',color:'#D0D5DD',data:filtMonths.map(m=>CHGf.filter(c=>c.month===m).length),type:null}
   ];
   configs.forEach(({id,color,data,type})=>{
     Chart.getChart(id)?.destroy();
@@ -3502,7 +3502,7 @@ function buildTransCategoryChart(Tf){
     type:'bar',
     data:{labels,datasets:[
       {label:'INC',data:incData,backgroundColor:'#F79009',borderRadius:3,borderSkipped:false},
-      {label:'ADR',data:adrData,backgroundColor:'#2E90FA',borderRadius:3,borderSkipped:false}
+      {label:'ADR',data:adrData,backgroundColor:'#D0D5DD',borderRadius:3,borderSkipped:false}
     ]},
     options:{
       indexAxis:'y',responsive:true,maintainAspectRatio:false,
@@ -3534,7 +3534,7 @@ function buildTransCIChart(CHGf){
   if(!labels.length){const el=document.getElementById('transCIChart');if(el)el.parentElement.innerHTML='<div style="text-align:center;color:var(--g400);font-size:12px;padding:40px">No CHG data in range</div>';return;}
   new Chart(document.getElementById('transCIChart'),{
     type:'bar',
-    data:{labels,datasets:[{label:'Changes',data,backgroundColor:'#2E90FA',borderRadius:3,borderSkipped:false}]},
+    data:{labels,datasets:[{label:'Changes',data,backgroundColor:'#D0D5DD',borderRadius:3,borderSkipped:false}]},
     options:{
       indexAxis:'y',responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{...TT}},
@@ -3567,7 +3567,7 @@ function buildTransLoeCharts(loeInc,loeAdr){
 }
 
 function buildTransEscCharts(labels,incData,adrData){
-  [['transEscInc',incData,'#F79009'],['transEscAdr',adrData,'#2E90FA']].forEach(([id,data,color])=>{
+  [['transEscInc',incData,'#F79009'],['transEscAdr',adrData,'#D0D5DD']].forEach(([id,data,color])=>{
     Chart.getChart(id)?.destroy();
     new Chart(document.getElementById(id),{
       type:'bar',
