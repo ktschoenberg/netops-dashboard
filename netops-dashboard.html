@@ -3385,15 +3385,11 @@ function buildTransitionPage(){
     +'<div class="d-label">Changes (CHG)</div><div class="d-num">'+chgCount+'</div>'
     +'<div class="d-change">'+chgClosed+' closed · '+(chgCount-chgClosed)+' open</div></div>'
     +'</div>'
-    +'<div class="card" style="margin-bottom:22px">'
-    +'<div class="card-header"><div><div class="card-title">Monthly Ticket Volume</div>'
-    +'<div class="card-sub">INC, ADR, and CHG per month · click any bar to drill into INC/ADR tickets</div></div>'
-    +'<div style="display:flex;gap:12px;align-items:center">'
-    +'<div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:2px;background:#F79009"></div><span style="font-size:11px;color:var(--g500)">INC</span></div>'
-    +'<div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:2px;background:#EAECF0;border:1px solid #D0D5DD"></div><span style="font-size:11px;color:var(--g500)">ADR</span></div>'
-    +'<div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:2px;background:#2E90FA"></div><span style="font-size:11px;color:var(--g500)">CHG</span></div>'
-    +'</div></div>'
-    +'<div style="height:220px"><canvas id="transVolChart"></canvas></div></div>'
+    +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px">'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">Incidents (INC)</div><div class="card-sub">Per month · click to drill in</div></div></div><div style="height:200px"><canvas id="transVolInc"></canvas></div></div>'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">ADR / RITM</div><div class="card-sub">Per month · click to drill in</div></div></div><div style="height:200px"><canvas id="transVolAdr"></canvas></div></div>'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">Changes (CHG)</div><div class="card-sub">Per month · from change records</div></div></div><div style="height:200px"><canvas id="transVolChg"></canvas></div></div>'
+    +'</div>'
 
     +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">Tickets by Category &amp; Impacted CI</div>'
     +'<div class="sec-sub">Breakdown by work category (INC/ADR) and configuration item (CHG)</div></div></div>'
@@ -3462,31 +3458,31 @@ function buildTransitionPage(){
 }
 
 function buildTransVolChart(filtMonths,filtLabels,Tf,CHGf){
-  const incD=filtMonths.map(m=>Tf.filter(t=>t.month===m&&t.type==='INC').length);
-  const adrD=filtMonths.map(m=>Tf.filter(t=>t.month===m&&t.type==='ADR').length);
-  const chgD=filtMonths.map(m=>CHGf.filter(c=>c.month===m).length);
-  Chart.getChart('transVolChart')?.destroy();
-  new Chart(document.getElementById('transVolChart'),{
-    type:'bar',
-    data:{labels:filtLabels,datasets:[
-      {label:'INC',data:incD,backgroundColor:'#F79009',borderRadius:{topLeft:4,topRight:4},borderSkipped:false},
-      {label:'ADR',data:adrD,backgroundColor:'#EAECF0',borderRadius:{topLeft:4,topRight:4},borderSkipped:false},
-      {label:'CHG',data:chgD,backgroundColor:'#2E90FA',borderRadius:{topLeft:4,topRight:4},borderSkipped:false}
-    ]},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{...TT,callbacks:{footer:items=>'Total: '+items.reduce((s,i)=>s+i.raw,0)}}},
-      scales:{
-        x:{stacked:true,grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:11}}},
-        y:{stacked:true,grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11},stepSize:5}}
-      },
-      onClick(e,els){
-        if(!els.length)return;
-        const m=filtMonths[els[0].index];
-        openFilteredPanel({label:(filtLabels[els[0].index]+' tickets'),filter:{month:m}});
-      },
-      onHover(e,els){e.native.target.style.cursor=els.length?'pointer':'default';}
-    }
+  const configs=[
+    {id:'transVolInc',color:'#F79009',data:filtMonths.map(m=>Tf.filter(t=>t.month===m&&t.type==='INC').length),type:'INC'},
+    {id:'transVolAdr',color:'#667085',data:filtMonths.map(m=>Tf.filter(t=>t.month===m&&t.type==='ADR').length),type:'ADR'},
+    {id:'transVolChg',color:'#2E90FA',data:filtMonths.map(m=>CHGf.filter(c=>c.month===m).length),type:null}
+  ];
+  configs.forEach(({id,color,data,type})=>{
+    Chart.getChart(id)?.destroy();
+    new Chart(document.getElementById(id),{
+      type:'bar',
+      data:{labels:filtLabels,datasets:[{data,backgroundColor:color,borderRadius:{topLeft:4,topRight:4},borderSkipped:false}]},
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{...TT}},
+        scales:{
+          x:{grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:10},maxRotation:45,minRotation:45}},
+          y:{grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11},stepSize:5}}
+        },
+        onClick(e,els){
+          if(!els.length||!type)return;
+          const m=filtMonths[els[0].index];
+          openFilteredPanel({label:filtLabels[els[0].index]+' · '+type,filter:{month:m,type}});
+        },
+        onHover(e,els){if(type)e.native.target.style.cursor=els.length?'pointer':'default';}
+      }
+    });
   });
 }
 
