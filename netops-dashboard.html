@@ -1614,12 +1614,10 @@ function setTransDate(section, range){
 }
 function transSectionData(section){
   const f=getDateFilter(window._transDR[section]);
-  const Tf=f?T.filter(t=>t.opened>=f.start&&t.opened<=f.end):T;
-  const CHGf=f?CHG_DATA.filter(c=>c.start>=f.start&&c.start<=f.end):CHG_DATA;
   const startM=f?f.start.slice(0,7):null,endM=f?f.end.slice(0,7):null;
-  const filtMonths=startM?MONTHS.filter(m=>m>=startM&&m<=endM):MONTHS;
-  const filtLabels=filtMonths.map(m=>LOA_MONTH_LABELS[MONTHS.indexOf(m)]||m);
-  return {Tf,CHGf,filtMonths,filtLabels};
+  const filtMonths=startM?TRANS_MONTHS.filter(m=>m>=startM&&m<=endM):TRANS_MONTHS;
+  const filtLabels=filtMonths.map(m=>TRANS_MONTH_LABELS[TRANS_MONTHS.indexOf(m)]||m);
+  return {filtMonths,filtLabels};
 }
 
 function buildDateRangeBtns(){
@@ -3319,23 +3317,56 @@ function applyImport(mode){
 /* ═══════════════════════════════════════
    NOC TO L3 TRANSITION PAGE
 ═══════════════════════════════════════ */
-const SAMPLE_ESC = {
-  '2024-05':{inc:8,adr:3},'2024-06':{inc:6,adr:2},'2024-07':{inc:9,adr:4},
-  '2024-08':{inc:7,adr:3},'2024-09':{inc:10,adr:4},'2024-10':{inc:12,adr:5},
-  '2024-11':{inc:8,adr:3},'2024-12':{inc:6,adr:2},'2025-01':{inc:11,adr:4},
-  '2025-02':{inc:9,adr:3},'2025-03':{inc:14,adr:6},'2025-04':{inc:10,adr:4},
-  '2025-05':{inc:8,adr:3},'2025-06':{inc:7,adr:2},'2025-07':{inc:9,adr:4},
-  '2025-08':{inc:11,adr:4},'2025-09':{inc:8,adr:3},'2025-10':{inc:13,adr:5},
-  '2025-11':{inc:10,adr:4},'2025-12':{inc:7,adr:2},'2026-01':{inc:15,adr:6},
-  '2026-02':{inc:18,adr:7},'2026-03':{inc:22,adr:8},'2026-04':{inc:14,adr:5},
-  '2026-05':{inc:4,adr:2}
+const TRANS_MONTHS=['2025-11','2025-12','2026-01','2026-02','2026-03','2026-04','2026-05'];
+const TRANS_MONTH_LABELS=["Nov'25","Dec'25","Jan'26","Feb'26","Mar'26","Apr'26","May'26"];
+const TRANS_VOL={
+  '2025-11':{inc:492,adrRitm:29,chg:6,incOpen:2,adrRitmOpen:18,chgOpen:5},
+  '2025-12':{inc:474,adrRitm:8,chg:6,incOpen:1,adrRitmOpen:5,chgOpen:5},
+  '2026-01':{inc:699,adrRitm:15,chg:15,incOpen:1,adrRitmOpen:4,chgOpen:13},
+  '2026-02':{inc:561,adrRitm:16,chg:7,incOpen:3,adrRitmOpen:5,chgOpen:7},
+  '2026-03':{inc:449,adrRitm:29,chg:13,incOpen:4,adrRitmOpen:11,chgOpen:12},
+  '2026-04':{inc:519,adrRitm:16,chg:21,incOpen:6,adrRitmOpen:7,chgOpen:18},
+  '2026-05':{inc:293,adrRitm:5,chg:12,incOpen:13,adrRitmOpen:3,chgOpen:7},
 };
-const SAMPLE_L2_MTTR = {
-  '2024-05':0.9,'2024-06':0.7,'2024-07':1.0,'2024-08':0.8,'2024-09':0.9,
-  '2024-10':0.8,'2024-11':0.7,'2024-12':0.8,'2025-01':1.1,'2025-02':0.9,
-  '2025-03':1.2,'2025-04':0.8,'2025-05':0.9,'2025-06':0.7,'2025-07':0.8,
-  '2025-08':0.9,'2025-09':0.8,'2025-10':1.0,'2025-11':0.8,'2025-12':0.7,
-  '2026-01':1.1,'2026-02':1.0,'2026-03':1.3,'2026-04':0.9,'2026-05':0.8
+const TRANS_CATS={
+'2025-11':{inc:{"Network Circuit Provider":279,"application degraded":36,"Cloud Service Provider":35,"Unknown":31,"Solarwinds Dashboards":16,"Switch":13,"General":11,"Switch - Leaf":8,"Switch - Edge":7,"Network Investigation":6,"NO NETWORK CONNECTIVITY":5,"Router - Edge":4,"Services - DNS":3,"Alert investigation":3,"Access issues":2,"Powerflex Issues":2,"FIREWALL":2,"Corporate Firewall issue":2,"General Network Support Request (Must be reclassified)":1,"Network Connectivity Issue":1,"Improper Configuration":1,"Switch - PCI":1,"Troubleshooting":1,"Hardware Failure":1,"Switchport Issue":1},adr:{"Add Device/Delete Device/Change Device":3,"General Network Support Request (Must be reclassified)":1,"DNS":1}},
+'2025-12':{inc:{"Network Circuit Provider":291,"Unknown":22,"Switch":18,"Solarwinds Dashboards":17,"Switch - Edge":15,"application degraded":14,"Switch - Leaf":13,"Corporate Firewall issue":9,"REGISTER OFFLINE":7,"Network Investigation":6,"General":5,"Switch - Core":5,"Router - Edge":5,"Services - DHCP":4,"Cloud Service Provider":3,"Add Device/Delete Device/Change Device":2,"NO NETWORK CONNECTIVITY":2,"PRINT":2,"General Network Support Request (Must be reclassified)":2,"Troubleshooting":2,"RECEIVER CLIENT":2,"APPLICATION/SERVICE DOWN":2,"Configuration":1,"Network Connectivity Issue":1,"Improper Configuration":1,"Load Balancer":1,"Powerflex Issues":1,"Incident":1,"Database Troubleshooting":1},adr:{"Information Request":2,"General Network Support Request (Must be reclassified)":1,"Solarwinds":1}},
+'2026-01':{inc:{"Network Circuit Provider":500,"application degraded":58,"Load Balancer":25,"Switch - Leaf":25,"Solarwinds Dashboards":17,"General":7,"Unknown":6,"Switch - Edge":5,"RECEIVER CLIENT":5,"Network Investigation":4,"Infrastructure Request":4,"Services - DNS":3,"Switch - Services":3,"Router - Edge":2,"Corporate Firewall issue":2,"APPLICATION/SERVICE DOWN":2,"Switch - Core":2,"Powerflex Issues":2,"General Network Support Request (Must be reclassified)":2,"Hardware Failure":2,"Switchport Issue":2,"Database Troubleshooting":2,"Cloud Service Provider":2,"FIREWALL":1,"Add/Delete Printer":1,"Alert investigation":1,"Switch - Store and NonStore":1,"Improper Configuration":1},adr:{"General Network Support Request (Must be reclassified)":5,"Printers":3,"Solarwinds":1,"Information Request":1}},
+'2026-02':{inc:{"Network Circuit Provider":374,"Switch - Leaf":30,"Unknown":20,"application degraded":19,"Switch - Store and NonStore":18,"Solarwinds Dashboards":17,"Switch - Core":9,"Switch - Edge":8,"General":5,"TCP port connection issues":5,"Switch":5,"Router - Edge":4,"Hardware Failure":4,"Switch - Services":4,"General Network Incident Request (Must be reclassified)":4,"NO NETWORK CONNECTIVITY":4,"Corporate Firewall issue":3,"Switch - PCI":3,"Network Connectivity Issue":2,"APPLICATION/SERVICE DOWN":2,"Switchport Issue":2,"Services - DNS":2,"Services - DHCP":2,"Cloud Service Provider":2,"Network Investigation":1,"Troubleshooting":1,"General Network Support Request (Must be reclassified)":1,"Database Troubleshooting":1,"Alert investigation":1,"Configuration":1,"Powerflex Issues":1},adr:{"DNS":3,"Solarwinds":3,"DHCP":2,"General Network Support Request (Must be reclassified)":2,"Unknown":2,"Information Request":1}},
+'2026-03':{inc:{"Network Circuit Provider":271,"Unknown":47,"application degraded":18,"Solarwinds Dashboards":14,"Switch":13,"Switch - Leaf":9,"Information Request":8,"Switch - Edge":7,"Configuration":7,"RECEIVER CLIENT":7,"Switchport Issue":6,"Services - DHCP":4,"Powerflex Issues":3,"General Network Support Request (Must be reclassified)":3,"Access issues":3,"Hardware Failure":3,"Cloud Service Provider":3,"Router - Edge":3,"General":3,"Switch - Core":2,"Switch - Services":1,"Add/Delete Printer":1,"Switch - PCI":1,"Improper Configuration":1,"NO NETWORK CONNECTIVITY":1},adr:{"Solarwinds":12,"DNS":3,"General Network Support Request (Must be reclassified)":2,"Printers":1,"Information Request":1,"DHCP":1}},
+'2026-04':{inc:{"Network Circuit Provider":339,"Switch - Leaf":32,"application degraded":25,"Solarwinds Dashboards":20,"Cloud Service Provider":13,"Switch - Edge":12,"NON-PINGABLE":10,"Unknown":9,"Router - Edge":7,"Switch":5,"Configuration":5,"Switch - Core":3,"Switch - Services":3,"General":2,"PRINT":2,"Corporate Firewall issue":2,"Powerflex Issues":2,"General Network Incident Request (Must be reclassified)":2,"Incident":2,"Hardware Failure":2,"SelectorAI":2,"Database Troubleshooting":2,"Add/Delete Printer":1,"Network Connectivity Issue":1,"APPLICATION/SERVICE DOWN":1,"Switchport Issue":1,"Alert investigation":1},adr:{"Solarwinds":3,"DNS":2,"Information Request":1}},
+'2026-05':{inc:{"Network Circuit Provider":166,"application degraded":29,"Unknown":24,"Switch - Leaf":11,"Solarwinds Dashboards":11,"Switch - Edge":9,"Router - Edge":7,"Switch":7,"Switch - Core":4,"Cloud Service Provider":4,"SelectorAI":3,"NON-PINGABLE":3,"Switch - Services":2,"General":2,"Troubleshooting":1,"Access issues":1,"Corporate Firewall issue":1,"Add Device/Delete Device/Change Device":1,"Network Connectivity Issue":1,"Switchport Issue":1,"Switch - PCI":1,"Configuration":1},adr:{"DNS":1,"Solarwinds":1}},
+};
+const TRANS_TTW={
+'2025-11':{inc:{"Network Circuit Provider":424.2,"Switch":70.4,"Solarwinds Dashboards":69.0,"Switch - Edge":29.1,"Alert investigation":25.9,"application degraded":24.0,"Switch - Leaf":22.8,"Router - Edge":19.9,"Cloud Service Provider":19.8,"Unknown":14.2,"Network Investigation":12.8,"Access issues":12.7,"NO NETWORK CONNECTIVITY":10.6,"FIREWALL":6.8,"General":3.2,"Switchport Issue":2.5,"Powerflex Issues":1.8,"Services - DNS":1.7,"Hardware Failure":1.7,"Corporate Firewall issue":1.5,"Troubleshooting":1.5,"Switch - PCI":1.0,"Improper Configuration":0.8,"General Network Support Request (Must be reclassified)":0.4,"Network Connectivity Issue":0.4},adr:{"Add Device/Delete Device/Change Device":1.0,"General Network Support Request (Must be reclassified)":0.3,"DNS":0.2}},
+'2025-12':{inc:{"Network Circuit Provider":320.8,"Switch":135.7,"Solarwinds Dashboards":78.8,"Switch - Leaf":40.0,"Switch - Edge":38.7,"Corporate Firewall issue":25.4,"Router - Edge":22.4,"Database Troubleshooting":19.0,"Add Device/Delete Device/Change Device":14.3,"General":12.2,"application degraded":10.5,"Troubleshooting":6.2,"Switch - Core":6.0,"Services - DHCP":5.0,"Network Investigation":4.6,"Cloud Service Provider":4.5,"Unknown":4.4,"NO NETWORK CONNECTIVITY":3.8,"PRINT":3.2,"Powerflex Issues":2.7,"Incident":2.5,"REGISTER OFFLINE":2.0,"APPLICATION/SERVICE DOWN":2.0,"General Network Support Request (Must be reclassified)":1.8,"RECEIVER CLIENT":1.7,"Configuration":1.4,"Load Balancer":0.8,"Network Connectivity Issue":0.2,"Improper Configuration":0.0},adr:{"Information Request":1.0,"Solarwinds":1.0,"General Network Support Request (Must be reclassified)":0.3}},
+'2026-01':{inc:{"Network Circuit Provider":346.6,"Switch - Leaf":85.3,"Solarwinds Dashboards":75.3,"application degraded":42.4,"Database Troubleshooting":28.0,"Switch - Edge":25.2,"Load Balancer":10.8,"Switch - Services":8.6,"Unknown":7.0,"Router - Edge":6.8,"Corporate Firewall issue":6.4,"Powerflex Issues":5.6,"Network Investigation":4.0,"Services - DNS":4.0,"General":3.8,"RECEIVER CLIENT":3.6,"Infrastructure Request":3.0,"General Network Support Request (Must be reclassified)":2.1,"APPLICATION/SERVICE DOWN":2.0,"Hardware Failure":2.0,"Add/Delete Printer":1.4,"Switch - Store and NonStore":1.0,"Switch - Core":1.0,"Switchport Issue":0.9,"FIREWALL":0.8,"Cloud Service Provider":0.8,"Improper Configuration":0.7,"Alert investigation":0.5},adr:{"General Network Support Request (Must be reclassified)":6.1,"Information Request":3.2,"Printers":1.1,"Solarwinds":0.5}},
+'2026-02':{inc:{"Network Circuit Provider":351.3,"Solarwinds Dashboards":105.7,"Switch - Leaf":77.0,"Switch - Edge":35.2,"Switch - Store and NonStore":21.5,"Switch - Services":16.5,"Router - Edge":16.4,"application degraded":15.2,"Switch - Core":14.3,"Powerflex Issues":11.0,"Alert investigation":11.0,"General Network Support Request (Must be reclassified)":10.0,"Hardware Failure":9.5,"Services - DHCP":8.8,"General":8.5,"Corporate Firewall issue":6.2,"Switch":5.6,"Network Connectivity Issue":3.7,"TCP port connection issues":3.2,"APPLICATION/SERVICE DOWN":3.2,"Database Troubleshooting":2.7,"General Network Incident Request (Must be reclassified)":2.7,"Troubleshooting":2.5,"Switch - PCI":2.5,"Unknown":2.5,"Switchport Issue":1.7,"NO NETWORK CONNECTIVITY":1.4,"Cloud Service Provider":1.2,"Configuration":1.0,"Services - DNS":0.7,"Network Investigation":0.2},adr:{"General Network Support Request (Must be reclassified)":4.1,"Information Request":2.0,"Solarwinds":1.8,"DHCP":0.9,"DNS":0.6,"Unknown":0.5}},
+'2026-03':{inc:{"Network Circuit Provider":403.5,"Solarwinds Dashboards":97.5,"Switch - Edge":39.5,"Switch - Leaf":38.1,"application degraded":17.7,"Router - Edge":13.5,"Switch":11.1,"Switch - Core":9.0,"Information Request":8.0,"General Network Support Request (Must be reclassified)":7.0,"Powerflex Issues":6.7,"Switchport Issue":6.4,"Configuration":4.5,"Hardware Failure":4.2,"General":4.0,"Access issues":3.8,"RECEIVER CLIENT":3.8,"Cloud Service Provider":3.8,"Services - DHCP":3.5,"Add/Delete Printer":0.5,"Improper Configuration":0.5,"Switch - Services":0.2,"NO NETWORK CONNECTIVITY":0.1,"Unknown":0.0,"Switch - PCI":0.0},adr:{"Solarwinds":6.2,"General Network Support Request (Must be reclassified)":2.3,"DNS":1.3,"Printers":0.8,"Information Request":0.3,"DHCP":0.1}},
+'2026-04':{inc:{"Network Circuit Provider":510.1,"Solarwinds Dashboards":141.9,"Switch - Leaf":115.1,"Switch - Edge":56.9,"Database Troubleshooting":38.8,"Router - Edge":32.1,"application degraded":19.6,"Switch - Core":13.6,"Cloud Service Provider":12.5,"General Network Incident Request (Must be reclassified)":12.0,"NON-PINGABLE":10.2,"SelectorAI":6.0,"Configuration":5.1,"Incident":4.8,"Switch - Services":3.3,"Switch":2.9,"Corporate Firewall issue":2.5,"Powerflex Issues":2.4,"Hardware Failure":1.8,"PRINT":1.5,"General":1.2,"APPLICATION/SERVICE DOWN":0.8,"Add/Delete Printer":0.5,"Switchport Issue":0.5,"Alert investigation":0.5,"Network Connectivity Issue":0.2,"Unknown":0.0},adr:{"Information Request":2.3,"Solarwinds":1.2,"DNS":1.0}},
+'2026-05':{inc:{"Network Circuit Provider":218.0,"Solarwinds Dashboards":79.0,"Switch - Leaf":74.8,"Switch - Edge":62.0,"Router - Edge":29.3,"application degraded":21.2,"Switch - Core":17.3,"SelectorAI":15.0,"Switch":10.7,"Corporate Firewall issue":5.6,"Unknown":5.4,"Cloud Service Provider":4.8,"NON-PINGABLE":2.9,"Troubleshooting":2.0,"General":1.5,"Switch - Services":1.1,"Switch - PCI":1.0,"Add Device/Delete Device/Change Device":0.8,"Configuration":0.7,"Switchport Issue":0.5,"Access issues":0.4,"Network Connectivity Issue":0.0},adr:{"Solarwinds":0.5,"DNS":0.1}},
+};
+const TRANS_BIZ={
+'2025-11':{"Network - Incident Request":141,"Network - Cloud Connect Center":102,"Network - DataCenter ATC":50,"Network - DataCenter SSC":43,"Solarwinds - PR":34,"Network - Distribution Center":33,"Unknown":30,"Network - Monitoring":16,"STORE":11,"Firewall/Security Operations":5,"SQL Server":4,"Windows Server":3,"Network - Corporate Offices":3,"Network - Support Request":3,"Virtualization-Powerflex":2,"LINUX":2},
+'2025-12':{"Network - Cloud Connect Center":188,"Network - DataCenter ATC":53,"Network - Incident Request":49,"Network - Distribution Center":39,"Network - DataCenter SSC":28,"Unknown":22,"Network - Monitoring":19,"Firewall/Security Operations":12,"Solarwinds - PR":12,"Point of Sale (POS) - PR":7,"Network - Corporate Offices":5,"Citrix Virtual Desktop Session Manager - PR":5,"STORE":5,"Windows Server":4,"DNS Change Request":3,"Network - Support Request":3},
+'2026-01':{"Network - Cloud Connect Center":257,"Network - Incident Request":126,"Network - DataCenter ATC":77,"Network - DataCenter SSC":73,"Network - Distribution Center":57,"Solarwinds - PR":47,"Network - Monitoring":19,"STORE":7,"Unknown":6,"Citrix Virtual Desktop Session Manager - PR":5,"Windows Server":4,"Network - Support Request":3,"Firewall/Security Operations":2,"Distribution - DC Inventory - PR":2,"Virtualization-Powerflex":2},
+'2026-02':{"Network - Cloud Connect Center":169,"Network - Incident Request":121,"Network - DataCenter SSC":87,"Network - DataCenter ATC":82,"Network - Distribution Center":22,"Unknown":20,"Network - Monitoring":18,"Solarwinds - PR":13,"Network - Support Request":6,"STORE":5,"Firewall/Security Operations":3,"LINUX":2,"Network - Non Store Archive":2,"Distribution - DC Inventory - PR":2,"Network - Call Center":2},
+'2026-03':{"Network - Incident Request":123,"Network - Cloud Connect Center":81,"Network - DataCenter SSC":64,"Network - DataCenter ATC":53,"Unknown":48,"Network - Monitoring":14,"Network - Distribution Center":12,"Citrix Virtual Desktop Session Manager - PR":12,"Solarwinds - PR":10,"Network Services - PR":8,"Firewall/Security Operations":4,"Virtualization-Powerflex":3,"Network - Support Request":3,"STORE":3,"Network Switch":3},
+'2026-04':{"Network - Incident Request":226,"Network - DataCenter ATC":74,"Network - DataCenter SSC":64,"Network - Cloud Connect Center":55,"Network - Monitoring":25,"Solarwinds - PR":22,"Network - Distribution Center":15,"Windows Server":10,"Unknown":9,"STORE":2,"Virtualization-Powerflex":2,"Network - Store":2},
+'2026-05':{"Network - Incident Request":115,"Network - DataCenter SSC":53,"Network - DataCenter ATC":30,"Solarwinds - PR":25,"Network - Cloud Connect Center":22,"Unknown":20,"Network - Monitoring":13,"Windows Server":5,"Firewall/Security Operations":2,"STORE":2},
+};
+const TRANS_ESC={
+  '2025-11':{inc:8,adr:0},'2025-12':{inc:7,adr:1},'2026-01':{inc:8,adr:3},
+  '2026-02':{inc:16,adr:0},'2026-03':{inc:21,adr:3},'2026-04':{inc:18,adr:0},
+  '2026-05':{inc:9,adr:0},
+};
+const TRANS_L2_MTTR={
+  '2025-11':3.40,'2025-12':3.55,'2026-01':4.08,
+  '2026-02':3.28,'2026-03':3.48,'2026-04':3.58,'2026-05':5.27,
+};
+const TRANS_L3_MTTR={
+  '2025-11':43.1,'2025-12':30.6,'2026-01':7.7,
+  '2026-02':13.8,'2026-03':1.0,'2026-04':6.8,'2026-05':1.7,
 };
 
 function openTransitionPage(){
@@ -3346,9 +3377,7 @@ function openTransitionPage(){
   if(!builtViews.has('transition')){builtViews.add('transition');buildTransitionPage();}
 }
 
-const _transNote=msg=>'<div style="background:var(--orange50);border:1px solid var(--orange200);border-radius:var(--r8);padding:10px 14px;font-size:12px;color:var(--orange700);margin-bottom:16px;display:flex;align-items:flex-start;gap:8px"><span>⚠️</span><span>'+msg+'</span></div>';
-const _transSample=msg=>'<div style="background:#FFF8E1;border:1px solid #FFD54F;border-radius:var(--r8);padding:10px 14px;font-size:12px;color:#5D4037;margin-bottom:16px;display:flex;align-items:flex-start;gap:8px"><span>📊</span><span><strong>Sample Data:</strong> '+msg+'</span></div>';
-const _sampleTag='<span style="font-size:9px;background:#FFF3CD;color:#856404;border-radius:4px;padding:1px 5px;font-weight:700;vertical-align:middle;margin-left:4px">SAMPLE</span>';
+const _transNote=msg=>'<div style="background:var(--orange50);border:1px solid var(--orange200);border-radius:var(--r8);padding:10px 14px;font-size:12px;color:var(--orange700);margin-bottom:16px;display:flex;align-items:flex-start;gap:8px"><span>ℹ️</span><span>'+msg+'</span></div>';
 const _drRow=section=>'<div style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">'+buildTransSectionBtns(section)+'</div></div>';
 
 function buildTransitionPage(){
@@ -3357,48 +3386,43 @@ function buildTransitionPage(){
     '<div class="sec-head" style="margin-bottom:20px"><div class="sec-title">NOC to L3 Transition</div></div>'
 
     +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">Ticket Volume</div>'
-    +'<div class="sec-sub">INC + ADR from ServiceNow import · CHG from change records</div></div></div>'
+    +'<div class="sec-sub">INC · ADR/RITM · CHG tickets assigned to ITO Network L2 · Nov 2025 – present</div></div></div>'
     +_drRow('vol')
-    +_transNote('INC and ADR counts are live from imported ticket data. CHG counts come from the change record export. <strong>Assignment group filter</strong> requires L2 ticket data — not currently available.')
     +'<div id="transVolContent"></div>'
 
-    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">Tickets by Category &amp; Impacted CI</div>'
-    +'<div class="sec-sub">Breakdown by work category (INC/ADR) and configuration item (CHG)</div></div></div>'
+    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">Tickets by Situation &amp; Business Service</div>'
+    +'<div class="sec-sub">INC/ADR situation breakdown · INC by impacted business service</div></div></div>'
     +_drRow('cat')
-    +_transNote('INC and ADR use <em>ticket category</em> as a proxy for product. To map to actual products, add <em>u_product</em> or <em>business_service</em> to the INC/ADR export. CI data requires the <em>cmdb_ci</em> field in the INC/ADR export (present in CHG records only).')
     +'<div id="transCatContent">'
     +'<div style="display:grid;grid-template-columns:3fr 2fr;gap:16px;margin-bottom:22px">'
-    +'<div class="card"><div class="card-header"><div><div class="card-title">INC vs ADR by Category</div><div class="card-sub">Top categories by ticket volume · click any bar to drill in</div></div>'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">INC vs ADR by Situation</div><div class="card-sub">Top situations by ticket volume</div></div>'
     +'<div style="display:flex;gap:10px;align-items:center">'
     +'<div style="display:flex;gap:4px;align-items:center"><div style="width:10px;height:10px;border-radius:2px;background:#F79009"></div><span style="font-size:11px;color:var(--g500)">INC</span></div>'
     +'<div style="display:flex;gap:4px;align-items:center"><div style="width:10px;height:10px;border-radius:2px;background:#D0D5DD;border:1px solid #98A2B3"></div><span style="font-size:11px;color:var(--g500)">ADR</span></div>'
     +'</div></div><div style="height:260px"><canvas id="transCatChart"></canvas></div></div>'
-    +'<div class="card"><div class="card-header"><div><div class="card-title">CHG by Impacted CI</div><div class="card-sub">Top configuration items · live from CHG records</div></div></div>'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">INC by Business Service</div><div class="card-sub">Top impacted services · from TTW records</div></div></div>'
     +'<div style="height:260px"><canvas id="transCIChart"></canvas></div></div>'
     +'</div></div>'
 
     +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">Level of Effort (TTW – Total Time Worked)</div>'
-    +'<div class="sec-sub">Hours logged per category for selected date range</div></div></div>'
+    +'<div class="sec-sub">Hours logged per situation · from ServiceNow TTW records</div></div></div>'
     +_drRow('loe')
-    +_transNote('<strong>Data source:</strong> Hours from imported LOE records (LOA_TICKET_HRS). CHG ticket hours are not tracked in the current LOE dataset — add CHG numbers to the LOE import to enable. <strong>LOE by Situation:</strong> Requires a situation/priority field in the ServiceNow export — not present in current data.')
     +'<div id="transLoeContent">'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px">'
-    +'<div class="card"><div class="card-header"><div><div class="card-title">LOE – Incidents by Category</div><div class="card-sub">Total hours logged per INC category · live data</div></div></div>'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">LOE – INC by Situation</div><div class="card-sub">Total hours logged per situation</div></div></div>'
     +'<div style="height:220px"><canvas id="transLoeInc"></canvas></div></div>'
-    +'<div class="card"><div class="card-header"><div><div class="card-title">LOE – ADR/RITM by Category</div><div class="card-sub">Total hours logged per ADR category · live data</div></div></div>'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">LOE – ADR/RITM by Situation</div><div class="card-sub">Total hours logged per situation</div></div></div>'
     +'<div style="height:220px"><canvas id="transLoeAdr"></canvas></div></div>'
     +'</div></div>'
 
     +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">NOC L2 → L3 Escalations</div>'
     +'<div class="sec-sub">Tickets escalated from ITO Network L2 to ITO Network L3</div></div></div>'
     +_drRow('esc')
-    +_transSample('Escalation records are not in the current data export. Charts below use generated sample data to illustrate the intended layout. To populate with actuals, provide a ServiceNow export containing: ticket number, escalation date, originating assignment group (ITO Network L2), and ticket type.')
     +'<div id="transEscContent"></div>'
 
     +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">MTTR Comparison – L2 vs L3</div>'
-    +'<div class="sec-sub">Mean time to resolve · L3 live from ticket data · L2 uses industry benchmark</div></div></div>'
+    +'<div class="sec-sub">Median time to resolve · L2 in hours · L3 in days · live data from ServiceNow</div></div></div>'
     +_drRow('mttr')
-    +_transNote('<strong>L2 MTTR '+_sampleTag+':</strong> L2 ticket data (with resolution timestamps) is not in the current import. The L2 MTTR stat and chart below use a 0.8-day industry benchmark for NOC L2 network operations with realistic monthly variation. Import L2 ticket data to replace with actuals.')
     +'<div id="transMttrContent"></div>';
 
   rebuildTransVol();
@@ -3410,103 +3434,107 @@ function buildTransitionPage(){
 
 function rebuildTransVol(){
   ['transVolInc','transVolAdr','transVolChg'].forEach(id=>Chart.getChart(id)?.destroy());
-  const {Tf,CHGf,filtMonths,filtLabels}=transSectionData('vol');
-  const incCount=Tf.filter(t=>t.type==='INC').length;
-  const adrCount=Tf.filter(t=>t.type==='ADR').length;
-  const chgCount=CHGf.length;
-  const incClosed=Tf.filter(t=>t.type==='INC'&&t.state!=='open').length;
-  const adrClosed=Tf.filter(t=>t.type==='ADR'&&t.state!=='open').length;
-  const chgClosed=CHGf.filter(c=>c.state==='closed').length;
+  const {filtMonths,filtLabels}=transSectionData('vol');
+  const incTotal=filtMonths.reduce((s,m)=>s+(TRANS_VOL[m]?.inc||0),0);
+  const adrTotal=filtMonths.reduce((s,m)=>s+(TRANS_VOL[m]?.adrRitm||0),0);
+  const chgTotal=filtMonths.reduce((s,m)=>s+(TRANS_VOL[m]?.chg||0),0);
+  const incOpen=filtMonths.reduce((s,m)=>s+(TRANS_VOL[m]?.incOpen||0),0);
+  const adrOpen=filtMonths.reduce((s,m)=>s+(TRANS_VOL[m]?.adrRitmOpen||0),0);
+  const chgOpen=filtMonths.reduce((s,m)=>s+(TRANS_VOL[m]?.chgOpen||0),0);
   document.getElementById('transVolContent').innerHTML=
     '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px">'
-    +'<div class="digest-card" style="cursor:pointer" onclick="openFilteredPanel({label:\'All Tickets\',filter:{}})">'
-    +'<div class="d-label">Total Tickets</div><div class="d-num">'+(incCount+adrCount+chgCount)+'</div>'
-    +'<div class="d-change">INC + ADR + CHG combined</div></div>'
-    +'<div class="digest-card" style="cursor:pointer" onclick="openFilteredPanel({label:\'INC — Incidents\',filter:{type:\'INC\'}})">'
-    +'<div class="d-label">Incidents (INC)</div><div class="d-num">'+incCount+'</div>'
-    +'<div class="d-change">'+incClosed+' resolved · '+(incCount-incClosed)+' open</div></div>'
-    +'<div class="digest-card" style="cursor:pointer" onclick="openFilteredPanel({label:\'ADR Records\',filter:{type:\'ADR\'}})">'
-    +'<div class="d-label">ADR / RITM</div><div class="d-num">'+adrCount+'</div>'
-    +'<div class="d-change">'+adrClosed+' closed · '+(adrCount-adrClosed)+' open</div></div>'
-    +'<div class="digest-card">'
-    +'<div class="d-label">Changes (CHG)</div><div class="d-num">'+chgCount+'</div>'
-    +'<div class="d-change">'+chgClosed+' closed · '+(chgCount-chgClosed)+' open</div></div>'
+    +'<div class="digest-card"><div class="d-label">Total Tickets</div><div class="d-num">'+(incTotal+adrTotal+chgTotal)+'</div>'
+    +'<div class="d-change">INC + ADR/RITM + CHG combined</div></div>'
+    +'<div class="digest-card"><div class="d-label">Incidents (INC)</div><div class="d-num">'+incTotal+'</div>'
+    +'<div class="d-change">'+incOpen+' open · '+(incTotal-incOpen)+' closed</div></div>'
+    +'<div class="digest-card"><div class="d-label">ADR / RITM</div><div class="d-num">'+adrTotal+'</div>'
+    +'<div class="d-change">'+adrOpen+' open · '+(adrTotal-adrOpen)+' closed</div></div>'
+    +'<div class="digest-card"><div class="d-label">Changes (CHG)</div><div class="d-num">'+chgTotal+'</div>'
+    +'<div class="d-change">'+chgOpen+' open · '+(chgTotal-chgOpen)+' closed</div></div>'
     +'</div>'
     +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px">'
     +'<div class="card"><div class="card-header"><div><div class="card-title">Incidents (INC)</div></div></div><div style="height:200px"><canvas id="transVolInc"></canvas></div></div>'
     +'<div class="card"><div class="card-header"><div><div class="card-title">ADR / RITM</div></div></div><div style="height:200px"><canvas id="transVolAdr"></canvas></div></div>'
     +'<div class="card"><div class="card-header"><div><div class="card-title">Changes (CHG)</div></div></div><div style="height:200px"><canvas id="transVolChg"></canvas></div></div>'
     +'</div>';
-  buildTransVolChart(filtMonths,filtLabels,Tf,CHGf);
+  buildTransVolChart(filtMonths,filtLabels);
 }
 function rebuildTransCat(){
-  const {Tf,CHGf}=transSectionData('cat');
-  buildTransCategoryChart(Tf);
-  buildTransCIChart(CHGf);
+  const {filtMonths}=transSectionData('cat');
+  const incCats={},adrCats={},bizMap={};
+  filtMonths.forEach(m=>{
+    const c=TRANS_CATS[m];if(c){Object.entries(c.inc).forEach(([k,v])=>{incCats[k]=(incCats[k]||0)+v;});Object.entries(c.adr).forEach(([k,v])=>{adrCats[k]=(adrCats[k]||0)+v;});}
+    const b=TRANS_BIZ[m];if(b)Object.entries(b).forEach(([k,v])=>{bizMap[k]=(bizMap[k]||0)+v;});
+  });
+  buildTransCategoryChart(incCats,adrCats);
+  buildTransBizChart(bizMap);
 }
 function rebuildTransLoe(){
-  const {Tf}=transSectionData('loe');
-  const loeInc={},loeAdr={};
-  Tf.filter(t=>t.type==='INC').forEach(t=>{const h=LOA_TICKET_HRS[t.num]||0;loeInc[t.cat]=(loeInc[t.cat]||0)+h;});
-  Tf.filter(t=>t.type==='ADR').forEach(t=>{const h=LOA_TICKET_HRS[t.num]||0;loeAdr[t.cat]=(loeAdr[t.cat]||0)+h;});
-  buildTransLoeCharts(loeInc,loeAdr);
+  const {filtMonths}=transSectionData('loe');
+  const incTTW={},adrTTW={};
+  filtMonths.forEach(m=>{
+    const d=TRANS_TTW[m];if(!d)return;
+    Object.entries(d.inc).forEach(([k,v])=>{incTTW[k]=(incTTW[k]||0)+v;});
+    Object.entries(d.adr).forEach(([k,v])=>{adrTTW[k]=(adrTTW[k]||0)+v;});
+  });
+  buildTransLoeCharts(incTTW,adrTTW);
 }
 function rebuildTransEsc(){
   ['transEscInc','transEscAdr'].forEach(id=>Chart.getChart(id)?.destroy());
-  const {filtMonths}=transSectionData('esc');
-  const escMonths=filtMonths.filter(m=>SAMPLE_ESC[m]);
-  const escLabels=escMonths.map(m=>LOA_MONTH_LABELS[MONTHS.indexOf(m)]||m);
-  const escIncData=escMonths.map(m=>SAMPLE_ESC[m].inc);
-  const escAdrData=escMonths.map(m=>SAMPLE_ESC[m].adr);
+  const {filtMonths,filtLabels}=transSectionData('esc');
+  const escLabels=[],escIncData=[],escAdrData=[];
+  filtMonths.forEach((m,i)=>{const d=TRANS_ESC[m];if(!d)return;escLabels.push(filtLabels[i]);escIncData.push(d.inc);escAdrData.push(d.adr);});
   const totalEscInc=escIncData.reduce((a,b)=>a+b,0);
   const totalEscAdr=escAdrData.reduce((a,b)=>a+b,0);
   document.getElementById('transEscContent').innerHTML=
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">'
-    +'<div class="digest-card"><div class="d-label">Total INC Escalated '+_sampleTag+'</div>'
+    +'<div class="digest-card"><div class="d-label">Total INC Escalated</div>'
     +'<div class="d-num">'+totalEscInc+'</div><div class="d-change">From NOC L2 · selected range</div></div>'
-    +'<div class="digest-card"><div class="d-label">Total ADR/RITM Escalated '+_sampleTag+'</div>'
+    +'<div class="digest-card"><div class="d-label">Total ADR/RITM Escalated</div>'
     +'<div class="d-num">'+totalEscAdr+'</div><div class="d-change">From NOC L2 · selected range</div></div>'
     +'</div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px">'
-    +'<div class="card"><div class="card-header"><div><div class="card-title">INC Escalations per Month '+_sampleTag+'</div>'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">INC Escalations per Month</div>'
     +'<div class="card-sub">Monthly INC tickets escalated from L2 to L3</div></div></div>'
     +'<div style="height:200px"><canvas id="transEscInc"></canvas></div></div>'
-    +'<div class="card"><div class="card-header"><div><div class="card-title">ADR/RITM Escalations per Month '+_sampleTag+'</div>'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">ADR/RITM Escalations per Month</div>'
     +'<div class="card-sub">Monthly ADR/RITM tickets escalated from L2 to L3</div></div></div>'
     +'<div style="height:200px"><canvas id="transEscAdr"></canvas></div></div>'
     +'</div>';
   buildTransEscCharts(escLabels,escIncData,escAdrData);
 }
 function rebuildTransMttr(){
-  Chart.getChart('transMttr')?.destroy();
-  const {Tf,filtMonths,filtLabels}=transSectionData('mttr');
-  const l3ByMonth=filtMonths.map(m=>{const mc=Tf.filter(t=>t.month===m&&t.state!=='open');return mc.length>0?parseFloat((mc.reduce((s,t)=>s+estMTTR(t),0)/mc.length).toFixed(1)):null;});
-  const l2ByMonth=filtMonths.map(m=>SAMPLE_L2_MTTR[m]||0.8);
-  const l3Closed=Tf.filter(t=>t.state!=='open');
-  const l3Avg=l3Closed.length>0?(l3Closed.reduce((s,t)=>s+estMTTR(t),0)/l3Closed.length).toFixed(1):'—';
-  const l2Vals=l2ByMonth.filter(v=>v>0);
-  const l2Avg=l2Vals.length>0?(l2Vals.reduce((a,b)=>a+b,0)/l2Vals.length).toFixed(1):'0.8';
+  ['transMttrL2','transMttrL3'].forEach(id=>Chart.getChart(id)?.destroy());
+  const {filtMonths,filtLabels}=transSectionData('mttr');
+  const l2Data=filtMonths.map(m=>TRANS_L2_MTTR[m]??null);
+  const l3Data=filtMonths.map(m=>TRANS_L3_MTTR[m]??null);
+  const l2Vals=l2Data.filter(v=>v!=null),l3Vals=l3Data.filter(v=>v!=null);
+  const l2Avg=l2Vals.length?(l2Vals.reduce((a,b)=>a+b,0)/l2Vals.length).toFixed(1):'—';
+  const l3Avg=l3Vals.length?(l3Vals.reduce((a,b)=>a+b,0)/l3Vals.length).toFixed(1):'—';
   document.getElementById('transMttrContent').innerHTML=
-    '<div style="display:grid;grid-template-columns:1fr 1fr 2fr;gap:16px;margin-bottom:22px">'
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">'
+    +'<div class="digest-card"><div class="d-label">L2 Avg MTTR</div><div class="d-num">'+l2Avg+'h</div>'
+    +'<div class="d-change"><span class="good">Live · ITO Network L2</span></div></div>'
     +'<div class="digest-card"><div class="d-label">L3 Avg MTTR</div><div class="d-num">'+l3Avg+'d</div>'
-    +'<div class="d-change"><span class="good">Live data · ITO Network L3</span></div></div>'
-    +'<div class="digest-card"><div class="d-label">L2 Avg MTTR '+_sampleTag+'</div><div class="d-num">'+l2Avg+'d</div>'
-    +'<div class="d-change">Industry benchmark · replace with L2 import</div></div>'
-    +'<div class="card"><div class="card-header"><div><div class="card-title">L2 vs L3 MTTR by Month</div>'
-    +'<div class="card-sub">L3 live data · L2 sample benchmark</div></div>'
-    +'<span style="font-size:10px;background:#FFF3CD;color:#856404;border-radius:4px;padding:2px 7px;font-weight:700;white-space:nowrap;align-self:center">L2 SAMPLE</span>'
-    +'</div><div style="height:160px"><canvas id="transMttr"></canvas></div></div>'
+    +'<div class="d-change"><span class="good">Live · ITO Network L3</span></div></div>'
+    +'</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px">'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">L2 MTTR by Month</div>'
+    +'<div class="card-sub">Median resolution time · hours</div></div></div>'
+    +'<div style="height:200px"><canvas id="transMttrL2"></canvas></div></div>'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">L3 MTTR by Month</div>'
+    +'<div class="card-sub">Median resolution time · days</div></div></div>'
+    +'<div style="height:200px"><canvas id="transMttrL3"></canvas></div></div>'
     +'</div>';
-  buildTransMttrChart(filtLabels,l3ByMonth,l2ByMonth);
+  buildTransMttrCharts(filtLabels,l2Data,l3Data);
 }
-
-function buildTransVolChart(filtMonths,filtLabels,Tf,CHGf){
+function buildTransVolChart(filtMonths,filtLabels){
   const configs=[
-    {id:'transVolInc',color:'#F79009',data:filtMonths.map(m=>Tf.filter(t=>t.month===m&&t.type==='INC').length),type:'INC'},
-    {id:'transVolAdr',color:'#D0D5DD',data:filtMonths.map(m=>Tf.filter(t=>t.month===m&&t.type==='ADR').length),type:'ADR'},
-    {id:'transVolChg',color:'#D0D5DD',data:filtMonths.map(m=>CHGf.filter(c=>c.month===m).length),type:null}
+    {id:'transVolInc',color:'#F79009',data:filtMonths.map(m=>TRANS_VOL[m]?.inc||0)},
+    {id:'transVolAdr',color:'#D0D5DD',data:filtMonths.map(m=>TRANS_VOL[m]?.adrRitm||0)},
+    {id:'transVolChg',color:'#D0D5DD',data:filtMonths.map(m=>TRANS_VOL[m]?.chg||0)}
   ];
-  configs.forEach(({id,color,data,type})=>{
+  configs.forEach(({id,color,data})=>{
     Chart.getChart(id)?.destroy();
     new Chart(document.getElementById(id),{
       type:'bar',
@@ -3516,23 +3544,14 @@ function buildTransVolChart(filtMonths,filtLabels,Tf,CHGf){
         plugins:{legend:{display:false},tooltip:{...TT}},
         scales:{
           x:{grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:10},maxRotation:45,minRotation:45}},
-          y:{grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11},stepSize:5}}
-        },
-        onClick(e,els){
-          if(!els.length||!type)return;
-          const m=filtMonths[els[0].index];
-          openFilteredPanel({label:filtLabels[els[0].index]+' · '+type,filter:{month:m,type}});
-        },
-        onHover(e,els){if(type)e.native.target.style.cursor=els.length?'pointer':'default';}
+          y:{grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11}}}
+        }
       }
     });
   });
 }
 
-function buildTransCategoryChart(Tf){
-  const incCats={},adrCats={};
-  Tf.filter(t=>t.type==='INC').forEach(t=>{incCats[t.cat]=(incCats[t.cat]||0)+1;});
-  Tf.filter(t=>t.type==='ADR').forEach(t=>{adrCats[t.cat]=(adrCats[t.cat]||0)+1;});
+function buildTransCategoryChart(incCats,adrCats){
   const allCats=[...new Set([...Object.keys(incCats),...Object.keys(adrCats)])];
   const sorted=allCats.map(c=>({cat:c,total:(incCats[c]||0)+(adrCats[c]||0)}))
     .sort((a,b)=>b.total-a.total).slice(0,8);
@@ -3552,32 +3571,24 @@ function buildTransCategoryChart(Tf){
       plugins:{legend:{display:false},tooltip:{...TT}},
       scales:{
         x:{grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11}}},
-        y:{grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:11}}}
-      },
-      onClick(e,els){
-        if(!els.length)return;
-        const cat=labels[els[0].index];
-        const type=els[0].datasetIndex===0?'INC':'ADR';
-        openFilteredPanel({label:cat+' – '+type,filter:{category:cat,type}});
+        y:{grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:10}}}
       }
     }
   });
 }
 
-function buildTransCIChart(CHGf){
-  const ciMap={};
-  CHGf.forEach(c=>{if(c.ci)ciMap[c.ci]=(ciMap[c.ci]||0)+1;});
-  const allSorted=Object.entries(ciMap).sort((a,b)=>b[1]-a[1]);
+function buildTransBizChart(bizMap){
+  const allSorted=Object.entries(bizMap).sort((a,b)=>b[1]-a[1]);
   const top=allSorted.slice(0,6);
   const otherCount=allSorted.slice(6).reduce((s,[,v])=>s+v,0);
   const labels=top.map(([n])=>n);
   const data=top.map(([,v])=>v);
   if(otherCount>0){labels.push('Other');data.push(otherCount);}
   Chart.getChart('transCIChart')?.destroy();
-  if(!labels.length){const el=document.getElementById('transCIChart');if(el)el.parentElement.innerHTML='<div style="text-align:center;color:var(--g400);font-size:12px;padding:40px">No CHG data in range</div>';return;}
+  if(!labels.length){const el=document.getElementById('transCIChart');if(el)el.parentElement.innerHTML='<div style="text-align:center;color:var(--g400);font-size:12px;padding:40px">No data in range</div>';return;}
   new Chart(document.getElementById('transCIChart'),{
     type:'bar',
-    data:{labels,datasets:[{label:'Changes',data,backgroundColor:'#D0D5DD',borderRadius:3,borderSkipped:false}]},
+    data:{labels,datasets:[{label:'INC',data,backgroundColor:'#F79009',borderRadius:3,borderSkipped:false}]},
     options:{
       indexAxis:'y',responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{...TT}},
@@ -3589,11 +3600,11 @@ function buildTransCIChart(CHGf){
   });
 }
 
-function buildTransLoeCharts(loeInc,loeAdr){
-  [['transLoeInc',loeInc,'#F79009'],['transLoeAdr',loeAdr,'#D0D5DD']].forEach(([id,loe,color])=>{
-    const sorted=Object.entries(loe).sort((a,b)=>b[1]-a[1]);
+function buildTransLoeCharts(incTTW,adrTTW){
+  [['transLoeInc',incTTW,'#F79009'],['transLoeAdr',adrTTW,'#D0D5DD']].forEach(([id,loe,color])=>{
+    const sorted=Object.entries(loe).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).slice(0,12);
     Chart.getChart(id)?.destroy();
-    if(!sorted.length){const el=document.getElementById(id);if(el)el.parentElement.innerHTML='<div style="text-align:center;color:var(--g400);font-size:12px;padding:30px">No LOE data in range</div>';return;}
+    if(!sorted.length){const el=document.getElementById(id);if(el)el.parentElement.innerHTML='<div style="text-align:center;color:var(--g400);font-size:12px;padding:30px">No TTW data in range</div>';return;}
     new Chart(document.getElementById(id),{
       type:'bar',
       data:{labels:sorted.map(([n])=>n),datasets:[{label:'Hours',data:sorted.map(([,v])=>parseFloat(v.toFixed(1))),backgroundColor:color,borderRadius:4,borderSkipped:false}]},
@@ -3627,25 +3638,21 @@ function buildTransEscCharts(labels,incData,adrData){
   });
 }
 
-function buildTransMttrChart(labels,l3Data,l2Data){
-  Chart.getChart('transMttr')?.destroy();
-  new Chart(document.getElementById('transMttr'),{
-    type:'bar',
-    data:{labels,datasets:[
-      {label:'L3 MTTR (live)',data:l3Data,backgroundColor:'#F79009',borderRadius:4,borderSkipped:false},
-      {label:'L2 MTTR (sample)',data:l2Data,backgroundColor:'#EAECF0',borderRadius:4,borderSkipped:false}
-    ]},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{
-        legend:{display:true,position:'bottom',labels:{color:'#667085',font:{size:11},boxWidth:10,padding:10}},
-        tooltip:{...TT,callbacks:{label:i=>i.raw!=null?i.raw.toFixed(1)+'d':'—'}}
-      },
-      scales:{
-        x:{grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:11}}},
-        y:{grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11},callback:v=>v+'d'}}
+function buildTransMttrCharts(labels,l2Data,l3Data){
+  [['transMttrL2',l2Data,'#F79009','h'],['transMttrL3',l3Data,'#D0D5DD','d']].forEach(([id,data,color,unit])=>{
+    Chart.getChart(id)?.destroy();
+    new Chart(document.getElementById(id),{
+      type:'bar',
+      data:{labels,datasets:[{data,backgroundColor:color,borderRadius:4,borderSkipped:false}]},
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:i=>i.raw!=null?i.raw.toFixed(1)+unit:'—'}}},
+        scales:{
+          x:{grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:10},maxRotation:45}},
+          y:{grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11},callback:v=>v+unit}}
+        }
       }
-    }
+    });
   });
 }
 
