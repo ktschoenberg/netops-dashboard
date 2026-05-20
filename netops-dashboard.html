@@ -1187,7 +1187,6 @@ const MONTH_LABELS = ['February','March','April','May (partial)'];
    HELPERS
 ═══════════════════════════════════════ */
 function fmt(d){ const p=d.split('-'); return p[1]+'/'+p[2]+'/'+p[0].slice(2); }
-function fmtDR(d){ const p=d.split('-'); return p[1]+'/'+p[2]+'/'+p[0].slice(2); }
 function age(d){ return Math.floor((new Date('2026-05-19')-new Date(d+'T00:00:00'))/(1000*60*60*24)); }
 function stateBadge(s){
   if(s==='open')     return `<span class="badge b-open"><span class="b-dot"></span>Open</span>`;
@@ -1301,55 +1300,6 @@ const TT = {
   displayColors:true, boxWidth:8, boxHeight:8, boxPadding:3
 };
 
-function buildVolumeChart(){
-  const incData = MONTHS.map(m=>T.filter(t=>t.month===m&&t.type==='INC').length);
-  const adrData = MONTHS.map(m=>T.filter(t=>t.month===m&&t.type==='ADR').length);
-  const chart = new Chart(document.getElementById('volChart'),{
-    type:'bar',
-    data:{
-      labels:MONTH_LABELS,
-      datasets:[
-        {label:'INC – Incidents', data:incData, backgroundColor:'#F79009', borderRadius:{topLeft:4,topRight:4}, borderSkipped:false},
-        {label:'ADR – Changes',   data:adrData, backgroundColor:'#EAECF0', borderRadius:{topLeft:4,topRight:4}, borderSkipped:false},
-      ]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{
-        legend:{display:false},
-        tooltip:{...TT, callbacks:{footer:items=>'Total: '+items.reduce((s,i)=>s+i.raw,0)}}
-      },
-      scales:{
-        x:{stacked:true, grid:{display:false}, border:{display:false}, ticks:{color:'#667085',font:{size:12}}},
-        y:{stacked:true, grid:{color:'#F2F4F7'}, border:{display:false}, ticks:{color:'#667085',font:{size:12},stepSize:5,padding:6}}
-      },
-      onClick(e,els){
-        if(!els.length) return;
-        const idx = els[0].index;
-        const m = MONTHS[idx];
-        openFilteredPanel({label:`${MONTH_LABELS[idx]} · ${T.filter(t=>t.month===m).length} tickets`, filter:{month:m}});
-      }
-    }
-  });
-}
-
-function buildCatBars(){
-  const cats = {};
-  T.forEach(t=>{ cats[t.cat]=(cats[t.cat]||0)+1; });
-  const sorted = Object.entries(cats).sort((a,b)=>b[1]-a[1]);
-  const max = sorted[0][1];
-  const el = document.getElementById('catBars');
-  sorted.forEach(([name,count])=>{
-    const pct = Math.round((count/max)*100);
-    el.insertAdjacentHTML('beforeend', `
-      <div class="cat-row" onclick="openFilteredPanel({label:'${name}',filter:{category:'${name}'}})">
-        <div class="cat-label">${name}</div>
-        <div class="cat-track"><div class="cat-fill" style="width:${pct}%"></div></div>
-        <div class="cat-count">${count}</div>
-      </div>
-    `);
-  });
-}
 
 /* ═══════════════════════════════════════
    PANEL SYSTEM
@@ -1723,7 +1673,7 @@ function buildTeamView(){
     const h=filtTeamMonthly[m]||0;
     if(h>peakHrs){peakHrs=h;peakMonth=LOA_MONTH_LABELS[LOA_MONTHS.indexOf(m)]||m;}
   });
-  const rangeLabel=f?(fmtDR(f.start)+' – '+fmtDR(f.end)):(LOA_MONTHS.length?fmtDR(LOA_MONTHS[0]+'-01')+' – '+fmtDR(LOA_MONTHS[LOA_MONTHS.length-1]+'-01'):'All Data');
+  const rangeLabel=f?(fmt(f.start)+' – '+fmt(f.end)):(LOA_MONTHS.length?fmt(LOA_MONTHS[0]+'-01')+' – '+fmt(LOA_MONTHS[LOA_MONTHS.length-1]+'-01'):'All Data');
 
   const _sToday=new Date();
   const _sMN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -1816,7 +1766,6 @@ function buildTeamView(){
   buildTeamHoursChart();
   buildTeamTrendChart();
 
-  // Individual workload cards
   page.insertAdjacentHTML('beforeend',
     '<div class="sec-head" style="margin-top:8px;margin-bottom:16px"><div>'
     +'<div class="sec-title" style="font-size:14px">Individual Workload</div>'
@@ -1825,7 +1774,6 @@ function buildTeamView(){
     +'<div class="team-grid" id="teamGrid" style="margin-bottom:22px"></div>'
   );
 
-  // AI-Powered Insights
   page.insertAdjacentHTML('beforeend',
     '<div class="sec-head" style="margin-bottom:16px"><div>'
     +'<div class="sec-title" style="font-size:14px">AI-Powered Insights</div>'
@@ -1858,7 +1806,6 @@ function buildTeamView(){
     +'</div></div>'
   );
 
-  // Open & Service-Impacting Tickets
   const _openCount=T.filter(t=>t.state==='open').length;
   const _restoredCount=T.filter(t=>t.state==='restored').length;
   page.insertAdjacentHTML('beforeend',
@@ -1876,7 +1823,6 @@ function buildTeamView(){
     +'</table></div></div>'
   );
 
-  // Recent Activity
   page.insertAdjacentHTML('beforeend',
     '<div class="table-card">'
     +'<div class="table-head-row"><div>'
@@ -2182,7 +2128,7 @@ function buildChangeSchedulePage(){
     <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
       <div>
         <h1 class="page-title">Change Schedule</h1>
-        <p class="page-sub">ServiceNow CHG records &mdash; ${total} changes${getDateFilter()?(' · '+fmtDR(getDateFilter().start)+' – '+fmtDR(getDateFilter().end)):', data through May 2026'}</p>
+        <p class="page-sub">ServiceNow CHG records &mdash; ${total} changes${getDateFilter()?(' · '+fmt(getDateFilter().start)+' – '+fmt(getDateFilter().end)):', data through May 2026'}</p>
       </div>
       <div style="display:flex;gap:8px">
         <button class="btn-outline" onclick="openFilteredCHGPanel({label:'Open Changes',state:'open'})">View Open</button>
@@ -2334,8 +2280,8 @@ function openCHGDetail(num){
       <div class="td-field"><div class="td-field-label">CI</div><div class="td-field-val">${c.ci||'—'}</div></div>
       <div class="td-field"><div class="td-field-label">Project</div><div class="td-field-val" style="font-family:monospace;font-size:13px">${c.project||'—'}</div></div>
       <div class="td-field"><div class="td-field-label">Approval</div><div class="td-field-val" style="font-weight:600;color:${approvalColor}">${c.approval}</div></div>
-      <div class="td-field"><div class="td-field-label">Start Date</div><div class="td-field-val">${c.start?fmtDR(c.start):'—'}</div></div>
-      <div class="td-field"><div class="td-field-label">End Date</div><div class="td-field-val">${c.end?fmtDR(c.end):'—'}</div></div>
+      <div class="td-field"><div class="td-field-label">Start Date</div><div class="td-field-val">${c.start?fmt(c.start):'—'}</div></div>
+      <div class="td-field"><div class="td-field-label">End Date</div><div class="td-field-val">${c.end?fmt(c.end):'—'}</div></div>
       <div class="td-field"><div class="td-field-label">Month</div><div class="td-field-val">${c.month||'—'}</div></div>
     </div>
   </div>`;
@@ -2552,7 +2498,7 @@ function buildDirectorView(){
     page.innerHTML='<div style="padding:60px 28px;text-align:center">'
       +'<div style="font-size:32px;margin-bottom:12px">📭</div>'
       +'<div style="font-size:15px;font-weight:700;color:var(--g700);margin-bottom:6px">No tickets in this range</div>'
-      +'<div style="font-size:13px;color:var(--g400);margin-bottom:20px">'+(f?fmtDR(f.start)+' – '+fmtDR(f.end):'Selected period')+'</div>'
+      +'<div style="font-size:13px;color:var(--g400);margin-bottom:20px">'+(f?fmt(f.start)+' – '+fmt(f.end):'Selected period')+'</div>'
       +'<button class="btn btn-primary" onclick="setDateRange(\'all\')">View All Data</button>'
       +'</div>';
     return;
@@ -3056,72 +3002,6 @@ function exportCSV(){
 /* ═══════════════════════════════════════
    DYNAMIC KPIs
 ═══════════════════════════════════════ */
-function buildKPIs(){
-  const total=T.length;
-  const openItems=T.filter(t=>t.state==='open');
-  const closed=T.filter(t=>t.state!=='open');
-  const resRate=total>0?((closed.length/total)*100).toFixed(1):'0.0';
-  let peakM='',peakMLabel='',peakCount=0;
-  MONTHS.forEach((m,i)=>{
-    const c=T.filter(t=>t.month===m).length;
-    if(c>peakCount){peakCount=c;peakM=m;peakMLabel=MONTH_LABELS[i];}
-  });
-  const avgCount=MONTHS.length?total/MONTHS.length:0;
-  const peakRatio=peakCount>0&&avgCount>0?(peakCount/avgCount).toFixed(1)+'×':'—';
-  const openFoot=openItems.length===0
-    ?`<span class="chip chip-green">All clear</span>`
-    :openItems.length===1
-    ?`<span class="chip chip-orange">${openItems[0].num}</span><span>${age(openItems[0].opened)} days open</span>`
-    :`<span class="chip chip-orange">${openItems.length} open items</span>`;
-  const dateRange=MONTH_LABELS.length>=2
-    ?MONTH_LABELS[0].replace(' (partial)','')+' – '+MONTH_LABELS[MONTH_LABELS.length-1]
-    :MONTH_LABELS[0]||'—';
-  document.getElementById('kpiGrid').innerHTML=`
-    <div class="kpi" onclick="openFilteredPanel({label:'All Tickets',filter:{}})">
-      <div class="kpi-top"><div class="kpi-label">Total Tickets</div><div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div></div>
-      <div class="kpi-num">${total}</div>
-      <div class="kpi-foot"><span class="chip chip-g">${dateRange}</span><span>ITO Network L3</span></div>
-    </div>
-    <div class="kpi" onclick="openFilteredPanel({label:'Open Tickets',filter:{state:'open'}})">
-      <div class="kpi-top"><div class="kpi-label">Currently Open</div><div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div></div>
-      <div class="kpi-num ${openItems.length>0?'orange':''}">${openItems.length}</div>
-      <div class="kpi-foot">${openFoot}</div>
-    </div>
-    <div class="kpi" onclick="openFilteredPanel({label:'Closed Tickets',filter:{state:'closed'}})">
-      <div class="kpi-top"><div class="kpi-label">Resolution Rate</div><div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div></div>
-      <div class="kpi-num">${resRate}<sup>%</sup></div>
-      <div class="kpi-foot"><span class="chip chip-green">${closed.length} resolved</span><span>${openItems.length} pending</span></div>
-    </div>
-    <div class="kpi" onclick="openFilteredPanel({label:'${peakMLabel} — Peak Month',filter:{month:'${peakM}'}})">
-      <div class="kpi-top"><div class="kpi-label">Peak Month</div><div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div></div>
-      <div class="kpi-num">${peakCount}</div>
-      <div class="kpi-foot"><span class="chip chip-g">${peakMLabel||'—'}</span><span>${peakRatio} avg</span></div>
-    </div>
-  `;
-}
-
-/* ═══════════════════════════════════════
-   DYNAMIC ALERT BAR
-═══════════════════════════════════════ */
-function buildAlertBar(){
-  const el=document.getElementById('alertBar');
-  const openItems=T.filter(t=>t.state==='open');
-  if(!openItems.length){el.style.display='none';return;}
-  el.style.display='flex';
-  const t=openItems[0];
-  const label=openItems.length===1
-    ?`<strong>1 open ticket:</strong> ${t.num} · ${t.desc} · Assigned ${t.who} · Opened ${fmt(t.opened)} · ${age(t.opened)} days`
-    :`<strong>${openItems.length} open tickets:</strong> ${openItems.map(x=>x.num).join(', ')}`;
-  el.setAttribute('onclick',openItems.length===1?`openTicketDetail('${t.num}')`:`openFilteredPanel({label:'Open Tickets',filter:{state:'open'}})`);
-  el.innerHTML=`
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;width:15px;height:15px">
-      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-      <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-    </svg>
-    <span>${label}</span>
-    <span class="alert-link">View details →</span>
-  `;
-}
 
 /* ═══════════════════════════════════════
    REFRESH HELPERS
@@ -3488,7 +3368,6 @@ function buildTransitionPage(){
     '<div class="sec-head" style="margin-bottom:12px"><div class="sec-title">NOC to L3 Transition</div></div>'
     +'<div style="margin-bottom:20px"><div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">'+buildDateRangeBtns()+'</div></div>'
 
-    // Section 1: Volume
     +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">Ticket Volume</div>'
     +'<div class="sec-sub">Total tickets in selected range · INC + ADR from ServiceNow import · CHG from change records</div></div></div>'
     +noteHtml('INC and ADR counts are live from imported ticket data. CHG counts come from the change record export. All three respond to the date filter above. <strong>Assignment group filter</strong> requires L2 ticket data — not currently available.')
@@ -3516,20 +3395,18 @@ function buildTransitionPage(){
     +'</div></div>'
     +'<div style="height:220px"><canvas id="transVolChart"></canvas></div></div>'
 
-    // Section 2: Product & CI
-    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">Tickets by Product &amp; Impacted CI</div>'
-    +'<div class="sec-sub">Distribution by work category and configuration item</div></div></div>'
-    +noteHtml('<strong>Product:</strong> INC and ADR use <em>ticket category</em> as a proxy for product (Connectivity &amp; Performance, Hardware &amp; Physical, etc.) — a dedicated product field is not in the current ServiceNow export. To map to actual products, add a <em>u_product</em> or <em>business_service</em> column to the INC/ADR export. <strong>Impacted CI for INC/ADR:</strong> CI data is present in CHG records (shown below) but not in the current INC/ADR export — add the <em>cmdb_ci</em> field to enable it.')
-    +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px">'
-    +'<div class="card"><div class="card-header"><div><div class="card-title">INC by Category</div><div class="card-sub">Proxy for product · live data</div></div></div>'
-    +'<div style="height:220px;display:flex;align-items:center;justify-content:center"><canvas id="transIncPie"></canvas></div></div>'
-    +'<div class="card"><div class="card-header"><div><div class="card-title">ADR / RITM by Category</div><div class="card-sub">Proxy for product · live data</div></div></div>'
-    +'<div style="height:220px;display:flex;align-items:center;justify-content:center"><canvas id="transAdrPie"></canvas></div></div>'
-    +'<div class="card"><div class="card-header"><div><div class="card-title">CHG by Impacted CI</div><div class="card-sub">Live from CHG records · ci field</div></div></div>'
-    +'<div style="height:220px;display:flex;align-items:center;justify-content:center"><canvas id="transCIPie"></canvas></div></div>'
+    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">Tickets by Category &amp; Impacted CI</div>'
+    +'<div class="sec-sub">Breakdown by work category (INC/ADR) and configuration item (CHG)</div></div></div>'
+    +noteHtml('INC and ADR use <em>ticket category</em> as a proxy for product. To map to actual products, add <em>u_product</em> or <em>business_service</em> to the INC/ADR export. CI data requires the <em>cmdb_ci</em> field in the INC/ADR export (present in CHG records only).')
+    +'<div style="display:grid;grid-template-columns:3fr 2fr;gap:16px;margin-bottom:22px">'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">INC vs ADR by Category</div><div class="card-sub">Top categories by ticket volume · click any bar to drill in</div></div>'
+    +'<div style="display:flex;gap:10px;align-items:center">'
+    +'<div style="display:flex;gap:4px;align-items:center"><div style="width:10px;height:10px;border-radius:2px;background:#F79009"></div><span style="font-size:11px;color:var(--g500)">INC</span></div>'
+    +'<div style="display:flex;gap:4px;align-items:center"><div style="width:10px;height:10px;border-radius:2px;background:#2E90FA"></div><span style="font-size:11px;color:var(--g500)">ADR</span></div>'
+    +'</div></div><div style="height:260px"><canvas id="transCatChart"></canvas></div></div>'
+    +'<div class="card"><div class="card-header"><div><div class="card-title">CHG by Impacted CI</div><div class="card-sub">Top configuration items · live from CHG records</div></div></div>'
+    +'<div style="height:260px"><canvas id="transCIChart"></canvas></div></div>'
     +'</div>'
-
-    // Section 3: LOE
     +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">Level of Effort (TTW – Total Time Worked)</div>'
     +'<div class="sec-sub">Hours logged per category for selected date range</div></div></div>'
     +noteHtml('<strong>Data source:</strong> Hours from imported LOE records (LOA_TICKET_HRS). CHG ticket hours are not tracked in the current LOE dataset — add CHG numbers to the LOE import to enable. <strong>LOE by Situation:</strong> Requires a situation/priority field in the ServiceNow export — not present in current data. <strong>LOE by Impacted CI for INC/ADR:</strong> Requires the <em>cmdb_ci</em> field in the INC/ADR export.')
@@ -3540,7 +3417,6 @@ function buildTransitionPage(){
     +'<div style="height:220px"><canvas id="transLoeAdr"></canvas></div></div>'
     +'</div>'
 
-    // Section 4: Escalations
     +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">NOC L2 → L3 Escalations</div>'
     +'<div class="sec-sub">Tickets escalated from ITO Network L2 to ITO Network L3</div></div></div>'
     +sampleHtml('Escalation records are not in the current data export. Charts below use generated sample data to illustrate the intended layout. To populate with actuals, provide a ServiceNow export containing: ticket number, escalation date, originating assignment group (ITO Network L2), and ticket type.')
@@ -3561,7 +3437,6 @@ function buildTransitionPage(){
     +'<div style="height:200px"><canvas id="transEscAdr"></canvas></div></div>'
     +'</div>'
 
-    // Section 5: MTTR
     +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">MTTR Comparison – L2 vs L3</div>'
     +'<div class="sec-sub">Mean time to resolve · L3 live from ticket data · L2 uses industry benchmark</div></div></div>'
     +noteHtml('<strong>L2 MTTR '+sampleTag+':</strong> L2 ticket data (with resolution timestamps) is not in the current import. The L2 MTTR stat and chart below use a 0.8-day industry benchmark for NOC L2 network operations with realistic monthly variation. Import L2 ticket data to replace with actuals. <strong>Filter by assignment group</strong> for L2 also requires that data.')
@@ -3579,7 +3454,7 @@ function buildTransitionPage(){
     +'</div>';
 
   buildTransVolChart(filtMonths,filtLabels,Tf,CHGf);
-  buildTransProductCharts(Tf);
+  buildTransCategoryChart(Tf);
   buildTransCIChart(CHGf);
   buildTransLoeCharts(loeInc,loeAdr);
   buildTransEscCharts(escLabels,escIncData,escAdrData);
@@ -3615,42 +3490,63 @@ function buildTransVolChart(filtMonths,filtLabels,Tf,CHGf){
   });
 }
 
-function buildTransProductCharts(Tf){
-  const PIE_COLORS=['#F79009','#2E90FA','#12B76A','#6941C6','#EE46BC','#667085','#F04438','#0086C9'];
-  ['INC','ADR'].forEach(type=>{
-    const id=type==='INC'?'transIncPie':'transAdrPie';
-    const cats={};
-    Tf.filter(t=>t.type===type).forEach(t=>{cats[t.cat]=(cats[t.cat]||0)+1;});
-    const sorted=Object.entries(cats).sort((a,b)=>b[1]-a[1]);
-    Chart.getChart(id)?.destroy();
-    if(!sorted.length){document.getElementById(id).parentElement.innerHTML='<div style="text-align:center;color:var(--g400);font-size:12px;padding:30px">No data in range</div>';return;}
-    new Chart(document.getElementById(id),{
-      type:'doughnut',
-      data:{labels:sorted.map(([n])=>n),datasets:[{data:sorted.map(([,v])=>v),backgroundColor:PIE_COLORS.slice(0,sorted.length),borderWidth:1,borderColor:'#fff'}]},
-      options:{
-        responsive:true,maintainAspectRatio:false,cutout:'55%',
-        plugins:{legend:{position:'bottom',labels:{color:'#667085',font:{size:10},boxWidth:8,padding:6}},tooltip:{...TT}},
-        onClick(e,els){
-          if(!els.length)return;
-          const cat=sorted[els[0].index][0];
-          openFilteredPanel({label:cat,filter:{category:cat,type}});
-        }
+function buildTransCategoryChart(Tf){
+  const incCats={},adrCats={};
+  Tf.filter(t=>t.type==='INC').forEach(t=>{incCats[t.cat]=(incCats[t.cat]||0)+1;});
+  Tf.filter(t=>t.type==='ADR').forEach(t=>{adrCats[t.cat]=(adrCats[t.cat]||0)+1;});
+  const allCats=[...new Set([...Object.keys(incCats),...Object.keys(adrCats)])];
+  const sorted=allCats.map(c=>({cat:c,total:(incCats[c]||0)+(adrCats[c]||0)}))
+    .sort((a,b)=>b.total-a.total).slice(0,8);
+  const labels=sorted.map(r=>r.cat);
+  const incData=labels.map(c=>incCats[c]||0);
+  const adrData=labels.map(c=>adrCats[c]||0);
+  Chart.getChart('transCatChart')?.destroy();
+  if(!sorted.length){const el=document.getElementById('transCatChart');if(el)el.parentElement.innerHTML='<div style="text-align:center;color:var(--g400);font-size:12px;padding:40px">No data in range</div>';return;}
+  new Chart(document.getElementById('transCatChart'),{
+    type:'bar',
+    data:{labels,datasets:[
+      {label:'INC',data:incData,backgroundColor:'#F79009',borderRadius:3,borderSkipped:false},
+      {label:'ADR',data:adrData,backgroundColor:'#2E90FA',borderRadius:3,borderSkipped:false}
+    ]},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{...TT}},
+      scales:{
+        x:{grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11}}},
+        y:{grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:11}}}
+      },
+      onClick(e,els){
+        if(!els.length)return;
+        const cat=labels[els[0].index];
+        const type=els[0].datasetIndex===0?'INC':'ADR';
+        openFilteredPanel({label:cat+' – '+type,filter:{category:cat,type}});
       }
-    });
+    }
   });
 }
 
 function buildTransCIChart(CHGf){
   const ciMap={};
   CHGf.forEach(c=>{if(c.ci)ciMap[c.ci]=(ciMap[c.ci]||0)+1;});
-  const sorted=Object.entries(ciMap).sort((a,b)=>b[1]-a[1]);
-  const COLORS=['#2E90FA','#F79009','#12B76A','#6941C6','#EE46BC','#667085','#F04438'];
-  Chart.getChart('transCIPie')?.destroy();
-  if(!sorted.length){const el=document.getElementById('transCIPie');if(el)el.parentElement.innerHTML='<div style="text-align:center;color:var(--g400);font-size:12px;padding:30px">No CHG data in range</div>';return;}
-  new Chart(document.getElementById('transCIPie'),{
-    type:'doughnut',
-    data:{labels:sorted.map(([n])=>n),datasets:[{data:sorted.map(([,v])=>v),backgroundColor:COLORS.slice(0,sorted.length),borderWidth:1,borderColor:'#fff'}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'bottom',labels:{color:'#667085',font:{size:10},boxWidth:8,padding:6}},tooltip:{...TT}}}
+  const allSorted=Object.entries(ciMap).sort((a,b)=>b[1]-a[1]);
+  const top=allSorted.slice(0,6);
+  const otherCount=allSorted.slice(6).reduce((s,[,v])=>s+v,0);
+  const labels=top.map(([n])=>n);
+  const data=top.map(([,v])=>v);
+  if(otherCount>0){labels.push('Other');data.push(otherCount);}
+  Chart.getChart('transCIChart')?.destroy();
+  if(!labels.length){const el=document.getElementById('transCIChart');if(el)el.parentElement.innerHTML='<div style="text-align:center;color:var(--g400);font-size:12px;padding:40px">No CHG data in range</div>';return;}
+  new Chart(document.getElementById('transCIChart'),{
+    type:'bar',
+    data:{labels,datasets:[{label:'Changes',data,backgroundColor:'#2E90FA',borderRadius:3,borderSkipped:false}]},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{...TT}},
+      scales:{
+        x:{grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11}}},
+        y:{grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:10}}}
+      }
+    }
   });
 }
 
