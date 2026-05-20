@@ -3069,20 +3069,41 @@ function exportPDF(){
     'view-training' : 'Training Opportunities',
     'view-transition': 'NOC Escalations',
   };
+  const NAV_MAP = {
+    'view-director' : 'navDashboard',
+    'view-team'     : 'navTeam',
+    'view-training' : 'navTraining',
+    'view-transition': 'navTransition',
+  };
   const pageTitle = PAGE_TITLES[activeView.id] || 'Network Operations Dashboard';
+  const activeNavId = NAV_MAP[activeView.id] || 'navDashboard';
   const now = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
 
   // Snapshot every canvas in the active view before cloning
   const canvasMap = {};
   activeView.querySelectorAll('canvas').forEach(c=>{
-    try{ canvasMap[c.id||('_c'+Math.random())] = c.toDataURL('image/png'); c.dataset.printId = c.id||'_'; }catch(e){}
+    const key = c.id || ('_c'+Math.random());
+    try{ canvasMap[key] = c.toDataURL('image/png'); c.dataset.printId = key; }catch(e){}
   });
 
-  // Deep clone the rendered content
-  const clone = activeView.cloneNode(true);
+  // Clone sidebar and mark the right item active
+  const sidebarEl = document.querySelector('.sidebar');
+  const sidebarClone = sidebarEl ? sidebarEl.cloneNode(true) : null;
+  if(sidebarClone){
+    sidebarClone.querySelectorAll('.s-item').forEach(btn=>{
+      btn.removeAttribute('onclick');
+      btn.classList.remove('active');
+      if(btn.id === activeNavId) btn.classList.add('active');
+    });
+    // Remove open-items pill badge (not meaningful in static export)
+    sidebarClone.querySelectorAll('.s-pill').forEach(p=>p.remove());
+  }
+
+  // Clone the active view content
+  const contentClone = activeView.cloneNode(true);
 
   // Replace canvas elements with captured images
-  clone.querySelectorAll('canvas').forEach(c=>{
+  contentClone.querySelectorAll('canvas').forEach(c=>{
     const src = canvasMap[c.dataset.printId||c.id];
     const ph = c.closest('[style*="height"]') || c.parentElement;
     const h = ph ? (ph.style.height||'220px') : '220px';
@@ -3096,13 +3117,9 @@ function exportPDF(){
     }
   });
 
-  // Strip interactive + overlay elements
-  clone.querySelectorAll('button,.btn,input,select,.panel-overlay,.panel,.dr-btn,[onclick*="setDateRange"],[onclick*="triggerImport"]').forEach(el=>el.remove());
+  // Strip interactive controls from content
+  contentClone.querySelectorAll('button,.btn,input,select,.panel-overlay,.panel,[data-dr]').forEach(el=>el.remove());
 
-  // Strip date-range pill row (first child of dirPage if it's the pill row)
-  clone.querySelectorAll('[data-dr]').forEach(el=>el.closest('div')?.remove());
-
-  // Get the page's full inline CSS
   const css = document.querySelector('style')?.textContent || '';
 
   const printHTML = `<!DOCTYPE html>
@@ -3113,53 +3130,66 @@ function exportPDF(){
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-@page { size: A4 landscape; margin: 14mm 13mm; }
+@page { size: A4 landscape; margin: 0; }
 *, *::before, *::after { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 ${css}
-body { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; background: #fff; margin: 0; padding: 0; color: #101828; }
-/* ── PDF header ── */
+html, body { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Inter', system-ui, sans-serif; font-size: 12px; color: #101828; background: #fff; }
+/* ── Root layout: sidebar + content side by side ── */
+.pdf-root { display: flex; flex-direction: row; width: 100%; min-height: 100%; }
+/* ── Sidebar ── */
+.sidebar {
+  position: relative !important;
+  width: 196px !important;
+  min-width: 196px !important;
+  height: auto !important;
+  min-height: 100vh;
+  flex-shrink: 0;
+  display: flex !important;
+  flex-direction: column;
+  overflow: visible !important;
+}
+.s-item { cursor: default !important; pointer-events: none; }
+/* ── Content area ── */
+.pdf-content { flex: 1; padding: 14mm 12mm 14mm 12mm; overflow: visible; min-width: 0; }
+/* ── Content header ── */
 .pdf-hdr { display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 10px; border-bottom: 2px solid #F2F4F7; margin-bottom: 18px; page-break-after: avoid; }
 .pdf-hdr-left { display: flex; flex-direction: column; gap: 2px; }
 .pdf-hdr-org { font-size: 10px; font-weight: 600; color: #667085; text-transform: uppercase; letter-spacing: .06em; }
 .pdf-hdr-title { font-size: 16px; font-weight: 700; color: #101828; }
 .pdf-hdr-date { font-size: 11px; color: #667085; }
-/* ── Layout fixes for print ── */
+/* ── Print layout fixes ── */
 .view { display: block !important; position: static !important; padding: 0 !important; }
 .page { padding: 0 !important; }
-main { padding: 0 !important; }
-/* Prevent orphaned cards */
 .card, .digest-card, .table-card, .bench-card, .icard, .kpi, .tc { break-inside: avoid; }
 .sec-head { break-after: avoid; }
-/* Flatten grid for narrow print columns */
-.charts-3 { grid-template-columns: repeat(3,1fr) !important; }
-.bench-grid { grid-template-columns: repeat(3,1fr) !important; }
-/* Hide scrollbars and overflow */
 .tw { overflow: visible !important; }
 table { width: 100%; font-size: 11px; }
 th, td { padding: 5px 8px !important; font-size: 11px !important; }
-/* Scale down large number displays */
-.d-num { font-size: 22px !important; }
-.sv { font-size: 22px !important; }
-/* Collapse insights two-col to full width on very narrow pages */
+.d-num { font-size: 20px !important; }
+.sv { font-size: 20px !important; }
 .insights-wrap { grid-template-columns: 1fr 1fr; gap: 12px; }
 .icard p { font-size: 11px !important; }
-/* Remove hover states and shadows for clean print */
 .card, .digest-card { box-shadow: none !important; }
+.charts-3 { grid-template-columns: repeat(3,1fr) !important; }
+.bench-grid { grid-template-columns: repeat(3,1fr) !important; }
 </style>
 </head>
 <body>
-<div class="pdf-hdr">
-  <div class="pdf-hdr-left">
-    <div class="pdf-hdr-org">ITO Network L3 &nbsp;·&nbsp; Network Operations Report Center</div>
-    <div class="pdf-hdr-title">${pageTitle}</div>
+<div class="pdf-root">
+  ${sidebarClone ? sidebarClone.outerHTML : ''}
+  <div class="pdf-content">
+    <div class="pdf-hdr">
+      <div class="pdf-hdr-left">
+        <div class="pdf-hdr-org">ITO Network L3 &nbsp;·&nbsp; Network Operations Report Center</div>
+        <div class="pdf-hdr-title">${pageTitle}</div>
+      </div>
+      <div class="pdf-hdr-date">${now}</div>
+    </div>
+    ${contentClone.innerHTML}
   </div>
-  <div class="pdf-hdr-date">${now}</div>
 </div>
-${clone.innerHTML}
 <script>
-  window.addEventListener('load', function(){
-    setTimeout(function(){ window.print(); }, 600);
-  });
+  window.addEventListener('load', function(){ setTimeout(function(){ window.print(); }, 700); });
 <\/script>
 </body>
 </html>`;
@@ -3170,6 +3200,7 @@ ${clone.innerHTML}
   win.document.write(printHTML);
   win.document.close();
 }
+
 
 /* ═══════════════════════════════════════
    DYNAMIC KPIs
