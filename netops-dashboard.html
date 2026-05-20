@@ -361,20 +361,6 @@ tbody tr:hover td{background:var(--g100)}
       </svg>
       Dashboard <em style="font-weight:400;color:#FDB022">(beta)</em>
     </button>
-    <button class="s-item" onclick="openFilteredPanel({label:'All Tickets',filter:{}})">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-        <polyline points="14 2 14 8 20 8"/>
-      </svg>
-      All Tickets
-    </button>
-    <button class="s-item" onclick="openFilteredPanel({label:'Open Tickets',filter:{state:'open'}})">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-      </svg>
-      Open Items
-      <span class="s-pill">1</span>
-    </button>
     <button class="s-item" id="navTeam" onclick="openTeamPage()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -394,6 +380,20 @@ tbody tr:hover td{background:var(--g100)}
         <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
       </svg>
       NOC Escalations
+    </button>
+    <button class="s-item" onclick="openFilteredPanel({label:'All Tickets',filter:{}})">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+      </svg>
+      All Tickets
+    </button>
+    <button class="s-item" onclick="openFilteredPanel({label:'Open Tickets',filter:{state:'open'}})">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      Open Items
+      <span class="s-pill">1</span>
     </button>
   </nav>
 
