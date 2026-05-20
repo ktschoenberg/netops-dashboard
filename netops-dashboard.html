@@ -52,10 +52,10 @@ body{font-family:var(--font);background:var(--g100);color:var(--g900);display:fl
 .s-appver{font-size:10.5px;color:rgba(255,255,255,.5)}
 .s-nav{padding:8px 6px;flex:1}
 .s-sec{font-size:10px;font-weight:600;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.07em;padding:10px 8px 3px}
-.s-item{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:var(--r6);color:rgba(255,255,255,.6);font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;transition:background .12s,color .12s;margin-bottom:1px;border:none;background:none;width:100%;text-align:left;font-family:var(--font)}
-.s-item:hover{background:#161B27;color:rgba(255,255,255,.85)}
+.s-item{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:var(--r6);color:#FFFFFF;font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;transition:background .12s,color .12s;margin-bottom:1px;border:none;background:none;width:100%;text-align:left;font-family:var(--font)}
+.s-item:hover{background:#161B27;color:#FFFFFF}
 .s-item.active{background:var(--side-active);color:var(--side-text-active)}
-.s-item svg{width:15px;height:15px;flex-shrink:0;opacity:.65}
+.s-item svg{width:15px;height:15px;flex-shrink:0;opacity:1}
 .s-item.active svg{opacity:1}
 .s-pill{margin-left:auto;background:var(--orange500);color:#fff;font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:var(--rfull);line-height:1.7}
 .s-pill.blue{background:var(--blue600)}
@@ -3390,6 +3390,11 @@ function buildTransitionPage(){
     +_drRow('vol')
     +'<div id="transVolContent"></div>'
 
+    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">NOC L2 → L3 Escalations</div>'
+    +'<div class="sec-sub">Tickets escalated from ITO Network L2 to ITO Network L3</div></div></div>'
+    +_drRow('esc')
+    +'<div id="transEscContent"></div>'
+
     +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">Tickets by Situation &amp; Business Service</div>'
     +'<div class="sec-sub">INC situation breakdown · INC by impacted business service</div></div></div>'
     +_drRow('cat')
@@ -3412,20 +3417,15 @@ function buildTransitionPage(){
     +'<div style="height:220px"><canvas id="transLoeAdr"></canvas></div></div>'
     +'</div></div>'
 
-    +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">NOC L2 → L3 Escalations</div>'
-    +'<div class="sec-sub">Tickets escalated from ITO Network L2 to ITO Network L3</div></div></div>'
-    +_drRow('esc')
-    +'<div id="transEscContent"></div>'
-
     +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">MTTR Comparison – L2 vs L3</div>'
     +'<div class="sec-sub">Median time to resolve · L2 in hours · L3 in days · live data from ServiceNow</div></div></div>'
     +_drRow('mttr')
     +'<div id="transMttrContent"></div>';
 
   rebuildTransVol();
+  rebuildTransEsc();
   rebuildTransCat();
   rebuildTransLoe();
-  rebuildTransEsc();
   rebuildTransMttr();
 }
 
