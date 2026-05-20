@@ -1804,7 +1804,7 @@ function buildTeamView(){
     +'<p>On March 13, 8 automated monitoring alerts fired within 26 minutes following a Juniper switch event across ATL and AUS sites. Khaled Shalati triaged and closed all 8 within the same business day — no customer-facing impact, no incident escalation.</p>'
     +'<div class="icard-metric">→ Mean time to close that cluster: &lt;8 hrs</div></div>'
     +'<div class="icard icard-positive"><div class="icard-head"><h4>Zero-incident ISP maintenance record</h4><span class="icard-tag">4 fiber events</span></div>'
-    +'<p>All 4 Verizon fiber coordination tickets (Yadwinder Singh) — including a live DWDM reroute on Apr 13 — were executed and closed without any reported service disruptions. Strong evidence of disciplined change-window management and ISP coordination.</p>'
+    +'<p>All 4 Verizon fiber coordination tickets (Yadwinder Singh) — including a live DWDM reroute on April 13 — were executed and closed without any reported service disruptions. Strong evidence of disciplined change-window management and ISP coordination.</p>'
     +'<div class="icard-metric">→ 100% planned maintenance executed without impact</div></div>'
     +'</div>'
     +'<div class="insights-col ins-col-improve">'
@@ -2337,6 +2337,10 @@ function buildTrainingView(){
   const relevanceBg={High:'var(--green50)',Medium:'var(--orange50)',Low:'var(--g150)'};
   const relevanceColor={High:'var(--green700)',Medium:'var(--orange700)',Low:'var(--g600)'};
   const priColor={High:'var(--red600)',Medium:'var(--orange600)',Low:'var(--g500)'};
+  const priCardBg={High:'#FFF5F5',Medium:'#FFFAEB',Low:'var(--g50)'};
+  const priCardBorder={High:'#FECDCA',Medium:'#FEDF89',Low:'var(--g200)'};
+  const priCardAccent={High:'#D92D20',Medium:'#F79009',Low:'#98A2B3'};
+  const priIconBg={High:'#FEE4E2',Medium:'#FEF0C7',Low:'var(--g150)'};
 
   const CAT_TRAINING={
     'Circuit Decommission':['ITIL 4 Change Management','Project Coordination Fundamentals','ServiceNow Change Workflow'],
@@ -2367,40 +2371,62 @@ function buildTrainingView(){
         +'<span>'+x.rec+' <span style="color:var(--g400);font-size:11px">&middot; '+x.cat+'</span></span>'
         +'</div>';
     }).join('');
-    return '<div class="card" style="padding:18px 20px">'
-      +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'
-      +'<div style="width:36px;height:36px;border-radius:50%;background:'+m.color+';display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0">'+m.init+'</div>'
-      +'<div>'
-      +'<div style="font-size:13px;font-weight:700;color:var(--g900)">'+displayName+'</div>'
-      +'<div style="font-size:11px;color:var(--g500)">'+myTickets.length+' ticket'+(myTickets.length!==1?'s':'')+' &middot; '+(topCats.length?topCats[0][0]:'—')+'</div>'
-      +'</div></div>'
-      +'<div style="display:flex;flex-direction:column;gap:7px">'
+    const topCatBadge=topCats.length
+      ?'<span style="font-size:10px;font-weight:700;color:var(--blue700);background:#EFF8FF;padding:2px 8px;border-radius:var(--rfull)">'+topCats[0][0]+'</span>'
+      :'';
+    return '<div style="background:var(--white);border:1px solid var(--g200);border-radius:var(--r8);padding:14px 16px;display:flex;align-items:flex-start;gap:14px">'
+      +'<div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:6px;width:100px">'
+      +'<div style="width:40px;height:40px;border-radius:50%;background:'+m.color+';display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff">'+m.init+'</div>'
+      +'<div style="font-size:12px;font-weight:700;color:var(--g900);text-align:center;line-height:1.3">'+displayName+'</div>'
+      +'<div style="font-size:11px;color:var(--g500)">'+myTickets.length+' ticket'+(myTickets.length!==1?'s':'')+'</div>'
+      +'</div>'
+      +'<div style="width:1px;background:var(--g150);align-self:stretch;flex-shrink:0"></div>'
+      +'<div style="flex:1;display:flex;flex-direction:column;gap:6px">'
+      +(topCatBadge?'<div style="margin-bottom:2px">'+topCatBadge+'</div>':'')
       +(recsHtml||'<div style="font-size:12px;color:var(--g400)">No tickets assigned in period</div>')
       +'</div></div>';
   }).join('');
 
   page.innerHTML=`
-    <div class="sec-head" style="margin-bottom:16px"><div>
-      <div class="sec-title" style="font-size:14px">Identified Skill Priorities</div>
-      <div class="sec-sub">Derived from recurring ticket categories and benchmark gaps</div>
-    </div></div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
-      ${skillCards.map(c=>`
-        <div class="card" style="padding:18px 20px">
-          <div style="font-size:22px;margin-bottom:10px">${c.icon}</div>
-          <div style="font-size:13px;font-weight:700;color:var(--g900);margin-bottom:6px">${c.title}</div>
-          <div style="font-size:12px;color:var(--g600);line-height:1.6;margin-bottom:10px">${c.body}</div>
-          <span style="font-size:11px;font-weight:700;color:${priColor[c.priority]};background:${relevanceBg[c.priority]};padding:2px 8px;border-radius:var(--rfull)">${c.priority} Priority</span>
+    <div style="background:var(--g50);border:1px solid var(--g200);border-radius:var(--r12);padding:16px 20px 20px;margin-bottom:24px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <div style="width:30px;height:30px;border-radius:var(--r8);background:#EFF8FF;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1570EF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
         </div>
-      `).join('')}
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--g900)">Identified Skill Priorities</div>
+          <div style="font-size:12px;color:var(--g500)">Derived from recurring ticket categories and benchmark gaps</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
+        ${skillCards.map((c,i)=>`
+          <div style="background:${priCardBg[c.priority]};border:1px solid ${priCardBorder[c.priority]};border-left:4px solid ${priCardAccent[c.priority]};border-radius:var(--r8);padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+              <div style="display:flex;align-items:center;gap:9px">
+                <div style="width:30px;height:30px;border-radius:var(--r6);background:${priIconBg[c.priority]};display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">${c.icon}</div>
+                <div style="font-size:13px;font-weight:700;color:var(--g900);line-height:1.3">${c.title}</div>
+              </div>
+              <span style="font-size:10px;font-weight:700;color:${priCardAccent[c.priority]};white-space:nowrap;flex-shrink:0;margin-top:2px">${c.priority.toUpperCase()}</span>
+            </div>
+            <div style="font-size:12px;color:var(--g600);line-height:1.6">${c.body}</div>
+          </div>
+        `).join('')}
+      </div>
     </div>
 
-    <div class="sec-head"><div>
-      <div class="sec-title" style="font-size:14px">Recommendations by Associate</div>
-      <div class="sec-sub">Tailored training based on each engineer's ticket category mix</div>
-    </div></div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
-      ${assocCardsHtml}
+    <div style="margin-bottom:24px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid #EFF8FF">
+        <div style="width:30px;height:30px;border-radius:var(--r8);background:#EFF8FF;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1570EF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--g900)">Recommendations by Associate</div>
+          <div style="font-size:12px;color:var(--g500)">Tailored training based on each engineer's ticket category mix</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${assocCardsHtml}
+      </div>
     </div>
 
     <div class="sec-head"><div>
@@ -2456,7 +2482,7 @@ function buildTrainingView(){
     </div>
 
     <div style="padding:12px 4px 4px;font-size:11px;color:var(--g900);line-height:1.7;border-top:1px solid var(--g200)">
-      Recommendations are generated from ticket category distribution Feb–May 2026. Hour estimates are approximate and sourced from vendor learning portals (Juniper Networks Education, AWS Skill Builder, AXELOS ITIL). Certification availability and pricing subject to change.
+      Recommendations are generated from ticket category distribution February–May 2026. Hour estimates are approximate and sourced from vendor learning portals (Juniper Networks Education, AWS Skill Builder, AXELOS ITIL). Certification availability and pricing subject to change.
     </div>
   `;
 }
@@ -2531,19 +2557,19 @@ function buildDirectorView(){
   const curVolM=T.filter(t=>t.month===curM).length;
   const prevVolM=T.filter(t=>t.month===prevM).length;
   const volPct=prevVolM>0?Math.round((curVolM-prevVolM)/prevVolM*100):0;
-  const volDeltaStr=showMoM?(volPct>0?'↑ +':'↓ ')+Math.abs(volPct)+'% Apr vs Mar':'';
+  const volDeltaStr=showMoM?(volPct>0?'↑ +':'↓ ')+Math.abs(volPct)+'% April vs March':'';
   const volDeltaColor=volPct>0?'var(--orange600)':'var(--green600)';
   const curResM=curVolM>0?(T.filter(t=>t.month===curM&&t.state!=='open').length/curVolM*100).toFixed(1):'100';
   const prevResM=prevVolM>0?(T.filter(t=>t.month===prevM&&t.state!=='open').length/prevVolM*100).toFixed(1):'100';
   const resDiff=(parseFloat(curResM)-parseFloat(prevResM)).toFixed(1);
-  const resDeltaStr=showMoM?(parseFloat(resDiff)>=0?'↑ +':'↓ ')+Math.abs(resDiff)+'% Apr vs Mar':'';
+  const resDeltaStr=showMoM?(parseFloat(resDiff)>=0?'↑ +':'↓ ')+Math.abs(resDiff)+'% April vs March':'';
   const resDeltaColor=parseFloat(resDiff)>=0?'var(--green600)':'var(--red600)';
   const _curClosed=T.filter(t=>t.month===curM&&t.state!=='open');
   const _prevClosed=T.filter(t=>t.month===prevM&&t.state!=='open');
   const curMTTR=_curClosed.length>0?(_curClosed.reduce((s,t)=>s+estMTTR(t),0)/_curClosed.length).toFixed(1):'—';
   const prevMTTR=_prevClosed.length>0?(_prevClosed.reduce((s,t)=>s+estMTTR(t),0)/_prevClosed.length).toFixed(1):'—';
   const mttrDiff=curMTTR!=='—'&&prevMTTR!=='—'?(parseFloat(curMTTR)-parseFloat(prevMTTR)).toFixed(1):'—';
-  const mttrDeltaStr=showMoM?(mttrDiff==='—'?'No comparison':(parseFloat(mttrDiff)<=0?'↓ '+(Math.abs(mttrDiff))+'d faster Apr':'↑ +'+mttrDiff+'d slower Apr')):'';
+  const mttrDeltaStr=showMoM?(mttrDiff==='—'?'No comparison':(parseFloat(mttrDiff)<=0?'↓ '+(Math.abs(mttrDiff))+'d faster, April':'↑ +'+mttrDiff+'d slower, April')):'';
   const mttrDeltaColor=mttrDiff==='—'?'var(--g400)':parseFloat(mttrDiff)<=0?'var(--green600)':'var(--red600)';
 
   const heatDayMap={};
@@ -2700,6 +2726,36 @@ function buildDirectorView(){
         <div class="bench-row"><span class="bench-name">Industry Avg <sup style="font-size:9px;color:var(--g400)">3</sup></span><span class="bench-val">15%</span></div>
         <div class="btrack"><div class="bfill" style="width:15%;background:var(--g300)"></div></div>
         <div style="margin-top:8px"><span style="background:${noiseRatio<=15?'var(--green50)':'var(--orange50)'};color:${noiseRatio<=15?'var(--green700)':'var(--orange700)'};font-size:11px;font-weight:700;padding:2px 8px;border-radius:var(--rfull)">${noiseRatio<=15?'Within benchmark':'+'+( noiseRatio-15)+'% above avg · reduce noise'}</span></div>
+      </div>
+    </div>
+    <div class="sec-head" style="margin-top:6px"><div>
+      <div class="sec-title">AI-Powered Insights</div>
+      <div class="sec-sub">Patterns and recommendations derived from ticket history</div>
+    </div></div>
+    <div class="insights-wrap" style="margin-bottom:22px">
+      <div class="insights-col ins-col-positive">
+        <div class="insights-col-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Team Strengths</span></div>
+        <div class="icard icard-positive"><div class="icard-head"><h4>Near-perfect resolution hygiene</h4><span class="icard-tag">98.3% closed</span></div>
+        <p>58 of 59 tickets resolved with zero escalations to L4. The sole open item is a routine ADR circuit decommission, only 7 days old and within normal handling time. No SLA breaches detected in the period.</p>
+        <div class="icard-metric">→ Benchmark: industry average for L3 net ops is ~92–95% in-period closure</div></div>
+        <div class="icard icard-positive"><div class="icard-head"><h4>Rapid containment of March alert storm</h4><span class="icard-tag">8 tickets, 1 day</span></div>
+        <p>On March 13, 8 automated monitoring alerts fired within 26 minutes following a Juniper switch event across ATL and AUS sites. All 8 were triaged and closed within the same business day — no customer-facing impact, no incident escalation.</p>
+        <div class="icard-metric">→ Mean time to close that cluster: &lt;8 hrs</div></div>
+        <div class="icard icard-positive"><div class="icard-head"><h4>Zero-incident ISP maintenance record</h4><span class="icard-tag">4 fiber events</span></div>
+        <p>All 4 Verizon fiber coordination tickets — including a live DWDM reroute on April 13 — were executed and closed without any reported service disruptions. Strong evidence of disciplined change-window management and ISP coordination.</p>
+        <div class="icard-metric">→ 100% planned maintenance executed without impact</div></div>
+      </div>
+      <div class="insights-col ins-col-improve">
+        <div class="insights-col-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Focus Areas</span></div>
+        <div class="icard icard-improve" style="cursor:pointer" onclick="openTechProfile('Jason Candler')"><div class="icard-head"><h4>Concentration risk: one engineer holds 41% of load</h4><span class="icard-tag">24 / 59 tickets</span></div>
+        <p>15 of those 24 tickets are routine ADR circuit-decommission notices — a repeating, low-complexity pattern. If that engineer is unavailable, no other team member has a proven workflow for ADR handling. Automating or distributing these could recover ~3 hrs/month of senior L3 time.</p>
+        <div class="icard-metric">→ Click to view ticket breakdown</div></div>
+        <div class="icard icard-improve" style="cursor:pointer" onclick="openFilteredPanel({label:'Monitoring Alerts',filter:{category:'Monitoring Alerts'}})"><div class="icard-head"><h4>30% of incidents are automated noise</h4><span class="icard-tag">12 auto-gen INC</span></div>
+        <p>12 of 40 INC tickets were auto-generated by monitoring systems, often firing in overlapping waves for the same root cause. The March 13 storm created 8 separate tickets from a single switch event. A 5-minute suppression window could cut this volume by ~60%.</p>
+        <div class="icard-metric">→ Estimated savings: ~7 tickets/month at current rate</div></div>
+        <div class="icard icard-improve" style="cursor:pointer" onclick="openFilteredPanel({label:'VLAN &amp; Config Tickets',filter:{category:'VLAN &amp; Config'}})"><div class="icard-head"><h4>VLAN/DHCP requests recur without a template</h4><span class="icard-tag">7 repeat tickets</span></div>
+        <p>Seven VLAN and DHCP configuration tickets across the period — nearly all phrased identically. These could be a pre-approved change template serviced by L2, eliminating senior-engineer toil entirely.</p>
+        <div class="icard-metric">→ Click to view these 7 tickets</div></div>
       </div>
     </div>
     <div class="sec-head">
@@ -6852,7 +6908,7 @@ function buildTransitionPage(){
     '<div class="sec-head" style="margin-bottom:20px"><div class="sec-title">NOC Escalations</div></div>'
 
     +'<div class="sec-head" style="margin-bottom:10px"><div><div class="sec-title" style="font-size:14px">Ticket Volume</div>'
-    +'<div class="sec-sub">INC · ADR/RITM · CHG tickets assigned to ITO Network L2 · Nov 2025 – present</div></div></div>'
+    +'<div class="sec-sub">INC · ADR/RITM · CHG tickets assigned to ITO Network L2 · November 2025 – present</div></div></div>'
     +_drRow('vol')
     +'<div id="transVolContent"></div>'
 
