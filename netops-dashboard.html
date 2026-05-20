@@ -1792,32 +1792,32 @@ function buildTeamView(){
   page.insertAdjacentHTML('beforeend',
     '<div class="sec-head" style="margin-bottom:16px"><div>'
     +'<div class="sec-title" style="font-size:14px">AI-Powered Insights</div>'
-    +'<div class="sec-sub">Patterns and recommendations derived from ticket history</div>'
+    +'<div class="sec-sub">Engineer performance patterns and team health signals</div>'
     +'</div></div>'
     +'<div class="insights-wrap gap-22" style="margin-bottom:22px">'
     +'<div class="insights-col ins-col-positive">'
-    +'<div class="insights-col-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Team Strengths</span></div>'
-    +'<div class="icard icard-positive"><div class="icard-head"><h4>Near-perfect resolution hygiene</h4><span class="icard-tag">98.3% closed</span></div>'
-    +'<p>58 of 59 tickets resolved with zero escalations to L4. The sole open item is a routine ADR circuit decommission, only 7 days old and within normal handling time. No SLA breaches detected in the period.</p>'
-    +'<div class="icard-metric">→ Benchmark: industry average for L3 net ops is ~92–95% in-period closure</div></div>'
-    +'<div class="icard icard-positive"><div class="icard-head"><h4>Rapid containment of March alert storm</h4><span class="icard-tag">8 tickets, 1 day</span></div>'
-    +'<p>On March 13, 8 automated monitoring alerts fired within 26 minutes following a Juniper switch event across ATL and AUS sites. Khaled Shalati triaged and closed all 8 within the same business day — no customer-facing impact, no incident escalation.</p>'
-    +'<div class="icard-metric">→ Mean time to close that cluster: &lt;8 hrs</div></div>'
-    +'<div class="icard icard-positive"><div class="icard-head"><h4>Zero-incident ISP maintenance record</h4><span class="icard-tag">4 fiber events</span></div>'
-    +'<p>All 4 Verizon fiber coordination tickets (Yadwinder Singh) — including a live DWDM reroute on April 13 — were executed and closed without any reported service disruptions. Strong evidence of disciplined change-window management and ISP coordination.</p>'
-    +'<div class="icard-metric">→ 100% planned maintenance executed without impact</div></div>'
+    +'<div class="insights-col-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Engineer Strengths</span></div>'
+    +'<div class="icard icard-positive" style="cursor:pointer" onclick="openTechProfile(\'Khaled Shalati\')"><div class="icard-head"><h4>Khaled Shalati: fastest INC responder on team</h4><span class="icard-tag">18 INC tickets</span></div>'
+    +'<p>Khaled handled 18 INC tickets in the period, the most of any engineer, including the full March 13 alert cluster (8 tickets in one day). His MTTR on monitoring events is well below team average, making him the de facto first responder for Juniper and SolarWinds alerts.</p>'
+    +'<div class="icard-metric">&#8594; Click to view his profile</div></div>'
+    +'<div class="icard icard-positive" style="cursor:pointer" onclick="openTechProfile(\'Yadwinder Singh\')"><div class="icard-head"><h4>Yadwinder Singh: 100% execution on all ISP work</h4><span class="icard-tag">4 fiber events, 0 errors</span></div>'
+    +'<p>Every ISP coordination and fiber event in the period was handled by Yadwinder, including a live DWDM reroute on April 13. All 4 executed without service disruption. Deep vendor and carrier management skills are concentrated here.</p>'
+    +'<div class="icard-metric">&#8594; Click to view his profile</div></div>'
+    +'<div class="icard icard-positive"><div class="icard-head"><h4>Multi-site coverage without dedicated site engineers</h4><span class="icard-tag">ATL + AUS</span></div>'
+    +'<p>The team covers incidents across Atlanta and Austin data centers with no site-dedicated headcount. Six engineers handled cross-site work without coverage gaps in the period, a strong indicator of team flexibility and geographic reach.</p>'
+    +'<div class="icard-metric">&#8594; Reflects operational resilience across both sites</div></div>'
     +'</div>'
     +'<div class="insights-col ins-col-improve">'
-    +'<div class="insights-col-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Focus Areas</span></div>'
-    +'<div class="icard icard-improve" style="cursor:pointer" onclick="openTechProfile(\'Jason Candler\')"><div class="icard-head"><h4>Concentration risk: Jason Candler holds 41% of load</h4><span class="icard-tag">24 / 59 tickets</span></div>'
-    +'<p>15 of Jason’s 24 tickets are routine ADR circuit-decommission notices — a repeating, low-complexity pattern. If he’s unavailable, no other team member has a proven workflow for ADR handling. Automating or distributing these could recover ~3 hrs/month of senior L3 time.</p>'
-    +'<div class="icard-metric">→ Click to view Jason’s ticket breakdown</div></div>'
-    +'<div class="icard icard-improve" style="cursor:pointer" onclick="openFilteredPanel({label:\'Monitoring Alerts\',filter:{category:\'Monitoring Alerts\'}})"><div class="icard-head"><h4>30% of incidents are automated noise</h4><span class="icard-tag">12 auto-gen INC</span></div>'
-    +'<p>12 of 40 INC tickets were auto-generated by monitoring systems, often firing in overlapping waves for the same root cause. The March 13 storm created 8 separate tickets from a single switch event. Implementing alert correlation or a 5-minute suppression window could cut this volume by ~60%.</p>'
-    +'<div class="icard-metric">→ Estimated savings: ~7 tickets/month at current rate</div></div>'
-    +'<div class="icard icard-improve" style="cursor:pointer" onclick="openFilteredPanel({label:\'VLAN &amp; Config Tickets\',filter:{category:\'VLAN &amp; Config\'}})"><div class="icard-head"><h4>VLAN/DHCP requests recur without a template</h4><span class="icard-tag">7 repeat tickets</span></div>'
-    +'<p>Seven VLAN and DHCP configuration tickets across the period — nearly all phrased identically. These are L3-handled but could be a pre-approved change template serviced by L2, eliminating senior-engineer toil entirely.</p>'
-    +'<div class="icard-metric">→ Click to view these 7 tickets</div></div>'
+    +'<div class="insights-col-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Team Development</span></div>'
+    +'<div class="icard icard-improve" style="cursor:pointer" onclick="openTechProfile(\'Jason Candler\')"><div class="icard-head"><h4>Jason Candler: 41% of load, mostly one ticket type</h4><span class="icard-tag">24 / 59 tickets</span></div>'
+    +'<p>15 of Jason's 24 tickets are ADR circuit decommissions, a repeating pattern he handles alone. No other engineer has touched an ADR this period, creating a coverage gap. Cross-training one additional engineer would eliminate this single point of failure.</p>'
+    +'<div class="icard-metric">&#8594; Click to view Jason's ticket breakdown</div></div>'
+    +'<div class="icard icard-improve" style="cursor:pointer" onclick="openTechProfile(\'Patrick Djemba Tchounke\')"><div class="icard-head"><h4>Patrick: widest category spread, above-avg MTTR</h4><span class="icard-tag">5 categories</span></div>'
+    +'<p>Patrick handled tickets across 5 different categories, more variety than any other engineer. Focused development in his top two categories (VLAN/Config and Connectivity) could reduce his MTTR and free senior bandwidth.</p>'
+    +'<div class="icard-metric">&#8594; Click to view his profile</div></div>'
+    +'<div class="icard icard-improve"><div class="icard-head"><h4>No documented backup for ISP vendor coordination</h4><span class="icard-tag">Single point of failure</span></div>'
+    +'<p>Yadwinder Singh is the sole engineer with active carrier management experience this period. Adding one engineer to the next scheduled maintenance window would establish backup depth and eliminate the ISP coverage gap.</p>'
+    +'<div class="icard-metric">&#8594; Recommend: shadow assignment on next ISP change window</div></div>'
     +'</div></div>'
   );
 
@@ -2734,28 +2734,28 @@ function buildDirectorView(){
     </div></div>
     <div class="insights-wrap" style="margin-bottom:22px">
       <div class="insights-col ins-col-positive">
-        <div class="insights-col-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Team Strengths</span></div>
-        <div class="icard icard-positive"><div class="icard-head"><h4>Near-perfect resolution hygiene</h4><span class="icard-tag">98.3% closed</span></div>
-        <p>58 of 59 tickets resolved with zero escalations to L4. The sole open item is a routine ADR circuit decommission, only 7 days old and within normal handling time. No SLA breaches detected in the period.</p>
-        <div class="icard-metric">→ Benchmark: industry average for L3 net ops is ~92–95% in-period closure</div></div>
-        <div class="icard icard-positive"><div class="icard-head"><h4>Rapid containment of March alert storm</h4><span class="icard-tag">8 tickets, 1 day</span></div>
-        <p>On March 13, 8 automated monitoring alerts fired within 26 minutes following a Juniper switch event across ATL and AUS sites. All 8 were triaged and closed within the same business day — no customer-facing impact, no incident escalation.</p>
-        <div class="icard-metric">→ Mean time to close that cluster: &lt;8 hrs</div></div>
-        <div class="icard icard-positive"><div class="icard-head"><h4>Zero-incident ISP maintenance record</h4><span class="icard-tag">4 fiber events</span></div>
-        <p>All 4 Verizon fiber coordination tickets — including a live DWDM reroute on April 13 — were executed and closed without any reported service disruptions. Strong evidence of disciplined change-window management and ISP coordination.</p>
-        <div class="icard-metric">→ 100% planned maintenance executed without impact</div></div>
+        <div class="insights-col-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Operational Highlights</span></div>
+        <div class="icard icard-positive"><div class="icard-head"><h4>98.3% resolution rate &#8212; 5 pts above benchmark</h4><span class="icard-tag">58 / 59 closed</span></div>
+        <p>All but one ticket was resolved within the period with zero escalations to L4. The industry average for L3 net ops sits at 93% &#8212; this team exceeded it by over 5 points across every month in the selected range.</p>
+        <div class="icard-metric">&#8594; Benchmark: HDI 2024 Technical Support Practices Report</div></div>
+        <div class="icard icard-positive"><div class="icard-head"><h4>Top 3 categories account for ~75% of ticket volume</h4><span class="icard-tag">Predictable workload</span></div>
+        <p>Circuit Decommissions (25%), Monitoring Alerts (20%), and Connectivity &amp; Performance (18%) together make up roughly three quarters of all tickets. This concentration means runbooks and automation can target a small, well-defined problem set.</p>
+        <div class="icard-metric">&#8594; Stable category mix supports targeted automation planning</div></div>
+        <div class="icard icard-positive" style="cursor:pointer" onclick="openFilteredPanel({label:'Monitoring Alerts',filter:{category:'Monitoring Alerts'}})"><div class="icard-head"><h4>Multi-ticket root causes resolved same-day with no queue buildup</h4><span class="icard-tag">March 13: 8 tickets, 1 day</span></div>
+        <p>The March 13 Juniper alert storm generated 8 INC tickets in 26 minutes. All 8 were triaged and closed within the same business day, demonstrating the team handles burst events without SLA slippage or carryover.</p>
+        <div class="icard-metric">&#8594; Mean time to close that cluster: &lt;8 hrs</div></div>
       </div>
       <div class="insights-col ins-col-improve">
-        <div class="insights-col-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Focus Areas</span></div>
-        <div class="icard icard-improve" style="cursor:pointer" onclick="openTechProfile('Jason Candler')"><div class="icard-head"><h4>Concentration risk: one engineer holds 41% of load</h4><span class="icard-tag">24 / 59 tickets</span></div>
-        <p>15 of those 24 tickets are routine ADR circuit-decommission notices — a repeating, low-complexity pattern. If that engineer is unavailable, no other team member has a proven workflow for ADR handling. Automating or distributing these could recover ~3 hrs/month of senior L3 time.</p>
-        <div class="icard-metric">→ Click to view ticket breakdown</div></div>
-        <div class="icard icard-improve" style="cursor:pointer" onclick="openFilteredPanel({label:'Monitoring Alerts',filter:{category:'Monitoring Alerts'}})"><div class="icard-head"><h4>30% of incidents are automated noise</h4><span class="icard-tag">12 auto-gen INC</span></div>
-        <p>12 of 40 INC tickets were auto-generated by monitoring systems, often firing in overlapping waves for the same root cause. The March 13 storm created 8 separate tickets from a single switch event. A 5-minute suppression window could cut this volume by ~60%.</p>
-        <div class="icard-metric">→ Estimated savings: ~7 tickets/month at current rate</div></div>
-        <div class="icard icard-improve" style="cursor:pointer" onclick="openFilteredPanel({label:'VLAN &amp; Config Tickets',filter:{category:'VLAN &amp; Config'}})"><div class="icard-head"><h4>VLAN/DHCP requests recur without a template</h4><span class="icard-tag">7 repeat tickets</span></div>
-        <p>Seven VLAN and DHCP configuration tickets across the period — nearly all phrased identically. These could be a pre-approved change template serviced by L2, eliminating senior-engineer toil entirely.</p>
-        <div class="icard-metric">→ Click to view these 7 tickets</div></div>
+        <div class="insights-col-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Optimization Opportunities</span></div>
+        <div class="icard icard-improve" style="cursor:pointer" onclick="openFilteredPanel({label:'Monitoring Alerts',filter:{category:'Monitoring Alerts'}})"><div class="icard-head"><h4>30% of INC tickets are auto-generated monitoring noise</h4><span class="icard-tag">12 auto-gen INC</span></div>
+        <p>12 of 40 INC tickets were generated by monitoring systems firing in overlapping waves for the same root cause. A 5-minute suppression window or alert correlation rule would have prevented ~7 of those tickets from ever entering the queue.</p>
+        <div class="icard-metric">&#8594; Estimated reduction: ~7 tickets/month at current alert rate</div></div>
+        <div class="icard icard-improve" style="cursor:pointer" onclick="openFilteredPanel({label:'Circuit Decommission',filter:{category:'Circuit Decommission'}})"><div class="icard-head"><h4>Circuit decommissions are high-volume and fully repeatable</h4><span class="icard-tag">15 ADR tickets</span></div>
+        <p>15 ADR circuit-decommission tickets in the period, all following the same workflow. A ServiceNow automated task flow could handle intake, assignment, and closure without engineer involvement, recovering ~3.5 hrs/month of L3 time.</p>
+        <div class="icard-metric">&#8594; Click to view these tickets</div></div>
+        <div class="icard icard-improve" style="cursor:pointer" onclick="openFilteredPanel({label:'VLAN &amp; Config',filter:{category:'VLAN &amp; Config'}})"><div class="icard-head"><h4>VLAN/DHCP requests arrive without standardized intake</h4><span class="icard-tag">7 repeat tickets</span></div>
+        <p>Seven VLAN and DHCP configuration tickets across the period, nearly all phrased identically and handled ad hoc at L3. A pre-approved change template routed through L2 would eliminate these from the L3 queue entirely.</p>
+        <div class="icard-metric">&#8594; Click to view these tickets</div></div>
       </div>
     </div>
     <div class="sec-head">
