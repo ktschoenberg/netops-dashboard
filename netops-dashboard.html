@@ -49,7 +49,7 @@ body{font-family:var(--font);background:var(--g100);color:var(--g900);display:fl
 .s-mark{width:32px;height:32px;border-radius:var(--r8);background:linear-gradient(135deg,var(--blue600),#6941C6);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .s-mark svg{width:17px;height:17px}
 .s-appname{font-size:12.5px;font-weight:700;color:var(--white);line-height:1.2}
-.s-appver{font-size:10.5px;color:rgba(255,255,255,.5)}
+.s-appver{font-size:10.5px;color:var(--white)}
 .s-nav{padding:8px 6px;flex:1}
 .s-sec{font-size:10px;font-weight:600;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.07em;padding:10px 8px 3px}
 .s-item{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:var(--r6);color:#FFFFFF;font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;transition:background .12s,color .12s;margin-bottom:1px;border:none;background:none;width:100%;text-align:left;font-family:var(--font)}
@@ -1763,7 +1763,7 @@ function buildTeamView(){
     +'<div class="sec-sub">Hours and tickets for selected range · click any card to view tickets</div></div></div>'
     +'<div style="margin-bottom:12px"><div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">'+buildDateRangeBtns()+'</div></div>'
     +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px">'+engCardsHtml+'</div>'
-    +'<div class="sec-head"><div><div class="sec-title" style="font-size:14px">Efficiency View</div>'
+    +'<div class="sec-head" id="efficiencyViewHead"><div><div class="sec-title" style="font-size:14px">Efficiency View</div>'
     +'<div class="sec-sub">Click an engineer in the chart above to filter · click any row to drill in</div></div></div>'
     +'<div id="teamEngFilterChip" style="margin-bottom:8px"></div>'
     +'<div class="table-card" style="margin-bottom:22px"><div class="tw"><table id="teamEffTable">'
@@ -1788,7 +1788,7 @@ function buildTeamView(){
   buildTeamHoursChart();
   buildTeamTrendChart();
 
-  page.insertAdjacentHTML('beforeend',
+  document.getElementById('efficiencyViewHead').insertAdjacentHTML('beforebegin',
     '<div class="sec-head" style="margin-bottom:16px"><div>'
     +'<div class="sec-title" style="font-size:14px">AI-Powered Insights</div>'
     +'<div class="sec-sub">Engineer performance patterns and team health signals</div>'
