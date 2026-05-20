@@ -7372,7 +7372,7 @@ function renderNocTicketList(tickets){
     const cat=ci>=0?TNOC_CATS[ci]:'';
     const badge=st===0?'<span class="badge b-open"><span class="b-dot"></span>Open</span>':'<span class="badge b-closed"><span class="b-dot"></span>Closed</span>';
     const tbadge=tp===0?'<span class="badge b-inc">INC</span>':'<span class="badge b-adr">ADR</span>';
-    return `<div class="pl-ticket"><div class="pl-ticket-left"><div class="pl-ticket-num" style="color:${numColor}">${num}</div><div class="pl-ticket-meta">${cat?cat+' · ':''}${fmt(opened)}</div></div><div class="pl-ticket-right">${tbadge}${badge}</div></div>`;
+    return `<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--white);border:1px solid var(--g200);border-radius:var(--r8);margin-bottom:8px"><div class="pl-ticket-left"><div class="pl-ticket-num" style="color:${numColor}">${num}</div><div class="pl-ticket-meta">${cat?cat+' · ':''}${fmt(opened)}</div></div><div class="pl-ticket-right">${tbadge}${badge}</div></div>`;
   }).join('');
 }
 function openNocTicketPanel(title,tickets){
