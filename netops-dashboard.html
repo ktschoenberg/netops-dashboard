@@ -1186,7 +1186,8 @@ const MONTH_LABELS = ['February','March','April','May (partial)'];
 /* ═══════════════════════════════════════
    HELPERS
 ═══════════════════════════════════════ */
-function fmt(d){ return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+function fmt(d){ const p=d.split('-'); return p[1]+'/'+p[2]+'/'+p[0].slice(2); }
+function fmtDR(d){ const p=d.split('-'); return p[1]+'/'+p[2]+'/'+p[0].slice(2); }
 function age(d){ return Math.floor((new Date('2026-05-19')-new Date(d+'T00:00:00'))/(1000*60*60*24)); }
 function stateBadge(s){
   if(s==='open')     return `<span class="badge b-open"><span class="b-dot"></span>Open</span>`;
@@ -1722,7 +1723,7 @@ function buildTeamView(){
     const h=filtTeamMonthly[m]||0;
     if(h>peakHrs){peakHrs=h;peakMonth=LOA_MONTH_LABELS[LOA_MONTHS.indexOf(m)]||m;}
   });
-  const rangeLabel=f?(f.start.slice(0,7)+' – '+f.end.slice(0,7)):'Sep 2024 – May 2026';
+  const rangeLabel=f?(fmtDR(f.start)+' – '+fmtDR(f.end)):(LOA_MONTHS.length?fmtDR(LOA_MONTHS[0]+'-01')+' – '+fmtDR(LOA_MONTHS[LOA_MONTHS.length-1]+'-01'):'All Data');
 
   const _sToday=new Date();
   const _sMN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -2181,7 +2182,7 @@ function buildChangeSchedulePage(){
     <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
       <div>
         <h1 class="page-title">Change Schedule</h1>
-        <p class="page-sub">ServiceNow CHG records &mdash; ${total} changes${getDateFilter()?(' · '+getDateFilter().start+' to '+getDateFilter().end):', data through May 2026'}</p>
+        <p class="page-sub">ServiceNow CHG records &mdash; ${total} changes${getDateFilter()?(' · '+fmtDR(getDateFilter().start)+' – '+fmtDR(getDateFilter().end)):', data through May 2026'}</p>
       </div>
       <div style="display:flex;gap:8px">
         <button class="btn-outline" onclick="openFilteredCHGPanel({label:'Open Changes',state:'open'})">View Open</button>
@@ -2333,8 +2334,8 @@ function openCHGDetail(num){
       <div class="td-field"><div class="td-field-label">CI</div><div class="td-field-val">${c.ci||'—'}</div></div>
       <div class="td-field"><div class="td-field-label">Project</div><div class="td-field-val" style="font-family:monospace;font-size:13px">${c.project||'—'}</div></div>
       <div class="td-field"><div class="td-field-label">Approval</div><div class="td-field-val" style="font-weight:600;color:${approvalColor}">${c.approval}</div></div>
-      <div class="td-field"><div class="td-field-label">Start Date</div><div class="td-field-val">${c.start||'—'}</div></div>
-      <div class="td-field"><div class="td-field-label">End Date</div><div class="td-field-val">${c.end||'—'}</div></div>
+      <div class="td-field"><div class="td-field-label">Start Date</div><div class="td-field-val">${c.start?fmtDR(c.start):'—'}</div></div>
+      <div class="td-field"><div class="td-field-label">End Date</div><div class="td-field-val">${c.end?fmtDR(c.end):'—'}</div></div>
       <div class="td-field"><div class="td-field-label">Month</div><div class="td-field-val">${c.month||'—'}</div></div>
     </div>
   </div>`;
@@ -2551,7 +2552,7 @@ function buildDirectorView(){
     page.innerHTML='<div style="padding:60px 28px;text-align:center">'
       +'<div style="font-size:32px;margin-bottom:12px">📭</div>'
       +'<div style="font-size:15px;font-weight:700;color:var(--g700);margin-bottom:6px">No tickets in this range</div>'
-      +'<div style="font-size:13px;color:var(--g400);margin-bottom:20px">'+(f?f.start+' – '+f.end:'Selected period')+'</div>'
+      +'<div style="font-size:13px;color:var(--g400);margin-bottom:20px">'+(f?fmtDR(f.start)+' – '+fmtDR(f.end):'Selected period')+'</div>'
       +'<button class="btn btn-primary" onclick="setDateRange(\'all\')">View All Data</button>'
       +'</div>';
     return;
