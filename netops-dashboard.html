@@ -3531,7 +3531,7 @@ function rebuildTransMttr(){
 function buildTransVolChart(filtMonths,filtLabels){
   const configs=[
     {id:'transVolInc',color:'#F79009',data:filtMonths.map(m=>TRANS_VOL[m]?.inc||0)},
-    {id:'transVolAdr',color:'#D0D5DD',data:filtMonths.map(m=>TRANS_VOL[m]?.adrRitm||0)},
+    {id:'transVolAdr',color:'#98A2B3',data:filtMonths.map(m=>TRANS_VOL[m]?.adrRitm||0)},
     {id:'transVolChg',color:'#D0D5DD',data:filtMonths.map(m=>TRANS_VOL[m]?.chg||0)}
   ];
   configs.forEach(({id,color,data})=>{
