@@ -398,10 +398,9 @@ tbody tr:hover td{background:var(--g100)}
 
   <div class="s-foot">
     <div class="s-user">
-      <div class="s-av">NM</div>
+      <div class="s-av">NO</div>
       <div>
-        <div class="s-uname">Network Manager</div>
-        <div class="s-urole">ITO · Network L3</div>
+        <div class="s-uname">Network Operations</div>
       </div>
     </div>
   </div>
@@ -421,7 +420,13 @@ tbody tr:hover td{background:var(--g100)}
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
         </svg>
-        Export PDF
+        Export this page
+      </button>
+      <button class="btn btn-ghost btn-sm" onclick="exportAllPDF()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="7" width="16" height="14" rx="2"/><polyline points="22 7 22 3 6 3 6 7"/><polyline points="14 13 14 7"/><polyline points="10 13 10 7"/>
+        </svg>
+        Export Full PDF
       </button>
       <button class="btn btn-primary btn-sm" onclick="triggerImport()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -2841,12 +2846,16 @@ function buildRatioDonut(){
 
 function buildCapacityChart(){
   const Tf=getActiveT();
-  const totals=MONTHS.map(m=>Tf.filter(t=>t.month===m).length);
+  const monthMap={};
+  Tf.forEach(t=>{ monthMap[t.month]=(monthMap[t.month]||0)+1; });
+  const months=Object.keys(monthMap).sort();
+  const labels=months.map(m=>LOA_MONTH_LABELS[LOA_MONTHS.indexOf(m)]||m);
+  const totals=months.map(m=>monthMap[m]);
   Chart.getChart('capacityChart')?.destroy();
   new Chart(document.getElementById('capacityChart'),{
     type:'line',
     data:{
-      labels:MONTH_LABELS,
+      labels,
       datasets:[{
         label:'Tickets',data:totals,
         borderColor:'#F79009',backgroundColor:'rgba(247,144,9,0.08)',
@@ -2859,7 +2868,13 @@ function buildCapacityChart(){
       scales:{
         x:{grid:{display:false},border:{display:false},ticks:{color:'#667085',font:{size:11}}},
         y:{grid:{color:'#F2F4F7'},border:{display:false},ticks:{color:'#667085',font:{size:11},stepSize:5}}
-      }
+      },
+      onClick(e,els){
+        if(!els.length) return;
+        const m=months[els[0].index];
+        openFilteredPanel({label:(labels[els[0].index]+' tickets'),filter:{month:m}});
+      },
+      onHover(e,els){e.native.target.style.cursor=els.length?'pointer':'default';}
     }
   });
 }
@@ -3175,6 +3190,132 @@ th, td { padding: 5px 8px !important; font-size: 11px !important; }
 
   const win = window.open('', '_blank', 'width=1280,height=900');
   if(!win){ alert('Pop-up blocked — please allow pop-ups for this page and try again.'); return; }
+  win.document.open();
+  win.document.write(printHTML);
+  win.document.close();
+}
+
+/* ── Export Full PDF (all pages) ── */
+function exportAllPDF(){
+  const ALL_VIEWS=[
+    {id:'view-director',  navId:'navDashboard', cacheKey:'director',  buildFn:buildDirectorView,  title:'Network Operations Dashboard'},
+    {id:'view-team',      navId:'navTeam',      cacheKey:'team',      buildFn:buildTeamView,      title:'Team Performance'},
+    {id:'view-training',  navId:'navTraining',  cacheKey:'training',  buildFn:buildTrainingView,  title:'Training Opportunities'},
+    {id:'view-transition',navId:'navTransition',cacheKey:'transition',buildFn:buildTransitionPage,title:'NOC Escalations'},
+  ];
+  const now=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const css=document.querySelector('style')?.textContent||'';
+  const prevActive=document.querySelector('.view.active');
+  const sidebarEl=document.querySelector('.sidebar');
+
+  const pageContents=ALL_VIEWS.map(v=>{
+    // Activate view and (re)build to capture current data
+    document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+    document.getElementById(v.id).classList.add('active');
+    if(!builtViews.has(v.cacheKey)){ builtViews.add(v.cacheKey); }
+    v.buildFn();
+
+    const viewEl=document.getElementById(v.id);
+    const canvasMap={};
+    viewEl.querySelectorAll('canvas').forEach(c=>{
+      const key=c.id||('_c'+Math.random());
+      try{ canvasMap[key]=c.toDataURL('image/png'); c.dataset.printId=key; }catch(e){}
+    });
+
+    const contentClone=viewEl.cloneNode(true);
+    contentClone.querySelectorAll('canvas').forEach(c=>{
+      const src=canvasMap[c.dataset.printId||c.id];
+      const ph=c.closest('[style*="height"]')||c.parentElement;
+      const h=ph?(ph.style.height||'220px'):'220px';
+      if(src){
+        const img=document.createElement('img');
+        img.src=src;
+        img.style.cssText=`width:100%;height:${h};object-fit:contain;display:block;`;
+        c.replaceWith(img);
+      } else { c.remove(); }
+    });
+    contentClone.querySelectorAll('button,.btn,input,select,.panel-overlay,.panel,[data-dr]').forEach(el=>el.remove());
+
+    const sidebarClone=sidebarEl?sidebarEl.cloneNode(true):null;
+    if(sidebarClone){
+      sidebarClone.querySelectorAll('.s-item').forEach(btn=>{
+        btn.removeAttribute('onclick');
+        btn.classList.remove('active');
+        if(btn.id===v.navId) btn.classList.add('active');
+      });
+      sidebarClone.querySelectorAll('.s-pill').forEach(p=>p.remove());
+    }
+    return {title:v.title,sidebarHTML:sidebarClone?sidebarClone.outerHTML:'',contentHTML:contentClone.innerHTML};
+  });
+
+  // Restore original view
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  if(prevActive) prevActive.classList.add('active');
+
+  const pagesHTML=pageContents.map((p,i)=>`
+<div class="pdf-page${i>0?' page-break':''}">
+  <div class="pdf-root">
+    ${p.sidebarHTML}
+    <div class="pdf-content">
+      <div class="pdf-hdr">
+        <div class="pdf-hdr-left">
+          <div class="pdf-hdr-org">Network Operations Report Center</div>
+          <div class="pdf-hdr-title">${p.title}</div>
+        </div>
+        <div class="pdf-hdr-date">${now}</div>
+      </div>
+      ${p.contentHTML}
+    </div>
+  </div>
+</div>`).join('\n');
+
+  const printHTML=`<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Network Operations — Full Report — ${now}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+@page { size: A4 landscape; margin: 0; }
+*,*::before,*::after{box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+${css}
+html,body{margin:0;padding:0;width:100%;font-family:'Inter',system-ui,sans-serif;font-size:12px;color:#101828;background:#fff}
+.pdf-page{width:100%;min-height:100vh}
+.pdf-page.page-break{page-break-before:always}
+.pdf-root{display:flex;flex-direction:row;width:100%;min-height:100vh}
+.sidebar{position:relative!important;width:196px!important;min-width:196px!important;height:auto!important;min-height:100vh;flex-shrink:0;display:flex!important;flex-direction:column;overflow:visible!important}
+.s-item{cursor:default!important;pointer-events:none}
+.pdf-content{flex:1;padding:14mm 12mm;overflow:visible;min-width:0}
+.pdf-hdr{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:10px;border-bottom:2px solid #F2F4F7;margin-bottom:18px;page-break-after:avoid}
+.pdf-hdr-left{display:flex;flex-direction:column;gap:2px}
+.pdf-hdr-org{font-size:10px;font-weight:600;color:#667085;text-transform:uppercase;letter-spacing:.06em}
+.pdf-hdr-title{font-size:16px;font-weight:700;color:#101828}
+.pdf-hdr-date{font-size:11px;color:#667085}
+.view{display:block!important;position:static!important;padding:0!important}
+.page{padding:0!important}
+.card,.digest-card,.table-card,.bench-card,.icard,.kpi,.tc{break-inside:avoid}
+.sec-head{break-after:avoid}
+.tw{overflow:visible!important}
+table{width:100%;font-size:11px}
+th,td{padding:5px 8px!important;font-size:11px!important}
+.d-num{font-size:20px!important}
+.sv{font-size:20px!important}
+.insights-wrap{grid-template-columns:1fr 1fr;gap:12px}
+.icard p{font-size:11px!important}
+.card,.digest-card{box-shadow:none!important}
+.charts-3{grid-template-columns:repeat(3,1fr)!important}
+.bench-grid{grid-template-columns:repeat(3,1fr)!important}
+</style>
+</head>
+<body>
+${pagesHTML}
+<script>window.addEventListener('load',function(){setTimeout(function(){window.print();},900);});<\/script>
+</body>
+</html>`;
+
+  const win=window.open('','_blank','width=1280,height=900');
+  if(!win){alert('Pop-up blocked — please allow pop-ups for this page and try again.');return;}
   win.document.open();
   win.document.write(printHTML);
   win.document.close();
