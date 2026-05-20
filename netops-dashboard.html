@@ -3547,7 +3547,7 @@ function buildTransCIChart(CHGf){
 }
 
 function buildTransLoeCharts(loeInc,loeAdr){
-  [['transLoeInc',loeInc,'#F79009'],['transLoeAdr',loeAdr,'#2E90FA']].forEach(([id,loe,color])=>{
+  [['transLoeInc',loeInc,'#F79009'],['transLoeAdr',loeAdr,'#D0D5DD']].forEach(([id,loe,color])=>{
     const sorted=Object.entries(loe).sort((a,b)=>b[1]-a[1]);
     Chart.getChart(id)?.destroy();
     if(!sorted.length){const el=document.getElementById(id);if(el)el.parentElement.innerHTML='<div style="text-align:center;color:var(--g400);font-size:12px;padding:30px">No LOE data in range</div>';return;}
