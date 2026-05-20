@@ -348,8 +348,8 @@ tbody tr:hover td{background:var(--g100)}
       </svg>
     </div>
     <div>
-      <div class="s-appname">ITO Network L3</div>
-      <div class="s-appver">Operations Center</div>
+      <div class="s-appname">Network Operations</div>
+      <div class="s-appver">Report Center</div>
     </div>
   </div>
 
@@ -1200,6 +1200,7 @@ function typeBadge(t){ return t==='INC'?'<span class="badge b-inc">INC</span>':'
 ═══════════════════════════════════════ */
 function buildTeamCards(){
   const grid = document.getElementById('teamGrid');
+  if(!grid) return;
   const maxCount = 24;
   TEAM_META.forEach(m => {
     const mine = T.filter(t=>t.who===m.name);
@@ -1787,14 +1788,6 @@ function buildTeamView(){
 
   buildTeamHoursChart();
   buildTeamTrendChart();
-
-  page.insertAdjacentHTML('beforeend',
-    '<div class="sec-head" style="margin-top:8px;margin-bottom:16px"><div>'
-    +'<div class="sec-title" style="font-size:14px">Individual Workload</div>'
-    +'<div class="sec-sub">Workload and resolution across all engineers · click any card to drill in</div>'
-    +'</div></div>'
-    +'<div class="team-grid" id="teamGrid" style="margin-bottom:22px"></div>'
-  );
 
   page.insertAdjacentHTML('beforeend',
     '<div class="sec-head" style="margin-bottom:16px"><div>'
@@ -2666,13 +2659,13 @@ function buildDirectorView(){
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px">
       <div class="card">
         <div class="card-header">
-          <div><div class="card-title">Monthly Ticket Volume</div><div class="card-sub">INC and ADR by month · click any bar to drill in</div></div>
+          <div><div class="card-title">Monthly Ticket Volume</div><div class="card-sub">INC and ADR by month</div></div>
         </div>
         <div style="height:240px"><canvas id="dirVolChart"></canvas></div>
       </div>
       <div class="card">
         <div class="card-header">
-          <div><div class="card-title">By Category</div><div class="card-sub">Ticket count by work type · click any bar to drill in</div></div>
+          <div><div class="card-title">By Category</div><div class="card-sub">Ticket count by work type</div></div>
         </div>
         <div style="height:240px"><canvas id="dirCatChart"></canvas></div>
       </div>
@@ -6983,9 +6976,9 @@ function rebuildTransMttr(){
   const l3Avg=l3Vals.length?(l3Vals.reduce((a,b)=>a+b,0)/l3Vals.length).toFixed(1):'—';
   document.getElementById('transMttrContent').innerHTML=
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">'
-    +'<div class="digest-card"><div class="d-label">L2 Avg MTTR</div><div class="d-num">'+l2Avg+'h</div>'
+    +'<div class="digest-card"><div class="d-label">Average MTTR &ndash; <span style="color:#F79009">L2</span></div><div class="d-num">'+l2Avg+'h</div>'
     +'<div class="d-change"><span class="good">Live · ITO Network L2</span></div></div>'
-    +'<div class="digest-card"><div class="d-label">L3 Avg MTTR</div><div class="d-num">'+l3Avg+'d</div>'
+    +'<div class="digest-card"><div class="d-label">Average MTTR &ndash; <span style="color:#F79009">L3</span></div><div class="d-num">'+l3Avg+'d</div>'
     +'<div class="d-change"><span class="good">Live · ITO Network L3</span></div></div>'
     +'</div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px">'
