@@ -1824,6 +1824,18 @@ function buildTeamView(){
   const _openCount=T.filter(t=>t.state==='open').length;
   const _restoredCount=T.filter(t=>t.state==='restored').length;
   page.insertAdjacentHTML('beforeend',
+    '<div class="sec-head" style="margin-bottom:16px"><div>'
+    +'<div class="sec-title" style="font-size:14px">Team MTTR Breakdown</div>'
+    +'<div class="sec-sub">Estimated mean time to resolve by engineer · click any row to drill in</div>'
+    +'</div></div>'
+    +'<div class="table-card" style="margin-bottom:22px">'
+    +'<div class="tw"><table>'
+    +'<thead><tr><th>Engineer</th><th>Tickets</th><th>INC</th><th>ADR</th><th>Est. MTTR</th><th>Fastest Category</th></tr></thead>'
+    +'<tbody id="mttrTeamTbl"></tbody>'
+    +'</table></div></div>'
+  );
+
+  page.insertAdjacentHTML('beforeend',
     '<div class="table-card" style="margin-bottom:22px">'
     +'<div class="table-head-row"><div>'
     +'<div class="table-title">Open &amp; Service-Impacting Tickets</div>'
@@ -1852,6 +1864,7 @@ function buildTeamView(){
     +'</table></div></div>'
   );
 
+  buildDirTeamTable();
   buildTeamCards();
   buildOpenTable();
   buildRecentTable();
@@ -2728,6 +2741,7 @@ function buildDirectorView(){
         <div style="margin-top:8px"><span style="background:${noiseRatio<=15?'var(--green50)':'var(--orange50)'};color:${noiseRatio<=15?'var(--green700)':'var(--orange700)'};font-size:11px;font-weight:700;padding:2px 8px;border-radius:var(--rfull)">${noiseRatio<=15?'Within benchmark':'+'+( noiseRatio-15)+'% above avg · reduce noise'}</span></div>
       </div>
     </div>
+    ${heatmapHtml}
     <div class="sec-head" style="margin-top:6px"><div>
       <div class="sec-title">AI-Powered Insights</div>
       <div class="sec-sub">Patterns and recommendations derived from ticket history</div>
@@ -2765,7 +2779,6 @@ function buildDirectorView(){
       </div>
     </div>
     <div id="dirGlance"></div>
-    ${heatmapHtml}
     <div class="sec-head">
       <div>
         <div class="sec-title">Recurring Ticket Patterns</div>
@@ -2776,18 +2789,6 @@ function buildDirectorView(){
       <div class="tw"><table>
         <thead><tr><th>Category</th><th>Count</th><th>Primary Assignee</th><th>Automation Potential</th><th>Est. Time Saved</th></tr></thead>
         <tbody id="recurTbl"></tbody>
-      </table></div>
-    </div>
-    <div class="sec-head">
-      <div>
-        <div class="sec-title">Team MTTR Breakdown</div>
-        <div class="sec-sub">Estimated mean time to resolve by engineer · click any row to drill in</div>
-      </div>
-    </div>
-    <div class="table-card" style="margin-bottom:22px">
-      <div class="tw"><table>
-        <thead><tr><th>Engineer</th><th>Tickets</th><th>INC</th><th>ADR</th><th>Est. MTTR</th><th>Fastest Category</th></tr></thead>
-        <tbody id="mttrTeamTbl"></tbody>
       </table></div>
     </div>
     <div style="padding:14px 4px 4px;font-size:11px;color:var(--g900);line-height:2;border-top:1px solid var(--g200)">
@@ -2804,7 +2805,6 @@ function buildDirectorView(){
   buildDirVolumeChart();
   buildDirCatChart();
   buildRecurringTable();
-  buildDirTeamTable();
   buildDirGlance();
 }
 
