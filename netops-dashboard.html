@@ -3460,7 +3460,7 @@ function buildTransitionPage(){
 function buildTransVolChart(filtMonths,filtLabels,Tf,CHGf){
   const configs=[
     {id:'transVolInc',color:'#F79009',data:filtMonths.map(m=>Tf.filter(t=>t.month===m&&t.type==='INC').length),type:'INC'},
-    {id:'transVolAdr',color:'#667085',data:filtMonths.map(m=>Tf.filter(t=>t.month===m&&t.type==='ADR').length),type:'ADR'},
+    {id:'transVolAdr',color:'#D0D5DD',data:filtMonths.map(m=>Tf.filter(t=>t.month===m&&t.type==='ADR').length),type:'ADR'},
     {id:'transVolChg',color:'#2E90FA',data:filtMonths.map(m=>CHGf.filter(c=>c.month===m).length),type:null}
   ];
   configs.forEach(({id,color,data,type})=>{
