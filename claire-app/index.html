@@ -1,0 +1,2127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claire · THD Career Coach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ─── Tokens ─────────────────────────────────────────────────────────────── */
+:root {
+  --hd:#F96302; --hd-dark:#D95A02; --hd-light:#FFF4EE; --hd-mid:#FFE0C8;
+  --g950:#0C111D; --g900:#101828; --g800:#1D2939; --g700:#344054;
+  --g600:#475467; --g500:#667085; --g400:#98A2B3; --g300:#D0D5DD;
+  --g200:#EAECF0; --g150:#F2F4F7; --g100:#F9FAFB; --white:#FFFFFF;
+  --page-bg:#F2F4F7;
+  --green600:#039855; --green500:#12B76A; --green100:#D1FADF; --green50:#ECFDF3;
+  --red500:#F04438; --red100:#FEE4E2; --amber500:#F79009; --amber100:#FEF0C7;
+  --blue500:#2E90FA; --blue100:#DBEAFE; --purple500:#7C3AED; --purple100:#EDE9FE;
+  --sh-xs:0 1px 2px rgba(16,24,40,.05);
+  --sh-sm:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.05);
+  --sh-md:0 4px 16px rgba(16,24,40,.10),0 2px 6px rgba(16,24,40,.06);
+  --sh-lg:0 12px 32px rgba(16,24,40,.14),0 4px 10px rgba(16,24,40,.08);
+  --r4:4px; --r8:8px; --r12:12px; --r16:16px; --r20:20px; --rfull:9999px;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --sidebar:220px;
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+html,body { height:100%; overflow:hidden }
+body { font-family:var(--font); background:var(--page-bg); color:var(--g900);
+  display:flex; font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+
+/* ─── Sidebar ─────────────────────────────────────────────────────────────── */
+.sidebar {
+  width:var(--sidebar); flex-shrink:0; background:var(--g900);
+  display:flex; flex-direction:column; height:100vh; overflow:hidden;
+}
+.sb-brand {
+  display:flex; align-items:center; gap:10px; padding:18px 16px 14px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.sb-logo {
+  width:32px; height:32px; background:var(--hd); border-radius:var(--r8);
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:800; color:var(--white); flex-shrink:0;
+}
+.sb-brand-text { display:flex; flex-direction:column; }
+.sb-name { font-size:14px; font-weight:700; color:var(--white); line-height:1.2; }
+.sb-sub { font-size:10.5px; color:rgba(255,255,255,.45); }
+
+.sb-nav { padding:10px 8px; flex:1; overflow-y:auto; }
+.sb-section { font-size:10px; font-weight:600; letter-spacing:.08em;
+  color:rgba(255,255,255,.3); padding:12px 10px 4px; text-transform:uppercase; }
+.sb-item {
+  display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:var(--r8);
+  cursor:pointer; font-size:13px; font-weight:500; color:var(--white);
+  transition:all .12s; margin-bottom:1px; border:none; background:none;
+  width:100%; text-align:left; font-family:var(--font);
+  border-left:2px solid transparent;
+}
+.sb-item:hover { background:rgba(255,255,255,.07); }
+.sb-item.active { background:rgba(255,255,255,.10); font-weight:600; border-left-color:var(--hd); }
+.sb-item svg { width:16px; height:16px; flex-shrink:0; opacity:.75; }
+.sb-item.active svg { opacity:1; }
+.sb-badge { margin-left:auto; background:var(--hd); color:var(--white);
+  font-size:10px; font-weight:700; padding:1px 6px; border-radius:var(--rfull); }
+
+.sb-bottom { padding:12px 8px; border-top:1px solid rgba(255,255,255,.08); }
+.sb-user { display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:var(--r8); }
+.sb-avatar { width:30px; height:30px; border-radius:var(--rfull); background:var(--hd);
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:700; color:var(--white); flex-shrink:0; }
+.sb-user-info { display:flex; flex-direction:column; min-width:0; }
+.sb-user-name { font-size:12.5px; font-weight:600; color:var(--white);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sb-user-role { font-size:10.5px; color:rgba(255,255,255,.4); }
+
+/* ─── Main wrapper ────────────────────────────────────────────────────────── */
+.main-wrap { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+
+/* ─── Topbar ──────────────────────────────────────────────────────────────── */
+.topbar {
+  background:var(--white); border-bottom:1px solid var(--g200);
+  height:54px; display:flex; align-items:center; padding:0 24px;
+  flex-shrink:0; box-shadow:var(--sh-xs); z-index:10;
+}
+.tb-page-title { font-size:15px; font-weight:700; color:var(--g900); }
+.tb-right { margin-left:auto; display:flex; align-items:center; gap:8px; }
+.tb-beta { font-size:11px; font-weight:600; color:var(--hd); font-style:italic; margin-right:4px; }
+.icon-btn { width:32px; height:32px; border-radius:var(--r8); border:1px solid var(--g200);
+  background:transparent; cursor:pointer; display:flex; align-items:center;
+  justify-content:center; color:var(--g500); transition:all .12s; }
+.icon-btn:hover { background:var(--g100); color:var(--g700); }
+.icon-btn svg { width:15px; height:15px; }
+
+/* ─── Content ─────────────────────────────────────────────────────────────── */
+.content { flex:1; overflow:hidden; }
+.view { display:none; width:100%; height:100%; overflow-y:auto; }
+.view.active { display:flex; }
+
+/* ══════════════════════════════════════════════════════════════════
+   HOME VIEW
+══════════════════════════════════════════════════════════════════ */
+.home-view { flex-direction:column; padding:28px 32px 40px; gap:24px; }
+
+/* Home session panel — unified dark launcher */
+.home-session-panel {
+  background:linear-gradient(145deg,#1a2332 0%,#0d1420 100%);
+  border-radius:var(--r20); padding:36px 40px;
+  display:grid; grid-template-columns:1fr 300px; gap:48px; align-items:center;
+  box-shadow:0 8px 32px rgba(0,0,0,.22);
+}
+.home-panel-h1 { font-size:26px; font-weight:800; color:var(--white); margin-bottom:4px; }
+.home-panel-sub { font-size:13px; color:rgba(255,255,255,.42); margin-bottom:22px; }
+
+/* Mood row on dark bg */
+.home-session-panel .mood-label { color:rgba(255,255,255,.55); }
+.home-session-panel .mood-btn { border-color:rgba(255,255,255,.12); background:rgba(255,255,255,.06); }
+.home-session-panel .mood-btn:hover,
+.home-session-panel .mood-btn.selected { border-color:var(--hd); background:rgba(249,99,2,.2); transform:scale(1.1); }
+
+/* Suggest tip */
+.home-suggest-eyebrow { font-size:10.5px; font-weight:700; letter-spacing:.09em;
+  text-transform:uppercase; color:rgba(255,255,255,.32); margin:16px 0 5px; }
+.home-suggest-msg { font-size:13px; color:rgba(255,255,255,.58); line-height:1.55; margin-bottom:14px; }
+
+/* Prompt pills — 2-col grid on dark */
+.home-session-panel #prompts { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:18px; }
+.home-session-panel .prompt-card { background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.1);
+  color:rgba(255,255,255,.75); font-size:12.5px; padding:10px 14px; box-shadow:none; }
+.home-session-panel .prompt-card:hover { background:rgba(255,255,255,.11);
+  border-color:rgba(249,99,2,.5); color:var(--white); transform:none; box-shadow:none; }
+.home-session-panel .prompt-card:last-child { grid-column:1 / -1; }
+.home-session-panel .arrow { color:rgba(255,255,255,.25); }
+.home-session-panel .prompt-card:hover .arrow { color:var(--hd); }
+
+/* Blueprint link */
+.home-blueprint-link { font-size:12.5px; font-weight:600; color:rgba(255,255,255,.38);
+  background:none; border:none; cursor:pointer; font-family:var(--font); padding:0; }
+.home-blueprint-link:hover { color:rgba(255,255,255,.7); text-decoration:underline; }
+
+/* Mic area */
+.home-panel-right { display:flex; flex-direction:column; align-items:center; gap:8px; }
+.home-panel-mic-top { display:flex; align-items:center; justify-content:space-between; width:100%; margin-bottom:8px; }
+.home-panel-right .agent-badge { background:rgba(255,255,255,.07); border-color:rgba(255,255,255,.1); color:rgba(255,255,255,.6); }
+.home-panel-right .idle-badge { color:rgba(255,255,255,.45); }
+.home-mic-glow-wrap { position:relative; display:flex; align-items:center; justify-content:center; width:220px; height:220px; }
+.home-mic-glow { position:absolute; inset:0; border-radius:50%;
+  background:radial-gradient(circle, rgba(249,99,2,.4) 0%, rgba(249,99,2,.12) 45%, transparent 70%);
+  animation:glowPulse 3s ease-in-out infinite; pointer-events:none; }
+@keyframes glowPulse { 0%,100%{opacity:.72;transform:scale(1)} 50%{opacity:1;transform:scale(1.09)} }
+.home-panel-right .mic-wrap { width:200px; height:200px; }
+.home-panel-right .mic-btn { width:200px; height:200px; box-shadow:0 12px 48px rgba(249,99,2,.48); }
+.home-panel-right .mic-btn svg { width:72px; height:72px; }
+.home-panel-right .session-row { color:rgba(255,255,255,.6); }
+.home-panel-right .end-btn { background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.15); color:rgba(255,255,255,.45); }
+.home-panel-right .end-btn:hover { background:rgba(239,68,68,.2); border-color:rgba(239,68,68,.4); color:#F87171; }
+.home-panel-privacy { font-size:10.5px; color:rgba(255,255,255,.25); text-align:center; line-height:1.5; margin-top:4px; }
+
+/* Share context card */
+.home-ctx-card { background:var(--white); border:1px solid var(--g200);
+  border-radius:var(--r12); box-shadow:var(--sh-xs); overflow:hidden; }
+.home-ctx-head { display:flex; align-items:center; justify-content:space-between;
+  padding:10px 14px; border-bottom:1px solid var(--g200); }
+.home-ctx-feed { max-height:110px; overflow-y:auto; }
+
+/* Stats row */
+.stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+.stat-card {
+  background:var(--white); border:1px solid var(--g200); border-radius:var(--r12);
+  padding:16px 18px; box-shadow:var(--sh-xs);
+}
+.stat-card.accent { border-left:3px solid var(--hd); }
+.stat-label { font-size:11.5px; font-weight:600; color:var(--g500); margin-bottom:6px;
+  text-transform:uppercase; letter-spacing:.04em; }
+.stat-value { font-size:26px; font-weight:800; color:var(--g900); line-height:1; margin-bottom:3px; }
+.stat-sub { font-size:11.5px; color:var(--g400); }
+
+/* Home grid */
+.home-grid { display:grid; grid-template-columns:1.4fr 1fr; gap:18px; }
+
+.home-card {
+  background:var(--white); border:1px solid var(--g200); border-radius:var(--r16);
+  padding:20px 22px; box-shadow:var(--sh-xs);
+}
+.home-card-hd { display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:16px; }
+.home-card-title { font-size:13px; font-weight:700; color:var(--g700);
+  text-transform:uppercase; letter-spacing:.05em; }
+.home-card-action { font-size:12px; color:var(--hd); cursor:pointer; font-weight:600; }
+.home-card-action:hover { text-decoration:underline; }
+
+/* Today suggestion */
+.today-card {
+  background:linear-gradient(135deg, var(--hd) 0%, var(--hd-dark) 100%);
+  border:none; color:var(--white);
+}
+.today-card .home-card-title { color:rgba(255,255,255,.7); }
+.today-eyebrow { font-size:11px; font-weight:600; letter-spacing:.06em;
+  color:rgba(255,255,255,.6); text-transform:uppercase; margin-bottom:6px; }
+.today-msg { font-size:15px; font-weight:600; color:var(--white); line-height:1.5;
+  margin-bottom:16px; }
+.today-btn { background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3);
+  border-radius:var(--r8); padding:8px 16px; color:var(--white); font-family:var(--font);
+  font-size:13px; font-weight:600; cursor:pointer; transition:all .15s; }
+.today-btn:hover { background:rgba(255,255,255,.25); }
+
+/* Last session recap */
+.recap-empty { text-align:center; padding:20px 0; color:var(--g400); font-size:13px; }
+.recap-item { display:flex; flex-direction:column; gap:6px; }
+.recap-date { font-size:11.5px; color:var(--g400); }
+.recap-topics { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:4px; }
+.recap-tag { background:var(--g100); border:1px solid var(--g200); border-radius:var(--rfull);
+  padding:2px 10px; font-size:11.5px; font-weight:500; color:var(--g600); }
+.recap-actions-list { list-style:none; padding:0; }
+.recap-actions-list li { display:flex; align-items:flex-start; gap:7px;
+  font-size:12.5px; color:var(--g700); padding:4px 0; border-bottom:1px solid var(--g100); }
+.recap-actions-list li:last-child { border-bottom:none; }
+.recap-check { width:14px; height:14px; border-radius:var(--r4); border:1.5px solid var(--g300);
+  flex-shrink:0; margin-top:1px; cursor:pointer; }
+.recap-check.done { background:var(--green500); border-color:var(--green500); }
+
+/* Goal mini cards */
+.goal-mini { display:flex; flex-direction:column; gap:10px; }
+.goal-mini-item { padding:12px 14px; background:var(--g100); border-radius:var(--r8);
+  border:1px solid var(--g200); }
+.goal-mini-title { font-size:13px; font-weight:600; color:var(--g800); margin-bottom:5px; }
+.goal-progress-bar { height:5px; background:var(--g200); border-radius:var(--rfull); overflow:hidden; }
+.goal-progress-fill { height:100%; background:var(--hd); border-radius:var(--rfull);
+  transition:width .4s; }
+.goal-mini-meta { display:flex; justify-content:space-between; margin-top:4px;
+  font-size:11px; color:var(--g400); }
+.goal-empty-mini { font-size:13px; color:var(--g400); text-align:center; padding:16px 0; }
+
+/* ══════════════════════════════════════════════════════════════════
+   CHAT VIEW
+══════════════════════════════════════════════════════════════════ */
+.chat-view { overflow:hidden; }
+.chat-layout {
+  display:grid; width:100%; height:100%;
+  grid-template-columns:minmax(240px,1.6fr) minmax(300px,2.2fr) minmax(240px,1.3fr);
+}
+
+/* Left */
+.intro-panel { padding:40px 32px; overflow-y:auto; background:var(--page-bg); }
+.intro-h1 { font-size:28px; font-weight:800; line-height:1.2; color:var(--g900); margin-bottom:12px; }
+.intro-h1 em { color:var(--hd); font-style:normal; }
+.intro-sub { font-size:13.5px; color:var(--g500); line-height:1.65; margin-bottom:28px; max-width:300px; }
+.mood-row { display:flex; align-items:center; gap:6px; margin-bottom:24px; }
+.mood-label { font-size:12px; font-weight:600; color:var(--g600); margin-right:4px; }
+.mood-btn { width:34px; height:34px; border:1.5px solid var(--g200); border-radius:var(--r8);
+  background:var(--white); cursor:pointer; font-size:17px; transition:all .15s;
+  display:flex; align-items:center; justify-content:center; }
+.mood-btn:hover, .mood-btn.selected { border-color:var(--hd); background:var(--hd-light); transform:scale(1.1); }
+.prompts { display:flex; flex-direction:column; gap:8px; }
+.prompt-card { display:flex; align-items:center; justify-content:space-between; gap:10px;
+  background:var(--white); border:1px solid var(--g200); border-radius:var(--r12);
+  padding:13px 16px; cursor:pointer; width:100%; text-align:left; font-family:var(--font);
+  font-size:13px; font-weight:500; color:var(--g800); box-shadow:var(--sh-xs);
+  transition:all .15s; }
+.prompt-card:hover { border-color:rgba(249,99,2,.3); background:var(--hd-light);
+  box-shadow:var(--sh-sm); transform:translateX(2px); }
+.prompt-card:hover .arrow { color:var(--hd); }
+.arrow { width:14px; height:14px; flex-shrink:0; color:var(--g300); transition:color .15s; }
+
+/* Center — voice */
+.voice-panel { display:flex; align-items:center; justify-content:center;
+  padding:20px; background:var(--page-bg); }
+.voice-card { background:var(--white); border-radius:var(--r16); box-shadow:var(--sh-md);
+  padding:28px 32px 24px; width:100%; max-width:400px;
+  display:flex; flex-direction:column; align-items:center; }
+.badge-row { width:100%; display:flex; align-items:center;
+  justify-content:space-between; margin-bottom:26px; }
+.agent-badge { display:flex; align-items:center; gap:6px; border:1px solid var(--g200);
+  border-radius:var(--rfull); padding:4px 10px 4px 7px;
+  font-size:11.5px; font-weight:500; color:var(--g500); }
+.agent-badge svg { width:13px; height:13px; color:var(--g400); }
+.idle-badge { display:flex; align-items:center; gap:5px;
+  font-size:11px; font-weight:600; letter-spacing:.06em; color:var(--g400); }
+.idle-dot { width:7px; height:7px; border-radius:var(--rfull); background:var(--g300); transition:background .3s; }
+.idle-dot.active   { background:var(--green500); animation:pdot 2s infinite; }
+.idle-dot.speaking { background:var(--hd);        animation:pdot 1s infinite; }
+.idle-dot.conn     { background:var(--amber500);  animation:blink 1s infinite; }
+@keyframes pdot  { 0%,100%{opacity:1} 50%{opacity:.35} }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.15} }
+
+.mic-wrap { position:relative; width:160px; height:160px;
+  display:flex; align-items:center; justify-content:center; margin-bottom:24px; }
+.ripple { position:absolute; inset:0; border-radius:var(--rfull);
+  border:2px solid rgba(249,99,2,.4); animation:ripple 2s ease-out infinite; display:none; }
+.ripple.r2 { animation-delay:.65s; }
+.ripple.r3 { animation-delay:1.3s; }
+.ripple.on { display:block; }
+@keyframes ripple { 0%{opacity:.6;transform:scale(1)} 100%{opacity:0;transform:scale(1.6)} }
+.mic-btn { width:160px; height:160px; border-radius:var(--rfull); background:var(--hd);
+  border:none; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  box-shadow:0 10px 40px rgba(249,99,2,.40); transition:all .18s; position:relative; z-index:1; }
+.mic-btn:hover { background:var(--hd-dark); transform:scale(1.03); }
+.mic-btn.placeholder { cursor:default; }
+.mic-btn.placeholder:hover { transform:none; background:var(--hd); }
+.mic-btn svg { width:64px; height:64px; }
+.voice-title { font-size:17px; font-weight:700; color:var(--g900); margin-bottom:7px; }
+.voice-sub { font-size:12px; color:var(--g500); line-height:1.65; text-align:center;
+  max-width:260px; margin-bottom:18px; }
+.session-row { display:none; align-items:center; gap:7px; margin-bottom:16px;
+  font-size:12px; font-weight:600; color:var(--g500); }
+.session-row.on { display:flex; }
+.session-row svg { width:13px; height:13px; }
+.timer { font-variant-numeric:tabular-nums; }
+.end-btn { width:34px; height:34px; border-radius:var(--rfull); background:var(--g100);
+  border:1px solid var(--g200); cursor:pointer; display:flex; align-items:center;
+  justify-content:center; color:var(--g400); transition:all .15s;
+  visibility:hidden; margin-bottom:18px; }
+.end-btn.on { visibility:visible; }
+.end-btn:hover { background:var(--red100); border-color:#FCA5A5; color:var(--red500); }
+.end-btn svg { width:15px; height:15px; }
+.privacy { font-size:11px; color:var(--hd); font-style:italic; line-height:1.55;
+  text-align:center; margin-bottom:8px; }
+.powered { font-size:10.5px; color:var(--g400); text-align:center; line-height:1.6; }
+
+/* Right — docs */
+.docs-panel { display:flex; flex-direction:column; border-left:1px solid var(--g200);
+  background:var(--white); overflow:hidden; }
+.docs-head { display:flex; align-items:center; justify-content:space-between;
+  padding:13px 16px; border-bottom:1px solid var(--g200); flex-shrink:0; }
+.docs-head-left { display:flex; align-items:center; gap:7px; }
+.rec-dot { width:8px; height:8px; border-radius:var(--rfull); background:var(--red500); flex-shrink:0; }
+.docs-label { font-size:10px; font-weight:700; letter-spacing:.09em; color:var(--g600); }
+.docs-count { font-size:11px; color:var(--g400); }
+.docs-feed { flex:1; overflow-y:auto; display:flex; flex-direction:column; }
+.docs-empty-state { flex:1; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:10px; padding:28px 20px; }
+.docs-empty-icon { width:48px; height:48px; border-radius:var(--rfull); border:2px solid var(--g200);
+  display:flex; align-items:center; justify-content:center; font-size:20px; color:var(--g300); }
+.docs-empty-text { font-size:12.5px; color:var(--g400); text-align:center;
+  line-height:1.55; max-width:160px; }
+.doc-item { display:flex; align-items:flex-start; gap:9px; padding:10px 14px;
+  border-bottom:1px solid var(--g100); font-size:12px; color:var(--g700); }
+.doc-item img { width:40px; height:40px; object-fit:cover; border-radius:var(--r6); flex-shrink:0; }
+.doc-icon { font-size:18px; flex-shrink:0; line-height:1; margin-top:1px; }
+.doc-meta { display:flex; flex-direction:column; gap:2px; min-width:0; }
+.doc-name { font-weight:600; font-size:12px; color:var(--g800); overflow:hidden;
+  text-overflow:ellipsis; white-space:nowrap; }
+.doc-hint { font-size:10.5px; color:var(--g400); }
+.doc-body { font-size:11.5px; color:var(--g600); white-space:pre-wrap; word-break:break-word; margin-top:2px; }
+.msg-bubble { margin:6px 12px; padding:8px 11px; border-radius:var(--r8);
+  font-size:12px; line-height:1.5; }
+.msg-bubble.user { background:var(--hd-light); color:var(--g800);
+  border:1px solid var(--hd-mid); align-self:flex-end; max-width:88%; }
+.msg-bubble.claire { background:var(--g100); color:var(--g700);
+  border:1px solid var(--g200); max-width:88%; }
+.docs-input { display:flex; align-items:flex-end; gap:7px; padding:10px 12px;
+  border-top:1px solid var(--g200); flex-shrink:0; }
+.attach-btn { width:30px; height:30px; border-radius:var(--r8); border:1px solid var(--g200);
+  background:transparent; cursor:pointer; display:flex; align-items:center;
+  justify-content:center; color:var(--g400); transition:all .12s; flex-shrink:0; }
+.attach-btn:hover { background:var(--g100); color:var(--g600); }
+.attach-btn svg { width:14px; height:14px; }
+.ctx-wrap { flex:1; }
+.ctx-input { width:100%; resize:none; border:1px solid var(--g200); border-radius:var(--r8);
+  padding:7px 10px; font-family:var(--font); font-size:12.5px; color:var(--g800);
+  background:var(--white); outline:none; line-height:1.5; max-height:100px;
+  overflow-y:auto; transition:border-color .12s; }
+.ctx-input:focus { border-color:var(--hd); box-shadow:0 0 0 3px rgba(249,99,2,.08); }
+.ctx-input::placeholder { color:var(--g400); }
+.send-btn { width:30px; height:30px; border-radius:var(--r8); border:none;
+  background:var(--g200); cursor:pointer; display:flex; align-items:center;
+  justify-content:center; color:var(--g500); transition:all .12s; flex-shrink:0; }
+.send-btn.ready { background:var(--hd); color:var(--white); }
+.send-btn.ready:hover { background:var(--hd-dark); }
+.send-btn svg { width:14px; height:14px; }
+
+/* ══════════════════════════════════════════════════════════════════
+   GOALS VIEW
+══════════════════════════════════════════════════════════════════ */
+.goals-view { flex-direction:column; padding:28px 32px 40px; gap:24px; }
+.page-header { display:flex; align-items:flex-end; justify-content:space-between; }
+.page-header h2 { font-size:20px; font-weight:800; color:var(--g900); }
+.page-header p { font-size:13px; color:var(--g500); margin-top:3px; }
+.btn-primary { background:var(--hd); color:var(--white); border:none; border-radius:var(--r8);
+  padding:9px 18px; font-family:var(--font); font-size:13px; font-weight:600;
+  cursor:pointer; transition:background .12s; }
+.btn-primary:hover { background:var(--hd-dark); }
+.btn-secondary { background:var(--white); color:var(--g700); border:1px solid var(--g200);
+  border-radius:var(--r8); padding:9px 18px; font-family:var(--font); font-size:13px;
+  font-weight:600; cursor:pointer; transition:all .12s; }
+.btn-secondary:hover { background:var(--g100); border-color:var(--g300); }
+
+.goals-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.goal-card { background:var(--white); border:1px solid var(--g200); border-radius:var(--r16);
+  padding:20px; box-shadow:var(--sh-xs); display:flex; flex-direction:column; gap:12px; }
+.goal-card.add-card { border:2px dashed var(--g200); align-items:center;
+  justify-content:center; cursor:pointer; min-height:180px; transition:all .15s; }
+.goal-card.add-card:hover { border-color:var(--hd); background:var(--hd-light); }
+.add-card-icon { width:40px; height:40px; border-radius:var(--rfull); background:var(--g100);
+  display:flex; align-items:center; justify-content:center; margin-bottom:8px; color:var(--g400); }
+.add-card-text { font-size:13px; font-weight:600; color:var(--g500); text-align:center; }
+.goal-card-top { display:flex; align-items:flex-start; justify-content:space-between; }
+.goal-category { font-size:10.5px; font-weight:700; letter-spacing:.06em;
+  text-transform:uppercase; padding:2px 8px; border-radius:var(--rfull); }
+.cat-career    { background:var(--blue100);   color:var(--blue500); }
+.cat-leadership{ background:var(--purple100); color:var(--purple500); }
+.cat-skills    { background:var(--green100);  color:var(--green600); }
+.cat-personal  { background:var(--amber100);  color:var(--amber500); }
+.goal-menu { background:none; border:none; cursor:pointer; color:var(--g400); padding:2px; }
+.goal-title { font-size:14px; font-weight:700; color:var(--g900); line-height:1.35; }
+.goal-desc { font-size:12.5px; color:var(--g500); line-height:1.5; }
+.goal-bar-wrap { }
+.goal-bar-top { display:flex; justify-content:space-between; margin-bottom:5px;
+  font-size:11.5px; font-weight:600; }
+.goal-bar-label { color:var(--g600); }
+.goal-bar-pct { color:var(--hd); }
+.goal-bar { height:6px; background:var(--g100); border-radius:var(--rfull); overflow:hidden; }
+.goal-bar-fill { height:100%; background:var(--hd); border-radius:var(--rfull); transition:width .4s; }
+.goal-footer { display:flex; align-items:center; justify-content:space-between;
+  padding-top:8px; border-top:1px solid var(--g100); }
+.goal-date { font-size:11px; color:var(--g400); }
+.goal-discuss-btn { font-size:11.5px; font-weight:600; color:var(--hd); background:none;
+  border:none; cursor:pointer; font-family:var(--font); }
+.goal-discuss-btn:hover { text-decoration:underline; }
+
+/* ══════════════════════════════════════════════════════════════════
+   HISTORY VIEW
+══════════════════════════════════════════════════════════════════ */
+.history-view { flex-direction:column; padding:28px 32px 40px; gap:20px; }
+.history-list { display:flex; flex-direction:column; gap:12px; }
+.session-card { background:var(--white); border:1px solid var(--g200);
+  border-radius:var(--r12); overflow:hidden; box-shadow:var(--sh-xs); }
+.session-card-head { display:flex; align-items:center; gap:14px; padding:16px 18px;
+  cursor:pointer; transition:background .12s; }
+.session-card-head:hover { background:var(--g100); }
+.session-icon { width:38px; height:38px; border-radius:var(--r8); background:var(--hd-light);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.session-icon svg { width:18px; height:18px; color:var(--hd); }
+.session-info { flex:1; min-width:0; }
+.session-title { font-size:13.5px; font-weight:600; color:var(--g800); }
+.session-meta { font-size:11.5px; color:var(--g400); margin-top:2px; }
+.session-tags { display:flex; gap:5px; flex-wrap:wrap; margin-top:6px; }
+.session-tag { background:var(--g100); border:1px solid var(--g200); border-radius:var(--rfull);
+  padding:2px 8px; font-size:11px; font-weight:500; color:var(--g600); }
+.session-chevron { color:var(--g300); transition:transform .2s; }
+.session-chevron.open { transform:rotate(90deg); }
+.session-body { padding:0 18px 16px; display:none; border-top:1px solid var(--g100); }
+.session-body.open { display:block; }
+.session-section { margin-top:14px; }
+.session-section-title { font-size:11.5px; font-weight:700; color:var(--g500);
+  text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px; }
+.session-summary { font-size:13px; color:var(--g700); line-height:1.65; }
+.action-list { list-style:none; display:flex; flex-direction:column; gap:6px; }
+.action-list li { display:flex; align-items:flex-start; gap:8px;
+  font-size:12.5px; color:var(--g700); }
+.action-bullet { width:6px; height:6px; border-radius:var(--rfull); background:var(--hd);
+  flex-shrink:0; margin-top:5px; }
+.history-empty { display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:12px; padding:60px 20px; color:var(--g400); text-align:center; }
+.history-empty-icon { font-size:36px; }
+.history-empty p { font-size:14px; color:var(--g500); }
+.history-empty span { font-size:12.5px; color:var(--g400); }
+
+/* ══════════════════════════════════════════════════════════════════
+   RESOURCES VIEW
+══════════════════════════════════════════════════════════════════ */
+.resources-view { flex-direction:column; padding:28px 32px 40px; gap:24px; }
+.resources-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.resource-card { background:var(--white); border:1px solid var(--g200); border-radius:var(--r12);
+  padding:18px; box-shadow:var(--sh-xs); display:flex; flex-direction:column; gap:10px;
+  transition:all .15s; }
+.resource-card:hover { box-shadow:var(--sh-md); border-color:var(--g300); transform:translateY(-1px); }
+.resource-icon { width:40px; height:40px; border-radius:var(--r8);
+  display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+.resource-title { font-size:14px; font-weight:700; color:var(--g900); }
+.resource-desc { font-size:12.5px; color:var(--g500); line-height:1.5; flex:1; }
+.resource-link { display:flex; align-items:center; gap:5px; font-size:12px;
+  font-weight:600; color:var(--hd); text-decoration:none; }
+.resource-link:hover { text-decoration:underline; }
+.resource-link svg { width:12px; height:12px; }
+.resources-section-title { font-size:13px; font-weight:700; color:var(--g700);
+  text-transform:uppercase; letter-spacing:.06em; margin-bottom:2px; }
+
+/* ══════════════════════════════════════════════════════════════════
+   SETTINGS VIEW
+══════════════════════════════════════════════════════════════════ */
+.settings-view { flex-direction:column; padding:28px 32px 40px; gap:24px; max-width:640px; }
+.settings-section { background:var(--white); border:1px solid var(--g200);
+  border-radius:var(--r16); padding:22px; box-shadow:var(--sh-xs); }
+.settings-section h3 { font-size:14px; font-weight:700; color:var(--g900); margin-bottom:4px; }
+.settings-section p { font-size:12.5px; color:var(--g500); margin-bottom:18px; }
+.settings-row { display:flex; align-items:center; justify-content:space-between;
+  padding:12px 0; border-bottom:1px solid var(--g100); }
+.settings-row:last-child { border-bottom:none; padding-bottom:0; }
+.settings-key { font-size:13px; font-weight:500; color:var(--g800); }
+.settings-val { font-size:12.5px; color:var(--g500); }
+.field-input { border:1px solid var(--g300); border-radius:var(--r8); padding:8px 12px;
+  font-family:var(--font); font-size:13px; color:var(--g900); outline:none;
+  transition:border-color .12s; min-width:220px; }
+.field-input:focus { border-color:var(--hd); box-shadow:0 0 0 3px rgba(249,99,2,.1); }
+.settings-actions { display:flex; gap:8px; margin-top:16px; }
+
+/* ══════════════════════════════════════════════════════════════════
+   BLUEPRINT VIEW
+══════════════════════════════════════════════════════════════════ */
+.blueprint-view { flex-direction:column; padding:28px 32px 48px; gap:22px; }
+
+/* Career Path */
+.bp-path-row { display:flex; align-items:stretch; gap:0; }
+.bp-node {
+  flex:1; background:var(--white); border:1.5px solid var(--g200); border-radius:var(--r16);
+  padding:18px 20px 16px; box-shadow:var(--sh-xs); cursor:pointer; transition:all .15s;
+  position:relative; overflow:hidden;
+}
+.bp-node:hover { border-color:var(--hd); box-shadow:var(--sh-sm); }
+.bp-node.filled { border-left:3px solid var(--hd); }
+.bp-node-badge { font-size:10px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; margin-bottom:10px; }
+.bp-badge-now  { color:var(--hd); }
+.bp-badge-near { color:var(--blue500); }
+.bp-badge-far  { color:var(--purple500); }
+.bp-node-role { font-size:15px; font-weight:700; color:var(--g900); line-height:1.3; margin-bottom:3px; min-height:22px; }
+.bp-node-dept { font-size:12px; color:var(--g500); margin-bottom:10px; }
+.bp-node-why { font-size:12px; color:var(--g600); font-style:italic; line-height:1.55;
+  border-top:1px solid var(--g100); padding-top:10px; min-height:38px; }
+.bp-node-empty-text { color:var(--g300); font-style:normal; }
+.bp-node-edit-btn { position:absolute; top:10px; right:10px; background:var(--g100);
+  border:1px solid var(--g200); border-radius:var(--r8); width:26px; height:26px;
+  display:flex; align-items:center; justify-content:center; color:var(--g400);
+  opacity:0; transition:opacity .12s; }
+.bp-node:hover .bp-node-edit-btn { opacity:1; }
+.bp-node-edit-btn svg { width:12px; height:12px; }
+.bp-connector { display:flex; align-items:center; padding:0 10px; color:var(--g300); flex-shrink:0; }
+.bp-connector svg { width:22px; height:22px; }
+
+/* Sections */
+.bp-section { background:var(--white); border:1px solid var(--g200); border-radius:var(--r16);
+  padding:22px; box-shadow:var(--sh-xs); }
+.bp-section-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+.bp-section-title { font-size:12px; font-weight:700; color:var(--g600); text-transform:uppercase; letter-spacing:.07em; }
+.bp-action-btn { background:none; border:none; font-family:var(--font); font-size:12px;
+  font-weight:600; color:var(--hd); cursor:pointer; }
+.bp-action-btn:hover { text-decoration:underline; }
+.bp-grid-2 { display:grid; grid-template-columns:1.1fr 1fr; gap:18px; }
+
+/* Skills radar */
+.skills-chart-wrap { display:flex; flex-direction:column; align-items:center; }
+.skills-chart-wrap svg { max-width:100%; }
+.skill-edit-grid { display:grid; grid-template-columns:1fr 1fr; gap:2px 24px; }
+.skill-row { padding:8px 0; }
+.skill-row-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
+.skill-row-label { font-size:12.5px; font-weight:500; color:var(--g700); }
+.skill-row-val { font-size:12px; font-weight:700; color:var(--hd); }
+
+/* Milestones */
+.milestone-list { display:flex; flex-direction:column; }
+.milestone-item { display:flex; gap:14px; padding:13px 0; border-bottom:1px solid var(--g100); }
+.milestone-item:last-child { border-bottom:none; padding-bottom:0; }
+.ms-node { display:flex; flex-direction:column; align-items:center; flex-shrink:0; padding-top:4px; }
+.ms-dot { width:11px; height:11px; border-radius:var(--rfull); flex-shrink:0; }
+.ms-line { width:2px; flex:1; background:var(--g200); margin-top:4px; min-height:16px; }
+.ms-not-started { background:var(--g300); }
+.ms-in-progress { background:var(--amber500); }
+.ms-completed   { background:var(--green500); }
+.ms-content { flex:1; min-width:0; }
+.ms-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
+.ms-title { font-size:13.5px; font-weight:600; color:var(--g900); line-height:1.3; flex:1; }
+.ms-buttons { display:flex; align-items:center; gap:4px; flex-shrink:0; }
+.ms-prep-btn { background:none; border:none; font-family:var(--font); font-size:11.5px;
+  font-weight:600; color:var(--hd); cursor:pointer; padding:3px 7px; border-radius:var(--r8);
+  transition:background .12s; white-space:nowrap; }
+.ms-prep-btn:hover { background:var(--hd-light); }
+.ms-icon-btn { background:none; border:none; cursor:pointer; color:var(--g400); padding:3px;
+  border-radius:var(--r8); display:flex; align-items:center; transition:all .12s; }
+.ms-icon-btn:hover { background:var(--g100); color:var(--g600); }
+.ms-icon-btn svg { width:13px; height:13px; }
+.ms-meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:5px; }
+.ms-status-badge { font-size:10.5px; font-weight:600; padding:2px 8px; border-radius:var(--rfull); }
+.msb-not-started { background:var(--g100);    color:var(--g500); }
+.msb-in-progress { background:var(--amber100);color:var(--amber500); }
+.msb-completed   { background:var(--green100);color:var(--green600); }
+.ms-cat { font-size:11px; color:var(--g400); }
+.ms-date { font-size:11px; color:var(--g400); }
+.ms-desc { font-size:12px; color:var(--g500); line-height:1.5; margin-top:4px; }
+.ms-empty { display:flex; flex-direction:column; align-items:center; gap:6px;
+  padding:28px 0; color:var(--g400); text-align:center; font-size:13px; }
+
+/* Learning Plan */
+.learning-list { display:flex; flex-direction:column; gap:7px; }
+.learning-item { display:flex; align-items:center; gap:11px; padding:10px 14px;
+  background:var(--g100); border:1px solid var(--g200); border-radius:var(--r8); transition:opacity .15s; }
+.learning-item.done { opacity:.5; }
+.learn-check { width:17px; height:17px; border-radius:var(--r4); border:1.5px solid var(--g300);
+  flex-shrink:0; cursor:pointer; background:var(--white); display:flex; align-items:center;
+  justify-content:center; transition:all .12s; }
+.learn-check.checked { background:var(--green500); border-color:var(--green500); }
+.learn-check svg { width:10px; height:10px; color:var(--white); display:none; }
+.learn-check.checked svg { display:block; }
+.learn-type-badge { font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+  padding:2px 7px; border-radius:var(--rfull); flex-shrink:0; }
+.lt-course      { background:var(--blue100);   color:var(--blue500); }
+.lt-cert        { background:var(--purple100); color:var(--purple500); }
+.lt-book        { background:var(--amber100);  color:var(--amber500); }
+.lt-stretch     { background:var(--hd-light);  color:var(--hd); }
+.lt-mentorship  { background:var(--green100);  color:var(--green600); }
+.learn-title { flex:1; font-size:13px; font-weight:500; color:var(--g800); }
+.learn-link  { font-size:11.5px; color:var(--hd); text-decoration:none; flex-shrink:0; }
+.learn-link:hover { text-decoration:underline; }
+.learn-del { background:none; border:none; cursor:pointer; color:var(--g300); font-size:17px;
+  line-height:1; transition:color .12s; padding:0 2px; }
+.learn-del:hover { color:var(--red500); }
+.learn-empty { font-size:13px; color:var(--g400); text-align:center; padding:20px 0; }
+
+/* Manager Alignment */
+.mgr-fields { display:flex; flex-direction:column; gap:13px; }
+.mgr-label { display:block; font-size:12px; font-weight:600; color:var(--g600); margin-bottom:4px; }
+.mgr-input { width:100%; border:1px solid var(--g300); border-radius:var(--r8);
+  padding:8px 12px; font-family:var(--font); font-size:13px; color:var(--g900);
+  outline:none; resize:vertical; transition:border-color .12s; background:var(--white); }
+.mgr-input:focus { border-color:var(--hd); box-shadow:0 0 0 3px rgba(249,99,2,.08); }
+
+/* Blueprint session CTA */
+.bp-cta-btn { display:inline-flex; align-items:center; gap:8px; background:var(--hd);
+  color:var(--white); border:none; border-radius:var(--r8); padding:10px 20px;
+  font-family:var(--font); font-size:13px; font-weight:600; cursor:pointer; transition:background .12s; }
+.bp-cta-btn:hover { background:var(--hd-dark); }
+.bp-cta-btn svg { width:15px; height:15px; }
+
+/* ══════════════════════════════════════════════════════════════════
+   SHARED COMPONENTS
+══════════════════════════════════════════════════════════════════ */
+/* Modal */
+.modal-bg { position:fixed; inset:0; background:rgba(16,24,40,.45);
+  backdrop-filter:blur(5px); z-index:100; display:none; align-items:center;
+  justify-content:center; padding:20px; }
+.modal-bg.open { display:flex; }
+.modal { background:var(--white); border-radius:var(--r16); box-shadow:var(--sh-lg);
+  padding:28px; width:100%; max-width:460px; }
+.modal h2 { font-size:18px; font-weight:700; color:var(--g900); margin-bottom:6px; }
+.modal p  { font-size:13px; color:var(--g600); line-height:1.6; margin-bottom:20px; }
+.modal-logo { display:flex; align-items:center; gap:10px; margin-bottom:20px; }
+.modal-hd { width:32px; height:32px; background:var(--hd); border-radius:var(--r8);
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:800; color:var(--white); }
+.modal-brand { font-size:14px; font-weight:800; color:var(--hd); letter-spacing:.04em; text-transform:uppercase; }
+.field-label { display:block; font-size:12.5px; font-weight:600; color:var(--g700); margin-bottom:5px; }
+.field-hint { font-size:11px; color:var(--g400); margin-top:5px; margin-bottom:18px; }
+.field-hint a { color:var(--hd); text-decoration:none; }
+.modal-note { margin-top:14px; font-size:11px; color:var(--g400); text-align:center; }
+.modal-row { display:flex; gap:10px; }
+.modal-row .btn-secondary { flex:1; text-align:center; }
+.modal-row .btn-primary { flex:1; text-align:center; }
+
+/* Goal modal */
+.goal-form { display:flex; flex-direction:column; gap:14px; }
+.form-group { display:flex; flex-direction:column; gap:5px; }
+.form-select { border:1px solid var(--g300); border-radius:var(--r8); padding:8px 12px;
+  font-family:var(--font); font-size:13px; color:var(--g900); outline:none;
+  background:var(--white); transition:border-color .12s; width:100%; }
+.form-select:focus { border-color:var(--hd); }
+.form-textarea { width:100%; border:1px solid var(--g300); border-radius:var(--r8);
+  padding:8px 12px; font-family:var(--font); font-size:13px; color:var(--g900);
+  outline:none; resize:vertical; min-height:72px; transition:border-color .12s; }
+.form-textarea:focus { border-color:var(--hd); box-shadow:0 0 0 3px rgba(249,99,2,.1); }
+.range-wrap { display:flex; align-items:center; gap:10px; }
+.range-input { flex:1; accent-color:var(--hd); }
+.range-val { font-size:13px; font-weight:700; color:var(--hd); min-width:30px; }
+
+/* Toast */
+.toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(8px);
+  background:var(--g900); color:var(--white); border-radius:var(--r8);
+  padding:10px 20px; font-size:13px; font-weight:500; box-shadow:var(--sh-lg);
+  opacity:0; transition:all .22s; z-index:200; max-width:480px;
+  text-align:center; pointer-events:none; }
+.toast.err  { background:#912018; }
+.toast.warn { background:#7A3C0D; }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--g200); border-radius:var(--rfull); }
+</style>
+</head>
+<body>
+
+<!-- ─── Setup modal ────────────────────────────────────────────────────────── -->
+<div id="modalBg" class="modal-bg">
+  <div class="modal">
+    <div class="modal-logo">
+      <div class="modal-hd">HD</div>
+      <span class="modal-brand">Home Depot</span>
+    </div>
+    <h2>Set up Claire</h2>
+    <p>Enter your Gemini API key to enable Claire's voice. Stored only on this device, sent directly to Google.</p>
+    <label class="field-label" for="keyInput">Gemini API Key</label>
+    <input class="field-input" type="password" id="keyInput" placeholder="AIza..." autocomplete="off" spellcheck="false" style="width:100%;margin-bottom:0">
+    <p class="field-hint">Get a key at <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com</a> → "Get API key"</p>
+    <button class="btn-primary" id="saveBtn" disabled style="width:100%">Start using Claire</button>
+    <p class="modal-note">Internal THD beta · Not a substitute for official HR guidance.</p>
+  </div>
+</div>
+
+<!-- ─── Goal modal ─────────────────────────────────────────────────────────── -->
+<div id="goalModal" class="modal-bg">
+  <div class="modal">
+    <h2 id="goalModalTitle">Add Career Goal</h2>
+    <p>Set a goal and Claire will reference it in every session to help you make progress.</p>
+    <div class="goal-form">
+      <div class="form-group">
+        <label class="field-label">Goal title</label>
+        <input class="field-input" id="goalTitle" placeholder="e.g. Get promoted to Senior Manager" style="width:100%">
+      </div>
+      <div class="form-group">
+        <label class="field-label">Category</label>
+        <select class="form-select" id="goalCategory">
+          <option value="career">Career Advancement</option>
+          <option value="leadership">Leadership</option>
+          <option value="skills">Skills Development</option>
+          <option value="personal">Personal Growth</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="field-label">Description <span style="color:var(--g400);font-weight:400">(optional)</span></label>
+        <textarea class="form-textarea" id="goalDesc" placeholder="What does success look like?"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="field-label">Progress: <span id="progressLabel">0%</span></label>
+        <div class="range-wrap">
+          <input type="range" class="range-input" id="goalProgress" min="0" max="100" value="0" step="5">
+          <span class="range-val" id="progressVal">0%</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="field-label">Target date <span style="color:var(--g400);font-weight:400">(optional)</span></label>
+        <input class="field-input" type="date" id="goalDate" style="width:100%">
+      </div>
+    </div>
+    <div class="modal-row" style="margin-top:20px">
+      <button class="btn-secondary" id="goalCancelBtn">Cancel</button>
+      <button class="btn-primary" id="goalSaveBtn">Save Goal</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── App ───────────────────────────────────────────────────────────────── -->
+<nav class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo">HD</div>
+    <div class="sb-brand-text">
+      <span class="sb-name">Claire</span>
+      <span class="sb-sub">THD Career Coach</span>
+    </div>
+  </div>
+
+  <div class="sb-nav">
+    <button class="sb-item active" data-view="home">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M2 6.5L8 2l6 4.5V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M6 15V9h4v6" stroke="currentColor" stroke-width="1.3"/></svg>
+      Home
+    </button>
+    <button class="sb-item" data-view="goals">
+      <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r=".8" fill="currentColor"/></svg>
+      My Goals
+    </button>
+    <button class="sb-item" data-view="blueprint">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M2 12l3-4 3 2.5 3-4.5 3-2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="14" cy="4" r="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+      Career Blueprint
+    </button>
+    <button class="sb-item" data-view="history">
+      <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M8 5v3.5l2 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Session History
+      <span class="sb-badge" id="histBadge" style="display:none">0</span>
+    </button>
+    <button class="sb-item" data-view="resources">
+      <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="8" height="11" rx="1" stroke="currentColor" stroke-width="1.3"/><path d="M5 5h4M5 7.5h4M5 10h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M10 5h3l1 3-1 3h-3" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+      Resources
+    </button>
+  </div>
+
+  <div class="sb-bottom">
+    <button class="sb-item" data-view="settings">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M6.5 2h3l.4 2 2 1 2-1L15.5 6.5l-2 1.5v1l2 1.5L14 13l-2-1-2 1-.4 2h-3l-.4-2-2-1-2 1L.5 10.5l2-1.5v-1L.5 6.5 2 4l2 1 2-1 .5-2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><circle cx="8" cy="8.5" r="2" stroke="currentColor" stroke-width="1.2"/></svg>
+      Settings
+    </button>
+    <div class="sb-user">
+      <div class="sb-avatar" id="sbAvatar">K</div>
+      <div class="sb-user-info">
+        <span class="sb-user-name" id="sbUserName">Associate</span>
+        <span class="sb-user-role" id="sbUserRole">The Home Depot</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="main-wrap">
+  <header class="topbar">
+    <span class="tb-page-title" id="pageTitle">Home</span>
+    <div class="tb-right">
+      <span class="tb-beta">(beta)</span>
+      <button class="icon-btn" id="settingsBtn" title="Settings">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M6.5 2h3l.4 2 2 1 2-1L15.5 6.5l-2 1.5v1l2 1.5L14 13l-2-1-2 1-.4 2h-3l-.4-2-2-1-2 1L.5 10.5l2-1.5v-1L.5 6.5 2 4l2 1 2-1 .5-2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><circle cx="8" cy="8.5" r="2" stroke="currentColor" stroke-width="1.2"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ── HOME ─────────────────────────────────────────────────────────── -->
+    <div class="view home-view active" id="view-home">
+      <!-- Unified dark launcher panel -->
+      <div class="home-session-panel">
+
+        <!-- Left: greeting + mood + prompts -->
+        <div class="home-panel-left">
+          <h1 class="home-panel-h1" id="homeGreeting">Good morning!</h1>
+          <p class="home-panel-sub">Your personal career coach is ready when you are.</p>
+          <div class="mood-row">
+            <span class="mood-label">How are you feeling?</span>
+            <button class="mood-btn" data-mood="great" title="Great">😊</button>
+            <button class="mood-btn" data-mood="okay" title="Okay">😐</button>
+            <button class="mood-btn" data-mood="stressed" title="Stressed">😟</button>
+            <button class="mood-btn" data-mood="tired" title="Tired">😴</button>
+          </div>
+          <div class="home-suggest-eyebrow" id="todayEyebrow">Suggested for you</div>
+          <div class="home-suggest-msg" id="todayMsg">Ready to talk through something? Claire is here.</div>
+          <div class="prompts" id="prompts"></div>
+          <button class="home-blueprint-link" onclick="nav('blueprint')">View my Career Blueprint →</button>
+        </div>
+
+        <!-- Right: mic with glow -->
+        <div class="home-panel-right">
+          <div class="home-panel-mic-top">
+            <div class="agent-badge">
+              <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.5" r="2.75" stroke="currentColor" stroke-width="1.3"/><path d="M2.5 14c0-3.038 2.462-5.5 5.5-5.5s5.5 2.462 5.5 5.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              Claire (Kore)
+            </div>
+            <div class="idle-badge">
+              <span class="idle-dot" id="idleDot"></span>
+              <span id="idleLabel">IDLE</span>
+            </div>
+          </div>
+
+          <div class="home-mic-glow-wrap">
+            <div class="home-mic-glow"></div>
+            <div class="mic-wrap">
+              <div class="ripple r1" id="r1"></div>
+              <div class="ripple r2" id="r2"></div>
+              <div class="ripple r3" id="r3"></div>
+              <button class="mic-btn placeholder" id="micBtn">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <rect x="9" y="2" width="6" height="12" rx="3" fill="white"/>
+                  <path d="M5 10a7 7 0 0 0 14 0" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+                  <line x1="12" y1="17" x2="12" y2="22" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+                  <line x1="8"  y1="22" x2="16" y2="22" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="session-row" id="sessionRow">
+            <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M8 5v3.2l2 1.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            <span class="timer" id="timer">30:00</span>
+            <span>remaining</span>
+          </div>
+
+          <button class="end-btn" id="endBtn">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M8 2v4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.2 3.9A5.5 5.5 0 1 0 10.8 3.9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </button>
+
+          <p class="home-panel-privacy">Your conversations are private and never shared with your manager.</p>
+        </div>
+      </div>
+
+      <!-- Share context -->
+      <div class="home-ctx-card">
+        <div class="home-ctx-head">
+          <span class="docs-label">SHARE CONTEXT</span>
+          <span class="docs-count" id="docsCount">0 messages</span>
+        </div>
+        <div class="docs-feed home-ctx-feed" id="docsFeed">
+          <div class="docs-empty-state" id="emptyState">
+            <div class="docs-empty-icon">📎</div>
+            <p class="docs-empty-text">Paste text or attach a file to share with Claire</p>
+          </div>
+        </div>
+        <div class="docs-input">
+          <button class="attach-btn" id="attachBtn" title="Attach file">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M13.5 7.5L7 14a4 4 0 0 1-5.657-5.657L8.293 1.39A2.5 2.5 0 0 1 12.06 5.16L5.107 12.11a1 1 0 0 1-1.414-1.414L10.5 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <input type="file" id="fileInput" hidden accept="image/*,.pdf,.txt,.doc,.docx,.csv">
+          <div class="ctx-wrap">
+            <textarea class="ctx-input" id="ctxInput" placeholder="Paste context or type here..." rows="1"></textarea>
+          </div>
+          <button class="send-btn" id="sendBtn">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M14 8H2M14 8L9 3M14 8L9 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="stats-row">
+        <div class="stat-card accent">
+          <div class="stat-label">Sessions this month</div>
+          <div class="stat-value" id="statSessions">0</div>
+          <div class="stat-sub">voice conversations</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total time</div>
+          <div class="stat-value" id="statTime">0m</div>
+          <div class="stat-sub">with Claire</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active goals</div>
+          <div class="stat-value" id="statGoals">0</div>
+          <div class="stat-sub">in progress</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Streak</div>
+          <div class="stat-value" id="statStreak">0</div>
+          <div class="stat-sub">weeks active</div>
+        </div>
+      </div>
+
+      <div class="home-grid">
+        <div class="home-card">
+          <div class="home-card-hd">
+            <span class="home-card-title">Last Session Recap</span>
+            <span class="home-card-action" onclick="nav('history')">View all →</span>
+          </div>
+          <div id="homeRecap">
+            <div class="recap-empty">No sessions yet. Start chatting with Claire!</div>
+          </div>
+        </div>
+        <div class="home-card">
+          <div class="home-card-hd">
+            <span class="home-card-title">My Goals</span>
+            <span class="home-card-action" onclick="nav('goals')">Manage →</span>
+          </div>
+          <div class="goal-mini" id="homeGoals">
+            <div class="goal-empty-mini">No goals set yet.<br>Add one to track your progress.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── GOALS ─────────────────────────────────────────────────────────── -->
+    <div class="view goals-view" id="view-goals">
+      <div class="page-header">
+        <div><h2>My Goals</h2><p>Set up to 3 career goals. Claire will reference them in every session.</p></div>
+        <button class="btn-primary" id="addGoalBtn">+ Add Goal</button>
+      </div>
+      <div class="goals-grid" id="goalsGrid"></div>
+    </div>
+
+    <!-- ── HISTORY ───────────────────────────────────────────────────────── -->
+    <div class="view history-view" id="view-history">
+      <div class="page-header">
+        <div><h2>Session History</h2><p>Review your past conversations and action items with Claire.</p></div>
+      </div>
+      <div id="historyList" class="history-list"></div>
+    </div>
+
+    <!-- ── RESOURCES ─────────────────────────────────────────────────────── -->
+    <div class="view resources-view" id="view-resources">
+      <div class="page-header">
+        <div><h2>THD Resources</h2><p>Helpful tools and links to support your career journey.</p></div>
+      </div>
+      <div class="resources-section-title">Career & Development</div>
+      <div class="resources-grid" id="resourcesGrid"></div>
+    </div>
+
+    <!-- ── SETTINGS ──────────────────────────────────────────────────────── -->
+    <div class="view settings-view" id="view-settings">
+      <div class="page-header">
+        <div><h2>Settings</h2><p>Manage your profile and preferences.</p></div>
+      </div>
+      <div class="settings-section">
+        <h3>Your Profile</h3>
+        <p>Claire uses this to personalize conversations.</p>
+        <div class="settings-row">
+          <span class="settings-key">Name</span>
+          <input class="field-input" id="settingName" placeholder="Your name" style="min-width:200px">
+        </div>
+        <div class="settings-row">
+          <span class="settings-key">Role / Title</span>
+          <input class="field-input" id="settingRole" placeholder="e.g. Store Manager" style="min-width:200px">
+        </div>
+        <div class="settings-row">
+          <span class="settings-key">Department</span>
+          <input class="field-input" id="settingDept" placeholder="e.g. Merchandising" style="min-width:200px">
+        </div>
+        <div class="settings-actions">
+          <button class="btn-primary" id="saveProfileBtn">Save Profile</button>
+        </div>
+      </div>
+      <div class="settings-section">
+        <h3>API Configuration</h3>
+        <p>Gemini API key used for Claire's voice. On Vercel deployments this is set server-side — no key needed here.</p>
+        <div class="settings-row">
+          <span class="settings-key">Key status</span>
+          <span class="settings-val" id="keyStatus">—</span>
+        </div>
+        <div class="settings-actions">
+          <button class="btn-secondary" id="updateKeyBtn">Update Key</button>
+          <button class="btn-secondary" id="clearDataBtn" style="color:var(--red500);border-color:var(--red100)">Clear All Data</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── BLUEPRINT ─────────────────────────────────────────────────────── -->
+    <div class="view blueprint-view" id="view-blueprint">
+      <div class="page-header">
+        <div>
+          <h2>Career Blueprint</h2>
+          <p>Your personalized roadmap for career growth at The Home Depot.</p>
+        </div>
+        <button class="bp-cta-btn" id="blueprintSessionBtn">
+          <svg viewBox="0 0 16 16" fill="none"><rect x="5" y="2" width="6" height="8" rx="3" stroke="currentColor" stroke-width="1.3"/><path d="M3 7a5 5 0 0 0 10 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="8" y1="12" x2="8" y2="15" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          Talk with Claire about my Blueprint
+        </button>
+      </div>
+
+      <!-- Career Path -->
+      <div class="bp-section">
+        <div class="bp-section-hd">
+          <span class="bp-section-title">Career Path</span>
+          <span style="font-size:12px;color:var(--g400)">Click any node to edit</span>
+        </div>
+        <div class="bp-path-row" id="bpPathRow"></div>
+      </div>
+
+      <!-- Skills + Manager -->
+      <div class="bp-grid-2">
+        <div class="bp-section">
+          <div class="bp-section-hd">
+            <span class="bp-section-title">Skills Matrix</span>
+            <button class="bp-action-btn" id="editSkillsBtn">Edit Skills</button>
+          </div>
+          <div class="skills-chart-wrap" id="skillsChartWrap"></div>
+        </div>
+        <div class="bp-section">
+          <div class="bp-section-hd">
+            <span class="bp-section-title">Manager Alignment</span>
+          </div>
+          <div class="mgr-fields">
+            <div>
+              <label class="mgr-label">What your manager has agreed to support</label>
+              <textarea class="mgr-input" id="mgrNotes" rows="3" placeholder="e.g. Weekly check-ins, stretch project in Q3, intro to District Manager…"></textarea>
+            </div>
+            <div>
+              <label class="mgr-label">Next career conversation date</label>
+              <input class="mgr-input" id="mgrDate" type="date" style="resize:none">
+            </div>
+            <div>
+              <label class="mgr-label">Key commitments</label>
+              <textarea class="mgr-input" id="mgrCommitments" rows="3" placeholder="e.g. Complete L3 certification by Q2, volunteer for the leadership program…"></textarea>
+            </div>
+            <button class="btn-primary" id="saveMgrBtn" style="align-self:flex-start;margin-top:2px">Save</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Development Milestones -->
+      <div class="bp-section">
+        <div class="bp-section-hd">
+          <span class="bp-section-title">Development Milestones</span>
+          <button class="bp-action-btn" id="addMilestoneBtn">+ Add Milestone</button>
+        </div>
+        <div class="milestone-list" id="milestoneList"></div>
+      </div>
+
+      <!-- Learning Plan -->
+      <div class="bp-section">
+        <div class="bp-section-hd">
+          <span class="bp-section-title">Learning Plan</span>
+          <button class="bp-action-btn" id="addLearningBtn">+ Add Item</button>
+        </div>
+        <div class="learning-list" id="learningList"></div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main-wrap -->
+
+<!-- ─── Path node modal ──────────────────────────────────────────────────────── -->
+<div id="pathModal" class="modal-bg">
+  <div class="modal">
+    <h2 id="pathModalTitle">Edit Career Path</h2>
+    <p style="margin-bottom:16px">Define your target role, department, and the reason it matters to you.</p>
+    <div class="goal-form">
+      <div class="form-group">
+        <label class="field-label">Role / Title</label>
+        <input class="field-input" id="pathRole" placeholder="e.g. Assistant Store Manager" style="width:100%">
+      </div>
+      <div class="form-group">
+        <label class="field-label">Department / Area <span style="color:var(--g400);font-weight:400">(optional)</span></label>
+        <input class="field-input" id="pathDept" placeholder="e.g. Merchandising, Operations" style="width:100%">
+      </div>
+      <div class="form-group" id="pathTimelineGroup">
+        <label class="field-label">Timeline</label>
+        <input class="field-input" id="pathTimeline" placeholder="e.g. 1–2 years" style="width:100%">
+      </div>
+      <div class="form-group">
+        <label class="field-label">Why this matters to me</label>
+        <textarea class="form-textarea" id="pathWhy" placeholder="What drives you toward this role? What will it unlock for you?"></textarea>
+      </div>
+    </div>
+    <div class="modal-row" style="margin-top:20px">
+      <button class="btn-secondary" id="pathCancelBtn">Cancel</button>
+      <button class="btn-primary"   id="pathSaveBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Skills modal ──────────────────────────────────────────────────────────── -->
+<div id="skillsModal" class="modal-bg">
+  <div class="modal" style="max-width:500px">
+    <h2>Rate Your Skills</h2>
+    <p style="margin-bottom:16px">Score each area 1–5. Claire uses this to target your coaching and the radar shows your growth gaps.</p>
+    <div id="skillsForm" class="skill-edit-grid"></div>
+    <div class="modal-row" style="margin-top:20px">
+      <button class="btn-secondary" id="skillsCancelBtn">Cancel</button>
+      <button class="btn-primary"   id="skillsSaveBtn">Save Skills</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Milestone modal ───────────────────────────────────────────────────────── -->
+<div id="milestoneModal" class="modal-bg">
+  <div class="modal">
+    <h2 id="msModalTitle">Add Milestone</h2>
+    <p style="margin-bottom:16px">Key steps on the path to your target role. Claire can help you prep for each one.</p>
+    <div class="goal-form">
+      <div class="form-group">
+        <label class="field-label">Milestone</label>
+        <input class="field-input" id="msTitle" placeholder="e.g. Lead a department reset" style="width:100%">
+      </div>
+      <div class="form-group">
+        <label class="field-label">Description <span style="color:var(--g400);font-weight:400">(optional)</span></label>
+        <textarea class="form-textarea" id="msDesc" placeholder="What does completing this look like?"></textarea>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group">
+          <label class="field-label">Category</label>
+          <select class="form-select" id="msCategory">
+            <option value="Leadership">Leadership</option>
+            <option value="Visibility">Visibility</option>
+            <option value="Technical">Technical / Ops</option>
+            <option value="Relationships">Relationships</option>
+            <option value="Training">Training / Cert</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="field-label">Status</label>
+          <select class="form-select" id="msStatus">
+            <option value="not_started">Not Started</option>
+            <option value="in_progress">In Progress</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="field-label">Target date <span style="color:var(--g400);font-weight:400">(optional)</span></label>
+        <input class="field-input" type="date" id="msDate" style="width:100%">
+      </div>
+    </div>
+    <div class="modal-row" style="margin-top:20px">
+      <button class="btn-secondary" id="msCancelBtn">Cancel</button>
+      <button class="btn-primary"   id="msSaveBtn">Save Milestone</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Learning item modal ───────────────────────────────────────────────────── -->
+<div id="learningModal" class="modal-bg">
+  <div class="modal">
+    <h2>Add Learning Item</h2>
+    <p style="margin-bottom:16px">Track courses, certifications, books, and stretch assignments.</p>
+    <div class="goal-form">
+      <div class="form-group">
+        <label class="field-label">Title</label>
+        <input class="field-input" id="learnTitle" placeholder="e.g. THD Leadership Foundations" style="width:100%">
+      </div>
+      <div class="form-group">
+        <label class="field-label">Type</label>
+        <select class="form-select" id="learnType">
+          <option value="course">Course</option>
+          <option value="cert">Certification</option>
+          <option value="book">Book</option>
+          <option value="stretch">Stretch Assignment</option>
+          <option value="mentorship">Mentorship</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="field-label">Link <span style="color:var(--g400);font-weight:400">(optional)</span></label>
+        <input class="field-input" id="learnUrl" placeholder="https://…" style="width:100%">
+      </div>
+    </div>
+    <div class="modal-row" style="margin-top:20px">
+      <button class="btn-secondary" id="learnCancelBtn">Cancel</button>
+      <button class="btn-primary"   id="learnSaveBtn">Add to Plan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── Config ───────────────────────────────────────────────────────────────────
+const IS_LOCAL  = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+const PROXY_URL = `wss://${location.host}/api/proxy`;
+const VOICE_ENABLED = false; // flip to true when ready to test
+
+const GEMINI_MODEL = 'models/gemini-2.0-flash-live-001';
+const WS_BASE      = 'wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent';
+const SESSION_SECS = 30 * 60;
+const INPUT_RATE   = 16000;
+const OUTPUT_RATE  = 24000;
+
+const SYSTEM_PROMPT = `You are Claire, a warm, empathetic, and highly skilled 24/7 career coach for The Home Depot associates. Your role is to help associates grow professionally, prepare for important conversations, navigate career decisions, and perform their best work.
+
+Speaking style:
+- Warm, encouraging, and direct. Conversational — no lists or markdown.
+- Ask clarifying questions before giving advice.
+- Practical, actionable guidance tailored to retail and home improvement.
+
+The Home Depot context:
+- Associates range from hourly store associates to senior corporate leaders.
+- THD values: doing the right thing, taking care of our people, building strong relationships, entrepreneurial spirit, giving back.
+- Be aware of retail rhythms: peak seasons, store operations, district/regional structures.
+
+At the start of each session, you will receive context about the associate including their name, role, mood, and active career goals. Use this to personalize your coaching.
+
+Always remind associates their conversations with you are confidential. You are not a substitute for official HR guidance.
+
+Start each session with a brief warm greeting using their name if available, and ask what's on their mind today.`;
+
+const PROMPTS = [
+  'I have a tough conversation coming up — help me prepare',
+  'I want to go after a promotion — where do I start?',
+  'I need to present to leadership and I\'m nervous',
+  'I don\'t know what my next career move should be',
+  'I need help with something else',
+];
+
+const RESOURCES = [
+  { icon:'🎯', title:'THD Career Center', desc:'Explore internal job postings, career paths, and growth opportunities within The Home Depot.', url:'#', label:'Open Career Center' },
+  { icon:'📚', title:'Learning & Development', desc:'Access courses, certifications, and development programs available to all associates.', url:'#', label:'Browse Courses' },
+  { icon:'⚡', title:'Workday', desc:'Manage your performance reviews, goals, time off, and HR information in one place.', url:'#', label:'Open Workday' },
+  { icon:'🤝', title:'Associate Resource Groups', desc:'Connect with colleague networks and communities that support your personal and professional growth.', url:'#', label:'Explore ARGs' },
+  { icon:'🏆', title:'Recognition Programs', desc:'Learn about Homer Award, The Homer Fund, and other programs that celebrate associate contributions.', url:'#', label:'Learn More' },
+  { icon:'💬', title:'EAP & Wellbeing', desc:'Free, confidential counseling, financial advice, and wellbeing resources for associates and their families.', url:'#', label:'Get Support' },
+];
+
+const SEASONAL_TIPS = [
+  { eyebrow:'Review Season', msg:'Annual reviews are coming up. Want help writing your self-assessment or preparing for your review conversation?' },
+  { eyebrow:'Mid-Year Check-In', msg:'It\'s a great time to revisit your goals. Want to talk through your progress and what\'s next?' },
+  { eyebrow:'New Year, New Goals', msg:'A new year is a great time to set career intentions. Want to map out what you want to achieve this year?' },
+  { eyebrow:'Q3 Planning', msg:'Second half of the year — great time to accelerate. What\'s one career move you want to make before year end?' },
+  { eyebrow:'Suggested for you', msg:'Ready to talk through something? Whether it\'s a tough conversation, a promotion, or just figuring out next steps — Claire is here.' },
+];
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let apiKey        = resolveKey();
+let ws            = null;
+let audioIn       = null;
+let audioOut      = null;
+let micStream     = null;
+let micProcessor  = null;
+let sessionActive = false;
+let timerID       = null;
+let secsLeft      = SESSION_SECS;
+let sessionStart  = null;
+let nextPlayTime  = 0;
+let playingSrcs   = [];
+let docCount      = 0;
+let pendingText   = null;
+let selectedMood  = null;
+let editingGoalId = null;
+
+// ─── DOM ──────────────────────────────────────────────────────────────────────
+const $  = id => document.getElementById(id);
+const modal    = $('modalBg'),  keyInput = $('keyInput'), saveBtn = $('saveBtn');
+const goalModal = $('goalModal');
+const micBtn = $('micBtn'), endBtn = $('endBtn');
+const idleDot = $('idleDot'), idleLabel = $('idleLabel');
+const sessionRow = $('sessionRow'), timerEl = $('timer');
+const docsFeed = $('docsFeed'), emptyState = $('emptyState'), docsCount = $('docsCount');
+const ctxInput = $('ctxInput'), sendBtn = $('sendBtn');
+
+// ─── Boot ──────────────────────────────────────────────────────────────────────
+buildPrompts();
+buildResources();
+renderGoals();
+renderHistory();
+updateHomeView();
+loadProfile();
+wireEvents();
+if (IS_LOCAL && !apiKey) modal.classList.add('open');
+
+// ─── Navigation ───────────────────────────────────────────────────────────────
+const PAGE_TITLES = { home:'Home', goals:'My Goals',
+  blueprint:'Career Blueprint', history:'Session History', resources:'THD Resources', settings:'Settings' };
+
+function nav(viewId) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(b => b.classList.remove('active'));
+  const view = $(`view-${viewId}`);
+  if (view) view.classList.add('active');
+  const btn = document.querySelector(`.sb-item[data-view="${viewId}"]`);
+  if (btn) btn.classList.add('active');
+  $('pageTitle').textContent = PAGE_TITLES[viewId] || viewId;
+  if (viewId === 'home')      updateHomeView();
+  if (viewId === 'history')   renderHistory();
+  if (viewId === 'goals')     renderGoals();
+  if (viewId === 'blueprint') renderBlueprint();
+}
+
+// ─── Key resolution ────────────────────────────────────────────────────────────
+function resolveKey() {
+  const p = new URLSearchParams(location.search).get('key');
+  if (p) { localStorage.setItem('claire_key', p); history.replaceState(null,'',location.pathname); return p; }
+  return localStorage.getItem('claire_key') || '';
+}
+
+// ─── Profile ──────────────────────────────────────────────────────────────────
+function loadProfile() {
+  const p = getProfile();
+  $('sbUserName').textContent = p.name || 'Associate';
+  $('sbAvatar').textContent   = (p.name || 'A')[0].toUpperCase();
+  $('sbUserRole').textContent = p.role || 'The Home Depot';
+  if ($('settingName'))  $('settingName').value = p.name || '';
+  if ($('settingRole'))  $('settingRole').value = p.role || '';
+  if ($('settingDept'))  $('settingDept').value = p.dept || '';
+  updateGreeting();
+}
+function getProfile() { return JSON.parse(localStorage.getItem('claire_profile') || '{}'); }
+function saveProfile() {
+  const p = { name: $('settingName').value.trim(), role: $('settingRole').value.trim(), dept: $('settingDept').value.trim() };
+  localStorage.setItem('claire_profile', JSON.stringify(p));
+  loadProfile(); showToast('Profile saved!');
+}
+function updateGreeting() {
+  const p = getProfile();
+  const h = new Date().getHours();
+  const g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+  $('homeGreeting').textContent = p.name ? `${g}, ${p.name}!` : `${g}!`;
+}
+
+// ─── Home view ────────────────────────────────────────────────────────────────
+function updateHomeView() {
+  updateGreeting();
+  updateStats();
+  updateTodaySuggestion();
+  renderHomeRecap();
+  renderHomeGoals();
+  updateKeyStatus();
+}
+
+function updateStats() {
+  const sessions = getSessions();
+  const now = new Date();
+  const thisMonth = sessions.filter(s => {
+    const d = new Date(s.date); return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear();
+  });
+  const totalMins = sessions.reduce((a,s) => a + (s.duration||0), 0);
+  const goals = getGoals();
+  $('statSessions').textContent = thisMonth.length;
+  $('statTime').textContent = totalMins < 60 ? `${totalMins}m` : `${Math.floor(totalMins/60)}h ${totalMins%60}m`;
+  $('statGoals').textContent = goals.length;
+  const weeks = sessions.length > 0 ? Math.ceil(sessions.length / 2) : 0;
+  $('statStreak').textContent = weeks;
+  const badge = $('histBadge');
+  if (sessions.length > 0) { badge.textContent = sessions.length; badge.style.display=''; }
+}
+
+function updateTodaySuggestion() {
+  const m = new Date().getMonth();
+  let tip;
+  if (m === 11 || m === 0) tip = SEASONAL_TIPS[2];
+  else if (m === 5 || m === 6) tip = SEASONAL_TIPS[1];
+  else if (m === 9 || m === 10) tip = SEASONAL_TIPS[0];
+  else if (m === 7 || m === 8) tip = SEASONAL_TIPS[3];
+  else tip = SEASONAL_TIPS[4];
+  $('todayEyebrow').textContent = tip.eyebrow;
+  $('todayMsg').textContent     = tip.msg;
+}
+
+function renderHomeRecap() {
+  const sessions = getSessions();
+  const el = $('homeRecap');
+  if (!sessions.length) { el.innerHTML = '<div class="recap-empty">No sessions yet. Start chatting with Claire!</div>'; return; }
+  const s = sessions[sessions.length - 1];
+  const tags = (s.topics||[]).map(t => `<span class="recap-tag">${t}</span>`).join('');
+  const actions = (s.actions||[]).map((a,i) => `<li><div class="recap-check${a.done?' done':''}" onclick="toggleAction(${sessions.length-1},${i})"></div>${a.text}</li>`).join('');
+  el.innerHTML = `<div class="recap-item"><div class="recap-date">${new Date(s.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})} · ${s.duration||0} min</div><div class="recap-topics">${tags}</div>${actions?`<ul class="recap-actions-list">${actions}</ul>`:''}</div>`;
+}
+
+function renderHomeGoals() {
+  const goals = getGoals();
+  const el = $('homeGoals');
+  if (!goals.length) { el.innerHTML = '<div class="goal-empty-mini">No goals set yet.<br>Add one to track your progress.</div>'; return; }
+  el.innerHTML = goals.map(g => `
+    <div class="goal-mini-item">
+      <div class="goal-mini-title">${g.title}</div>
+      <div class="goal-progress-bar"><div class="goal-progress-fill" style="width:${g.progress||0}%"></div></div>
+      <div class="goal-mini-meta"><span>${g.category}</span><span>${g.progress||0}%</span></div>
+    </div>`).join('');
+}
+
+function toggleAction(sessionIdx, actionIdx) {
+  const sessions = getSessions();
+  if (!sessions[sessionIdx]?.actions?.[actionIdx]) return;
+  sessions[sessionIdx].actions[actionIdx].done = !sessions[sessionIdx].actions[actionIdx].done;
+  localStorage.setItem('claire_sessions', JSON.stringify(sessions));
+  renderHomeRecap();
+}
+
+function updateKeyStatus() {
+  const el = $('keyStatus');
+  if (!el) return;
+  if (!IS_LOCAL) el.textContent = 'Configured server-side via Vercel env var ✓';
+  else if (apiKey) el.textContent = 'API key set in localStorage';
+  else el.textContent = 'No key set — enter one in setup';
+}
+
+// ─── Goals ────────────────────────────────────────────────────────────────────
+function getGoals() { return JSON.parse(localStorage.getItem('claire_goals') || '[]'); }
+function saveGoals(g) { localStorage.setItem('claire_goals', JSON.stringify(g)); }
+
+function renderGoals() {
+  const goals = getGoals();
+  const grid = $('goalsGrid'); if (!grid) return;
+  const catClass = { career:'cat-career', leadership:'cat-leadership', skills:'cat-skills', personal:'cat-personal' };
+  let html = goals.map(g => `
+    <div class="goal-card">
+      <div class="goal-card-top">
+        <span class="goal-category ${catClass[g.category]||'cat-career'}">${g.category}</span>
+        <button class="goal-menu" onclick="deleteGoal('${g.id}')">✕</button>
+      </div>
+      <div class="goal-title">${g.title}</div>
+      ${g.desc ? `<div class="goal-desc">${g.desc}</div>` : ''}
+      <div class="goal-bar-wrap">
+        <div class="goal-bar-top"><span class="goal-bar-label">Progress</span><span class="goal-bar-pct">${g.progress||0}%</span></div>
+        <div class="goal-bar"><div class="goal-bar-fill" style="width:${g.progress||0}%"></div></div>
+      </div>
+      <div class="goal-footer">
+        <span class="goal-date">${g.targetDate ? 'Target: '+new Date(g.targetDate).toLocaleDateString('en-US',{month:'short',year:'numeric'}) : 'No target date'}</span>
+        <button class="goal-discuss-btn" onclick="discussGoal('${g.id}')">Discuss with Claire →</button>
+      </div>
+    </div>`).join('');
+  if (goals.length < 3) html += `<div class="goal-card add-card" onclick="openGoalModal()"><div class="add-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="add-card-text">Add a goal</div></div>`;
+  grid.innerHTML = html;
+}
+
+function openGoalModal(id) {
+  editingGoalId = id || null;
+  $('goalModalTitle').textContent = id ? 'Edit Goal' : 'Add Career Goal';
+  if (id) {
+    const g = getGoals().find(g => g.id === id);
+    if (g) { $('goalTitle').value = g.title; $('goalCategory').value = g.category; $('goalDesc').value = g.desc||''; $('goalProgress').value = g.progress||0; $('goalDate').value = g.targetDate||''; updateProgressLabel(); }
+  } else {
+    $('goalTitle').value=''; $('goalCategory').value='career'; $('goalDesc').value=''; $('goalProgress').value=0; $('goalDate').value=''; updateProgressLabel();
+  }
+  goalModal.classList.add('open');
+}
+
+function updateProgressLabel() {
+  const v = $('goalProgress').value; $('progressVal').textContent=v+'%'; $('progressLabel').textContent=v+'%';
+}
+
+function saveGoal() {
+  const title = $('goalTitle').value.trim(); if (!title) return;
+  const goals = getGoals();
+  const goal = { id: editingGoalId || Date.now().toString(), title, category: $('goalCategory').value,
+    desc: $('goalDesc').value.trim(), progress: parseInt($('goalProgress').value), targetDate: $('goalDate').value };
+  if (editingGoalId) {
+    const idx = goals.findIndex(g => g.id === editingGoalId);
+    if (idx > -1) goals[idx] = goal;
+  } else {
+    if (goals.length >= 3) { showToast('Maximum 3 goals allowed.', 'warn'); return; }
+    goals.push(goal);
+  }
+  saveGoals(goals); goalModal.classList.remove('open'); renderGoals(); renderHomeGoals();
+  $('statGoals').textContent = goals.length;
+}
+
+function deleteGoal(id) {
+  const goals = getGoals().filter(g => g.id !== id); saveGoals(goals); renderGoals(); renderHomeGoals();
+  $('statGoals').textContent = goals.length;
+}
+
+function discussGoal(id) {
+  const g = getGoals().find(g => g.id === id); if (!g) return;
+  nav('home');
+  setTimeout(() => {
+    if (VOICE_ENABLED && !sessionActive) startSession(`I want to discuss my goal: "${g.title}"`);
+    else showToast(`Goal loaded: "${g.title}" — start a session to discuss it with Claire.`);
+  }, 300);
+}
+
+// ─── Session History ──────────────────────────────────────────────────────────
+function getSessions() { return JSON.parse(localStorage.getItem('claire_sessions') || '[]'); }
+function saveSessions(s) { localStorage.setItem('claire_sessions', JSON.stringify(s)); }
+
+function addSession(session) {
+  const sessions = getSessions(); sessions.push(session); saveSessions(sessions);
+  const badge = $('histBadge'); badge.textContent = sessions.length; badge.style.display='';
+  updateStats();
+}
+
+function renderHistory() {
+  const sessions = getSessions().slice().reverse();
+  const list = $('historyList'); if (!list) return;
+  if (!sessions.length) {
+    list.innerHTML = '<div class="history-empty"><div class="history-empty-icon">🎙</div><p>No sessions yet</p><span>Your conversation summaries will appear here after each session with Claire.</span></div>';
+    return;
+  }
+  list.innerHTML = sessions.map((s,i) => {
+    const tags = (s.topics||[]).map(t => `<span class="session-tag">${t}</span>`).join('');
+    const actions = (s.actions||[]).map(a => `<li><span class="action-bullet"></span>${a.text}</li>`).join('');
+    return `<div class="session-card">
+      <div class="session-card-head" onclick="toggleSession(${i})">
+        <div class="session-icon"><svg viewBox="0 0 16 16" fill="none"><rect x="5" y="2" width="6" height="8" rx="3" stroke="currentColor" stroke-width="1.3"/><path d="M3 7a5 5 0 0 0 10 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div class="session-info">
+          <div class="session-title">${s.title || 'Session with Claire'}</div>
+          <div class="session-meta">${new Date(s.date).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})} · ${s.duration||0} min</div>
+          <div class="session-tags">${tags}</div>
+        </div>
+        <svg class="session-chevron" id="chev-${i}" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="session-body" id="sbody-${i}">
+        ${s.summary ? `<div class="session-section"><div class="session-section-title">Summary</div><div class="session-summary">${s.summary}</div></div>` : ''}
+        ${actions ? `<div class="session-section"><div class="session-section-title">Action Items</div><ul class="action-list">${actions}</ul></div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleSession(i) {
+  const body = $(`sbody-${i}`), chev = $(`chev-${i}`);
+  const open = body.classList.toggle('open');
+  chev.classList.toggle('open', open);
+}
+
+// ─── Prompts ──────────────────────────────────────────────────────────────────
+function buildPrompts() {
+  const wrap = $('prompts'); if (!wrap) return;
+  PROMPTS.forEach(text => {
+    const btn = document.createElement('button'); btn.className = 'prompt-card';
+    btn.innerHTML = `<span>${text}</span><svg class="arrow" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    btn.onclick = () => handlePrompt(text);
+    wrap.appendChild(btn);
+  });
+}
+
+function buildResources() {
+  const grid = $('resourcesGrid'); if (!grid) return;
+  grid.innerHTML = RESOURCES.map(r => `
+    <div class="resource-card">
+      <div class="resource-icon">${r.icon}</div>
+      <div class="resource-title">${r.title}</div>
+      <div class="resource-desc">${r.desc}</div>
+      <a class="resource-link" href="${r.url}" target="_blank">${r.label} <svg viewBox="0 0 16 16" fill="none"><path d="M7 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V9M9 1h6m0 0v6m0-6L7 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></a>
+    </div>`).join('');
+}
+
+function handlePrompt(text) {
+  if (!VOICE_ENABLED) { showToast('Voice coming soon — design review in progress.'); return; }
+  if (IS_LOCAL && !apiKey) { modal.classList.add('open'); return; }
+  if (sessionActive) { sendText(text); addMsg(text, 'user'); }
+  else startSession(text);
+}
+
+// ─── Status ────────────────────────────────────────────────────────────────────
+function setStatus(s) {
+  const cfgs = { idle:{dot:'',label:'IDLE',ripple:false}, conn:{dot:'conn',label:'CONNECTING...',ripple:false},
+    active:{dot:'active',label:'LISTENING',ripple:true}, speaking:{dot:'speaking',label:'SPEAKING',ripple:true} };
+  const cfg = cfgs[s] || cfgs.idle;
+  idleDot.className = `idle-dot ${cfg.dot}`;
+  idleLabel.textContent = cfg.label;
+  [$('r1'),$('r2'),$('r3')].forEach(r => r && r.classList.toggle('on', cfg.ripple));
+  sessionRow.classList.toggle('on', s !== 'idle');
+  endBtn.classList.toggle('on', s !== 'idle');
+}
+
+// ─── Session ───────────────────────────────────────────────────────────────────
+async function startSession(promptText) {
+  if (sessionActive) { if (promptText) sendText(promptText); return; }
+  if (IS_LOCAL && !apiKey) { modal.classList.add('open'); return; }
+  pendingText = promptText || null;
+  sessionStart = Date.now();
+  setStatus('conn');
+
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({ audio:{ channelCount:1, echoCancellation:true, noiseSuppression:true } });
+  } catch {
+    showToast('Microphone access required.', 'err'); setStatus('idle'); return;
+  }
+
+  const wsUrl = IS_LOCAL ? `${WS_BASE}?key=${encodeURIComponent(apiKey)}` : PROXY_URL;
+  ws = new WebSocket(wsUrl);
+
+  // Build context from profile and goals
+  const p = getProfile();
+  const goals = getGoals();
+  let ctx = SYSTEM_PROMPT;
+  if (p.name || p.role) ctx += `\n\nAssociate context: Name: ${p.name||'unknown'}, Role: ${p.role||'unknown'}${p.dept?', Department: '+p.dept:''}.`;
+  if (selectedMood) ctx += ` Current mood: ${selectedMood}.`;
+  if (goals.length) ctx += `\n\nActive career goals:\n${goals.map((g,i) => `${i+1}. "${g.title}" (${g.category}, ${g.progress||0}% complete)`).join('\n')}`;
+
+  ws.onopen = () => ws.send(JSON.stringify({
+    setup: { model:GEMINI_MODEL, generationConfig: { responseModalities:['AUDIO'],
+      speechConfig:{ voiceConfig:{ prebuiltVoiceConfig:{ voiceName:'Kore' } } } },
+      systemInstruction:{ parts:[{ text:ctx }] } }
+  }));
+  ws.onmessage = handleMsg;
+  ws.onerror   = () => { showToast('Connection error. Check your API key.', 'err'); endSession(); };
+  ws.onclose   = evt => {
+    if (!sessionActive) return;
+    if (evt.code === 1008 || evt.code === 403) showToast('Invalid API key.', 'err');
+    else if (evt.code !== 1000) showToast('Session ended unexpectedly.', 'warn');
+    endSession();
+  };
+}
+
+function handleMsg(event) {
+  let data; try { data = JSON.parse(event.data); } catch { return; }
+  if (data.setupComplete !== undefined) {
+    sessionActive = true; setStatus('active'); startMic(); startTimer();
+    if (pendingText) { sendText(pendingText); addMsg(pendingText, 'user'); pendingText = null; }
+    else sendText('Hello, I just joined the session.');
+    return;
+  }
+  if (data.serverContent) {
+    const sc = data.serverContent;
+    if (sc.interrupted) { stopPlayback(); setStatus('active'); return; }
+    if (sc.modelTurn?.parts) { setStatus('speaking'); sc.modelTurn.parts.forEach(p => { if (p.inlineData?.data) playChunk(p.inlineData.data); }); }
+    if (sc.turnComplete) setStatus('active');
+  }
+  if (data.error) { showToast(`Error: ${data.error?.message||'API error'}`, 'err'); endSession(); }
+}
+
+function endSession() {
+  if (sessionStart) {
+    const dur = Math.round((Date.now() - sessionStart) / 60000);
+    if (dur >= 1) {
+      addSession({ id:Date.now().toString(), date:new Date().toISOString(), duration:dur,
+        title:'Session with Claire', topics:['Coaching'], actions:[], summary:'' });
+    }
+    sessionStart = null;
+  }
+  sessionActive = false;
+  stopMic(); stopPlayback();
+  if (audioIn)  { try { audioIn.close();  } catch {} audioIn  = null; }
+  if (audioOut) { try { audioOut.close(); } catch {} audioOut = null; }
+  if (ws && ws.readyState < 2) ws.close(1000); ws = null;
+  clearInterval(timerID); timerID = null;
+  secsLeft = SESSION_SECS; timerEl.textContent = fmt(SESSION_SECS); timerEl.style.color = '';
+  setStatus('idle');
+}
+
+function startTimer() {
+  secsLeft = SESSION_SECS; timerEl.textContent = fmt(secsLeft);
+  timerID = setInterval(() => {
+    secsLeft--; timerEl.textContent = fmt(secsLeft);
+    if (secsLeft === 300) { timerEl.style.color='var(--red500)'; showToast('5 minutes remaining.', 'warn'); }
+    if (secsLeft <= 0)    { endSession(); showToast('Session ended. Start a new one anytime!'); }
+  }, 1000);
+}
+function fmt(s) { return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`; }
+
+async function startMic() {
+  audioIn = new AudioContext({ sampleRate:INPUT_RATE }); await audioIn.resume();
+  const src = audioIn.createMediaStreamSource(micStream);
+  micProcessor = audioIn.createScriptProcessor(4096,1,1);
+  micProcessor.onaudioprocess = evt => {
+    if (!ws || ws.readyState !== 1) return;
+    const i16 = f32i16(evt.inputBuffer.getChannelData(0));
+    ws.send(JSON.stringify({ realtimeInput:{ mediaChunks:[{ mimeType:`audio/pcm;rate=${INPUT_RATE}`, data:b64(i16.buffer) }] } }));
+  };
+  src.connect(micProcessor); micProcessor.connect(audioIn.destination);
+}
+function stopMic() {
+  try { micProcessor?.disconnect(); } catch {} micProcessor = null;
+  micStream?.getTracks().forEach(t => t.stop()); micStream = null;
+}
+
+async function ensureOut() {
+  if (!audioOut) { audioOut = new AudioContext({ sampleRate:OUTPUT_RATE }); nextPlayTime = 0; }
+  if (audioOut.state === 'suspended') await audioOut.resume();
+  if (nextPlayTime < audioOut.currentTime) nextPlayTime = audioOut.currentTime;
+}
+async function playChunk(b64data) {
+  await ensureOut();
+  const i16 = new Int16Array(unb64(b64data)); const f32 = new Float32Array(i16.length);
+  for (let i=0;i<i16.length;i++) f32[i]=i16[i]/32768;
+  const buf = audioOut.createBuffer(1,f32.length,OUTPUT_RATE); buf.getChannelData(0).set(f32);
+  const src = audioOut.createBufferSource(); src.buffer=buf; src.connect(audioOut.destination);
+  const t = Math.max(audioOut.currentTime+0.04, nextPlayTime); src.start(t); nextPlayTime=t+buf.duration;
+  playingSrcs.push(src); src.onended=()=>{ const i=playingSrcs.indexOf(src); if(i>-1) playingSrcs.splice(i,1); };
+}
+function stopPlayback() { playingSrcs.forEach(s=>{try{s.stop()}catch{}}); playingSrcs=[]; if(audioOut) nextPlayTime=audioOut.currentTime; }
+
+function sendText(text) { if (!ws||ws.readyState!==1) return; ws.send(JSON.stringify({ clientContent:{ turns:[{role:'user',parts:[{text}]}], turnComplete:true } })); }
+function sendImage(mime,data) { if (!ws||ws.readyState!==1) return; ws.send(JSON.stringify({ clientContent:{ turns:[{role:'user',parts:[{inlineData:{mimeType:mime,data}}]}], turnComplete:true } })); }
+
+function addMsg(text, who) {
+  emptyState.style.display='none';
+  const el=document.createElement('div'); el.className=`msg-bubble ${who}`; el.textContent=text;
+  docsFeed.appendChild(el); docsFeed.scrollTop=docsFeed.scrollHeight;
+  docsCount.textContent=`${++docCount} message${docCount!==1?'s':''}`;
+}
+function addDocItem(icon,name,hint,body) {
+  emptyState.style.display='none';
+  const el=document.createElement('div'); el.className='doc-item';
+  el.innerHTML=`<span class="doc-icon">${icon}</span><div class="doc-meta"><span class="doc-name">${name}</span><span class="doc-hint">${hint}</span>${body?`<span class="doc-body">${body}</span>`:''}</div>`;
+  docsFeed.appendChild(el); docsFeed.scrollTop=docsFeed.scrollHeight;
+  docsCount.textContent=`${++docCount} message${docCount!==1?'s':''}`;
+}
+function addImageItem(src,name) {
+  emptyState.style.display='none';
+  const el=document.createElement('div'); el.className='doc-item';
+  el.innerHTML=`<img src="${src}" alt="${name}"><div class="doc-meta"><span class="doc-name">${name}</span><span class="doc-hint">Shared with Claire</span></div>`;
+  docsFeed.appendChild(el); docsFeed.scrollTop=docsFeed.scrollHeight;
+  docsCount.textContent=`${++docCount} message${docCount!==1?'s':''}`;
+}
+
+// ─── Events ───────────────────────────────────────────────────────────────────
+function wireEvents() {
+  // Sidebar nav
+  document.querySelectorAll('.sb-item[data-view]').forEach(btn => {
+    btn.addEventListener('click', () => nav(btn.dataset.view));
+  });
+
+
+  // Modals
+  keyInput.addEventListener('input', () => saveBtn.disabled = keyInput.value.trim().length < 10);
+  keyInput.addEventListener('keydown', e => { if(e.key==='Enter'&&!saveBtn.disabled) saveBtn.click(); });
+  saveBtn.onclick = () => { const k=keyInput.value.trim(); if(!k) return; apiKey=k; localStorage.setItem('claire_key',k); modal.classList.remove('open'); keyInput.value=''; saveBtn.disabled=true; updateKeyStatus(); };
+  modal.addEventListener('click', e => { if(e.target===modal&&apiKey) modal.classList.remove('open'); });
+  $('settingsBtn').onclick = () => { if(sessionActive) endSession(); modal.classList.add('open'); };
+  goalModal.addEventListener('click', e => { if(e.target===goalModal) goalModal.classList.remove('open'); });
+  $('goalCancelBtn').onclick = () => goalModal.classList.remove('open');
+  $('goalSaveBtn').onclick   = saveGoal;
+  $('goalProgress').addEventListener('input', updateProgressLabel);
+  $('addGoalBtn').onclick = () => openGoalModal();
+
+  // Mood
+  document.querySelectorAll('.mood-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected'); selectedMood = btn.dataset.mood;
+      showToast(`Mood noted — Claire will tailor her tone.`);
+    });
+  });
+
+  // Mic
+  micBtn.onclick = () => {
+    if (!VOICE_ENABLED) { showToast('Voice coming soon — finalizing design first.'); return; }
+    if (IS_LOCAL && !apiKey) { modal.classList.add('open'); return; }
+    if (!sessionActive) startSession(null);
+  };
+  endBtn.onclick = () => endSession();
+
+  // Context input
+  ctxInput.addEventListener('input', () => {
+    ctxInput.style.height='auto'; ctxInput.style.height=Math.min(ctxInput.scrollHeight,100)+'px';
+    sendBtn.classList.toggle('ready', ctxInput.value.trim().length>0);
+  });
+  ctxInput.addEventListener('keydown', e => { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendCtx();} });
+  sendBtn.onclick = sendCtx;
+
+  // File
+  $('attachBtn').onclick = () => $('fileInput').click();
+  $('fileInput').addEventListener('change', handleFile);
+
+  // Blueprint — path modal
+  $('pathCancelBtn').onclick = () => $('pathModal').classList.remove('open');
+  $('pathSaveBtn').onclick   = savePathNode;
+  $('pathModal').addEventListener('click', e => { if(e.target===$('pathModal')) $('pathModal').classList.remove('open'); });
+
+  // Blueprint — skills modal
+  $('editSkillsBtn').onclick    = openSkillsModal;
+  $('skillsCancelBtn').onclick  = () => $('skillsModal').classList.remove('open');
+  $('skillsSaveBtn').onclick    = saveSkills;
+  $('skillsModal').addEventListener('click', e => { if(e.target===$('skillsModal')) $('skillsModal').classList.remove('open'); });
+
+  // Blueprint — milestone modal
+  $('addMilestoneBtn').onclick = () => openMilestoneModal();
+  $('msCancelBtn').onclick     = () => $('milestoneModal').classList.remove('open');
+  $('msSaveBtn').onclick       = saveMilestone;
+  $('milestoneModal').addEventListener('click', e => { if(e.target===$('milestoneModal')) $('milestoneModal').classList.remove('open'); });
+
+  // Blueprint — learning modal
+  $('addLearningBtn').onclick  = openLearningModal;
+  $('learnCancelBtn').onclick  = () => $('learningModal').classList.remove('open');
+  $('learnSaveBtn').onclick    = saveLearning;
+  $('learningModal').addEventListener('click', e => { if(e.target===$('learningModal')) $('learningModal').classList.remove('open'); });
+
+  // Blueprint — manager + CTA
+  $('saveMgrBtn').onclick         = saveMgrAlignment;
+  $('blueprintSessionBtn').onclick = startBlueprintSession;
+
+  // Settings
+  $('saveProfileBtn').onclick = saveProfile;
+  $('updateKeyBtn').onclick = () => modal.classList.add('open');
+  $('clearDataBtn').onclick = () => {
+    if (confirm('Clear all Claire data? This cannot be undone.')) {
+      ['claire_sessions','claire_goals','claire_profile','claire_blueprint'].forEach(k=>localStorage.removeItem(k));
+      updateHomeView(); renderGoals(); renderHistory(); showToast('All data cleared.');
+    }
+  };
+}
+
+function sendCtx() {
+  const text=ctxInput.value.trim(); if(!text) return;
+  const preview=text.length>80?text.slice(0,80)+'…':text;
+  addDocItem('💬','Context added','Shared with Claire',preview);
+  if(VOICE_ENABLED&&sessionActive) sendText(text);
+  else if(VOICE_ENABLED) startSession(text);
+  ctxInput.value=''; ctxInput.style.height='auto'; sendBtn.classList.remove('ready');
+}
+
+function handleFile(e) {
+  const file=e.target.files[0]; if(!file) return; $('fileInput').value='';
+  if(file.type.startsWith('image/')) {
+    const r=new FileReader(); r.onload=ev=>{ const url=ev.target.result; addImageItem(url,file.name); if(VOICE_ENABLED&&sessionActive) sendImage(file.type,url.split(',')[1]); }; r.readAsDataURL(file);
+  } else {
+    const r=new FileReader(); r.onload=ev=>{ addDocItem('📄',file.name,'Shared with Claire',null); if(VOICE_ENABLED&&sessionActive) sendText(`[Attached: ${file.name}]\n\n${ev.target.result}`); }; r.readAsText(file);
+  }
+}
+
+// ─── Blueprint ────────────────────────────────────────────────────────────────
+const BP_SKILL_KEYS   = ['leadership','communication','technical','businessAcumen','peopleDev','adaptability','problemSolving','collaboration'];
+const BP_SKILL_LABELS = ['Leadership','Communication','Technical','Biz Acumen','People Dev','Adaptability','Prob. Solving','Collaboration'];
+
+function getBlueprint() {
+  const def = {
+    path: {
+      current: { role:'', dept:'', timeline:'', why:'' },
+      near:    { role:'', dept:'', timeline:'1–2 years', why:'' },
+      far:     { role:'', dept:'', timeline:'3–5 years', why:'' }
+    },
+    skills: Object.fromEntries(BP_SKILL_KEYS.map(k => [k, 3])),
+    milestones: [],
+    learning: [],
+    manager: { notes:'', nextConvo:'', commitments:'' }
+  };
+  try {
+    const stored = JSON.parse(localStorage.getItem('claire_blueprint'));
+    return stored ? { ...def, ...stored, path: { ...def.path, ...stored.path } } : def;
+  } catch { return def; }
+}
+function saveBlueprint(bp) { localStorage.setItem('claire_blueprint', JSON.stringify(bp)); }
+
+function renderBlueprint() {
+  const bp = getBlueprint();
+  renderBpPath(bp.path);
+  renderSkillsChart(bp.skills);
+  renderMilestones(bp.milestones);
+  renderLearning(bp.learning);
+  loadMgrFields(bp.manager);
+}
+
+// ── Career Path ──
+function renderBpPath(path) {
+  const el = $('bpPathRow'); if (!el) return;
+  const nodes = [
+    { key:'current', label:'NOW',       cls:'bp-badge-now',  d:path.current },
+    { key:'near',    label:'1–2 YEARS', cls:'bp-badge-near', d:path.near },
+    { key:'far',     label:'3–5 YEARS', cls:'bp-badge-far',  d:path.far }
+  ];
+  el.innerHTML = nodes.map((n, i) => `
+    <div class="bp-node${n.d.role?' filled':''}" onclick="openPathModal('${n.key}')">
+      <div class="bp-node-badge ${n.cls}">${n.label}</div>
+      <div class="bp-node-role">${n.d.role || '<span class="bp-node-empty-text">Click to set target role</span>'}</div>
+      ${n.d.dept ? `<div class="bp-node-dept">${escH(n.d.dept)}</div>` : ''}
+      <div class="bp-node-why">${n.d.why ? escH(n.d.why) : '<span class="bp-node-empty-text">Add your "why"…</span>'}</div>
+      <div class="bp-node-edit-btn">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M11 2l3 3-8 8H3v-3l8-8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    ${i < 2 ? '<div class="bp-connector"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M14 7l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>' : ''}
+  `).join('');
+}
+
+let editingPathKey = null;
+function openPathModal(key) {
+  editingPathKey = key;
+  const bp = getBlueprint();
+  const titles = { current:'Current Role', near:'Near-Term Target', far:'Long-Term Vision' };
+  $('pathModalTitle').textContent = `Edit: ${titles[key]}`;
+  const d = bp.path[key];
+  $('pathRole').value = d.role || '';
+  $('pathDept').value = d.dept || '';
+  $('pathTimeline').value = d.timeline || '';
+  $('pathWhy').value  = d.why  || '';
+  $('pathTimelineGroup').style.display = key === 'current' ? 'none' : '';
+  $('pathModal').classList.add('open');
+}
+function savePathNode() {
+  const bp = getBlueprint();
+  bp.path[editingPathKey] = {
+    role: $('pathRole').value.trim(),
+    dept: $('pathDept').value.trim(),
+    timeline: $('pathTimeline').value.trim(),
+    why: $('pathWhy').value.trim()
+  };
+  saveBlueprint(bp);
+  $('pathModal').classList.remove('open');
+  renderBpPath(bp.path);
+}
+
+// ── Skills Radar ──
+function renderSkillsChart(skills) {
+  const el = $('skillsChartWrap'); if (!el) return;
+  el.innerHTML = buildRadarSVG(skills);
+}
+
+function buildRadarSVG(skills) {
+  const N = 8, cx = 130, cy = 130, R = 78;
+  const angle = i => -Math.PI / 2 + 2 * Math.PI * i / N;
+  const px = (i, f) => cx + f * R * Math.cos(angle(i));
+  const py = (i, f) => cy + f * R * Math.sin(angle(i));
+
+  const grids = [.2,.4,.6,.8,1].map(f => {
+    const pts = Array.from({length:N},(_,i) => `${px(i,f).toFixed(1)},${py(i,f).toFixed(1)}`).join(' ');
+    return `<polygon points="${pts}" fill="none" stroke="#E4E7EC" stroke-width="${f===1?1.2:0.6}"/>`;
+  }).join('');
+
+  const axes = Array.from({length:N},(_,i) =>
+    `<line x1="${cx}" y1="${cy}" x2="${px(i,1).toFixed(1)}" y2="${py(i,1).toFixed(1)}" stroke="#E4E7EC" stroke-width="1"/>`
+  ).join('');
+
+  const dataPts = BP_SKILL_KEYS.map((k,i) => {
+    const v = Math.max(1, Math.min(5, skills[k]||3)) / 5;
+    return `${px(i,v).toFixed(1)},${py(i,v).toFixed(1)}`;
+  }).join(' ');
+
+  const dots = BP_SKILL_KEYS.map((k,i) => {
+    const v = Math.max(1, Math.min(5, skills[k]||3)) / 5;
+    return `<circle cx="${px(i,v).toFixed(1)}" cy="${py(i,v).toFixed(1)}" r="3.5" fill="#F96302" stroke="white" stroke-width="1.5"/>`;
+  }).join('');
+
+  const labels = BP_SKILL_LABELS.map((l,i) => {
+    const a = angle(i);
+    const lx = cx + (R + 26) * Math.cos(a);
+    const ly = cy + (R + 26) * Math.sin(a);
+    const ca = Math.cos(a), sa = Math.sin(a);
+    const anchor = ca > 0.2 ? 'start' : ca < -0.2 ? 'end' : 'middle';
+    const dy = sa < -0.2 ? '-0.2em' : sa > 0.2 ? '1em' : '0.35em';
+    return `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${anchor}" dy="${dy}" font-size="9.5" fill="#667085" font-family="Inter,-apple-system,sans-serif">${l}</text>`;
+  }).join('');
+
+  const avg = (BP_SKILL_KEYS.reduce((a,k) => a + (skills[k]||3), 0) / N).toFixed(1);
+
+  return `<svg width="100%" viewBox="-55 -18 375 300" style="max-width:290px">
+    ${grids}${axes}
+    <polygon points="${dataPts}" fill="rgba(249,99,2,0.12)" stroke="#F96302" stroke-width="2" stroke-linejoin="round"/>
+    ${dots}${labels}
+    <text x="${cx}" y="${cy-5}" text-anchor="middle" font-size="21" font-weight="800" fill="#101828" font-family="Inter,-apple-system,sans-serif">${avg}</text>
+    <text x="${cx}" y="${cy+12}" text-anchor="middle" font-size="9" fill="#98A2B3" font-family="Inter,-apple-system,sans-serif">avg score</text>
+  </svg>`;
+}
+
+function openSkillsModal() {
+  const bp = getBlueprint();
+  $('skillsForm').innerHTML = BP_SKILL_KEYS.map((k,i) => `
+    <div class="skill-row">
+      <div class="skill-row-top">
+        <span class="skill-row-label">${BP_SKILL_LABELS[i]}</span>
+        <span class="skill-row-val" id="sv-${k}">${bp.skills[k]||3}/5</span>
+      </div>
+      <input type="range" class="range-input" id="skill-${k}" min="1" max="5" step="1" value="${bp.skills[k]||3}"
+        oninput="$('sv-${k}').textContent=this.value+'/5'">
+    </div>`).join('');
+  $('skillsModal').classList.add('open');
+}
+function saveSkills() {
+  const bp = getBlueprint();
+  BP_SKILL_KEYS.forEach(k => { const el = $(`skill-${k}`); if (el) bp.skills[k] = parseInt(el.value); });
+  saveBlueprint(bp);
+  $('skillsModal').classList.remove('open');
+  renderSkillsChart(bp.skills);
+}
+
+// ── Milestones ──
+let editingMsId = null;
+function openMilestoneModal(id) {
+  editingMsId = id || null;
+  $('msModalTitle').textContent = id ? 'Edit Milestone' : 'Add Milestone';
+  if (id) {
+    const ms = getBlueprint().milestones.find(m => m.id === id);
+    if (ms) { $('msTitle').value=ms.title; $('msDesc').value=ms.desc||''; $('msCategory').value=ms.category||'Leadership'; $('msStatus').value=ms.status||'not_started'; $('msDate').value=ms.date||''; }
+  } else { $('msTitle').value=''; $('msDesc').value=''; $('msCategory').value='Leadership'; $('msStatus').value='not_started'; $('msDate').value=''; }
+  $('milestoneModal').classList.add('open');
+}
+function saveMilestone() {
+  const title = $('msTitle').value.trim(); if (!title) return;
+  const bp = getBlueprint();
+  const ms = { id: editingMsId || Date.now().toString(), title, desc: $('msDesc').value.trim(),
+    category: $('msCategory').value, status: $('msStatus').value, date: $('msDate').value };
+  if (editingMsId) { const idx=bp.milestones.findIndex(m=>m.id===editingMsId); if(idx>-1) bp.milestones[idx]=ms; }
+  else bp.milestones.push(ms);
+  saveBlueprint(bp);
+  $('milestoneModal').classList.remove('open');
+  renderMilestones(bp.milestones);
+}
+function deleteMilestone(id) {
+  const bp = getBlueprint(); bp.milestones = bp.milestones.filter(m => m.id !== id);
+  saveBlueprint(bp); renderMilestones(bp.milestones);
+}
+function renderMilestones(ms) {
+  const el = $('milestoneList'); if (!el) return;
+  if (!ms.length) { el.innerHTML = '<div class="ms-empty"><p>No milestones yet</p><span style="font-size:12px">Add the key steps on your path to your target role.</span></div>'; return; }
+  const sClass = { not_started:'ms-not-started', in_progress:'ms-in-progress', completed:'ms-completed' };
+  const bClass = { not_started:'msb-not-started', in_progress:'msb-in-progress', completed:'msb-completed' };
+  const sLabel = { not_started:'Not Started', in_progress:'In Progress', completed:'Completed' };
+  el.innerHTML = ms.map((m,i) => `
+    <div class="milestone-item">
+      <div class="ms-node">
+        <div class="ms-dot ${sClass[m.status]||'ms-not-started'}"></div>
+        ${i < ms.length-1 ? '<div class="ms-line"></div>' : ''}
+      </div>
+      <div class="ms-content">
+        <div class="ms-top">
+          <div class="ms-title">${escH(m.title)}</div>
+          <div class="ms-buttons">
+            <button class="ms-prep-btn" onclick="prepMilestone('${m.id}')">Prep with Claire →</button>
+            <button class="ms-icon-btn" onclick="openMilestoneModal('${m.id}')">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M11 2l3 3-8 8H3v-3l8-8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+            </button>
+            <button class="ms-icon-btn" onclick="deleteMilestone('${m.id}')">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="ms-meta">
+          <span class="ms-status-badge ${bClass[m.status]||'msb-not-started'}">${sLabel[m.status]||'Not Started'}</span>
+          ${m.category ? `<span class="ms-cat">${escH(m.category)}</span>` : ''}
+          ${m.date ? `<span class="ms-date">Target: ${new Date(m.date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>` : ''}
+        </div>
+        ${m.desc ? `<div class="ms-desc">${escH(m.desc)}</div>` : ''}
+      </div>
+    </div>`).join('');
+}
+function prepMilestone(id) {
+  const ms = getBlueprint().milestones.find(m => m.id === id); if (!ms) return;
+  nav('home');
+  setTimeout(() => {
+    if (VOICE_ENABLED && !sessionActive) startSession(`I want to prepare for this milestone: "${ms.title}"`);
+    else showToast(`Milestone loaded: "${ms.title}" — start a session to prep with Claire.`);
+  }, 300);
+}
+
+// ── Learning Plan ──
+function openLearningModal() {
+  $('learnTitle').value = ''; $('learnType').value = 'course'; $('learnUrl').value = '';
+  $('learningModal').classList.add('open');
+}
+function saveLearning() {
+  const title = $('learnTitle').value.trim(); if (!title) return;
+  const bp = getBlueprint();
+  bp.learning.push({ id:Date.now().toString(), title, type:$('learnType').value, url:$('learnUrl').value.trim(), completed:false });
+  saveBlueprint(bp);
+  $('learningModal').classList.remove('open');
+  renderLearning(bp.learning);
+}
+function toggleLearning(id) {
+  const bp = getBlueprint(); const item = bp.learning.find(l => l.id === id); if (!item) return;
+  item.completed = !item.completed; saveBlueprint(bp); renderLearning(bp.learning);
+}
+function deleteLearning(id) {
+  const bp = getBlueprint(); bp.learning = bp.learning.filter(l => l.id !== id);
+  saveBlueprint(bp); renderLearning(bp.learning);
+}
+function renderLearning(items) {
+  const el = $('learningList'); if (!el) return;
+  if (!items.length) { el.innerHTML = '<div class="learn-empty">No items yet. Add courses, certifications, books, or stretch assignments.</div>'; return; }
+  const tBadge = { course:'lt-course', cert:'lt-cert', book:'lt-book', stretch:'lt-stretch', mentorship:'lt-mentorship' };
+  const tLabel = { course:'Course', cert:'Cert', book:'Book', stretch:'Stretch', mentorship:'Mentorship' };
+  el.innerHTML = items.map(l => `
+    <div class="learning-item${l.completed?' done':''}">
+      <div class="learn-check${l.completed?' checked':''}" onclick="toggleLearning('${l.id}')">
+        <svg viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="learn-type-badge ${tBadge[l.type]||'lt-course'}">${tLabel[l.type]||'Item'}</span>
+      <span class="learning-title" style="${l.completed?'text-decoration:line-through':''}">${escH(l.title)}</span>
+      ${l.url ? `<a class="learn-link" href="${escH(l.url)}" target="_blank" rel="noopener">Open ↗</a>` : ''}
+      <button class="learn-del" onclick="deleteLearning('${l.id}')">×</button>
+    </div>`).join('');
+}
+
+// ── Manager Alignment ──
+function loadMgrFields(m) {
+  if ($('mgrNotes'))        $('mgrNotes').value       = m.notes       || '';
+  if ($('mgrDate'))         $('mgrDate').value         = m.nextConvo   || '';
+  if ($('mgrCommitments'))  $('mgrCommitments').value  = m.commitments || '';
+}
+function saveMgrAlignment() {
+  const bp = getBlueprint();
+  bp.manager = { notes:$('mgrNotes').value, nextConvo:$('mgrDate').value, commitments:$('mgrCommitments').value };
+  saveBlueprint(bp); showToast('Manager alignment saved!');
+}
+
+// ── Blueprint Claire session ──
+function startBlueprintSession() {
+  const bp = getBlueprint(); const path = bp.path;
+  let ctx = 'I want to discuss my Career Blueprint. ';
+  if (path.current.role) ctx += `I am currently a ${path.current.role}${path.current.dept?', '+path.current.dept:''}. `;
+  if (path.near.role) ctx += `My near-term target is ${path.near.role}. `;
+  if (path.far.role)  ctx += `My long-term vision is ${path.far.role}. `;
+  const active = bp.milestones.filter(m => m.status !== 'completed').slice(0,2);
+  if (active.length) ctx += `Key milestones I'm working on: ${active.map(m=>m.title).join(', ')}. `;
+  nav('home');
+  setTimeout(() => {
+    if (VOICE_ENABLED && !sessionActive) startSession(ctx);
+    else showToast('Blueprint context loaded — start a session to discuss it with Claire.');
+  }, 300);
+}
+
+function escH(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ─── Utils ────────────────────────────────────────────────────────────────────
+function f32i16(f){const o=new Int16Array(f.length);for(let i=0;i<f.length;i++){const s=Math.max(-1,Math.min(1,f[i]));o[i]=s<0?s*32768:s*32767;}return o;}
+function b64(buf){const b=new Uint8Array(buf);let s='';for(let i=0;i<b.length;i++)s+=String.fromCharCode(b[i]);return btoa(s);}
+function unb64(str){const bin=atob(str);const b=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);return b.buffer;}
+function showToast(msg,type=''){const el=document.createElement('div');el.className=`toast${type?' '+type:''}`;el.textContent=msg;document.body.appendChild(el);requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),300);},4500);}
+</script>
+</body>
+</html>
