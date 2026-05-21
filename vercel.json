@@ -1,4 +1,7 @@
 {
+  "rewrites": [
+    { "source": "/", "destination": "/claire-app/index.html" }
+  ],
   "functions": {
     "api/proxy.js": {
       "runtime": "edge"
