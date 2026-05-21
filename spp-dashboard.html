@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HD Infrastructure Technology · SPP FY2026 Leadership View</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* ─── Untitled UI v8 Tokens ─── */
+:root {
+  --g950:#0C111D; --g900:#101828; --g800:#1D2939; --g700:#344054;
+  --g600:#475467; --g500:#667085; --g400:#98A2B3; --g300:#D0D5DD;
+  --g200:#EAECF0; --g150:#F2F4F7; --g100:#F9FAFB; --white:#FFFFFF;
+  --green700:#027A48; --green600:#039855; --green500:#12B76A;
+  --green100:#D1FADF; --green50:#ECFDF3;
+  --red700:#B42318;   --red600:#D92D20;
+  --red100:#FEE4E2;   --red50:#FEF3F2;
+  --hd:#F96302; --hd-dark:#D95A00; --hd-50:#FFF4EE;
+  --sh-xs:0 1px 2px rgba(16,24,40,.05);
+  --sh-sm:0 1px 3px rgba(16,24,40,.10),0 1px 2px rgba(16,24,40,.06);
+  --sh-md:0 4px 8px -2px rgba(16,24,40,.10),0 2px 4px -2px rgba(16,24,40,.06);
+  --r4:4px; --r6:6px; --r8:8px; --r12:12px; --rfull:9999px;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--g100);color:var(--g900);
+  display:flex;flex-direction:column;height:100vh;overflow:hidden;
+  font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+
+/* ══ TOPBAR ══ */
+.topbar{background:var(--white);border-bottom:1px solid var(--g200);height:56px;
+  display:flex;align-items:center;padding:0 24px;flex-shrink:0;box-shadow:var(--sh-xs);z-index:10}
+.tb-mark{width:30px;height:30px;background:var(--hd);border-radius:var(--r6);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;
+  color:white;flex-shrink:0;margin-right:12px;letter-spacing:-.02em}
+.tb-name{font-size:14px;font-weight:700;color:var(--g900)}
+.tb-sep{color:var(--g300);margin:0 10px}
+.tb-sub{font-size:13px;color:var(--g500)}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.tb-pill{background:var(--g100);border:1px solid var(--g200);color:var(--g700);
+  font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:var(--rfull)}
+.live-pill{display:flex;align-items:center;gap:5px;background:var(--g100);
+  border:1px solid var(--g200);color:var(--g500);font-size:11.5px;padding:3px 10px;border-radius:var(--rfull)}
+.live-dot{width:6px;height:6px;background:var(--green500);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* ══ LAYOUT ══ */
+.body-wrap{display:flex;flex:1;overflow:hidden}
+.sidebar{width:220px;flex-shrink:0;background:var(--white);border-right:1px solid var(--g200);display:flex;flex-direction:column}
+.s-nav{padding:10px 8px;flex:1}
+.s-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--r6);cursor:pointer;
+  font-size:13.5px;font-weight:500;color:var(--g600);transition:all .12s;margin-bottom:2px;
+  border:none;background:none;width:100%;text-align:left;font-family:var(--font);border-left:2px solid transparent}
+.s-item:hover{background:var(--g100);color:var(--g900)}
+.s-item.active{background:var(--g100);color:var(--g900);font-weight:600;border-left-color:var(--hd)}
+.s-item svg{width:16px;height:16px;flex-shrink:0;color:var(--g400);transition:color .12s}
+.s-item:hover svg,.s-item.active svg{color:var(--g600)}
+.s-footer{padding:12px 14px;border-top:1px solid var(--g150);font-size:11px;color:var(--g400);line-height:1.7}
+.s-footer strong{color:var(--g600);display:block;font-size:11.5px;margin-bottom:1px}
+
+/* ══ MAIN ══ */
+.main{flex:1;overflow-y:auto;padding:22px 28px 56px}
+.section{display:none}.section.active{display:block}
+.page-hd{margin-bottom:18px;display:flex;align-items:flex-end;justify-content:space-between}
+.page-title{font-size:18px;font-weight:700;color:var(--g900)}
+.page-sub{font-size:12.5px;color:var(--g500);margin-top:2px}
+.page-meta{font-size:11.5px;color:var(--g400)}
+
+/* ══ ALERT BANNER ══ */
+.alert{display:flex;align-items:center;gap:10px;background:var(--red50);border:1px solid var(--red100);
+  border-left:3px solid var(--red600);border-radius:var(--r8);padding:10px 16px;
+  font-size:12.5px;color:var(--red700);margin-bottom:16px}
+.alert svg{flex-shrink:0;width:15px;height:15px}
+.alert strong{font-weight:700}
+.alert-note{margin-left:auto;font-size:11.5px;font-weight:600;color:var(--red600);white-space:nowrap}
+
+.info-bar{display:flex;align-items:center;gap:10px;background:var(--g100);border:1px solid var(--g200);
+  border-left:3px solid var(--g400);border-radius:var(--r8);padding:10px 16px;
+  font-size:12.5px;color:var(--g700);margin-bottom:16px}
+
+/* ══ KPI ══ */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+.kpi-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
+.kpi{background:var(--white);border:1px solid var(--g200);border-radius:var(--r12);padding:16px 18px;box-shadow:var(--sh-xs)}
+.kpi.accent{border-left:3px solid var(--hd)}
+.kpi.dark{background:var(--g900);border-color:var(--g800)}
+.kpi-label{font-size:11px;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.kpi.dark .kpi-label{color:var(--g400)}
+.kpi-val{font-size:26px;font-weight:800;color:var(--g900);letter-spacing:-.04em;line-height:1;margin-bottom:4px}
+.kpi.accent .kpi-val{color:var(--hd)}
+.kpi.dark .kpi-val{color:var(--white)}
+.kpi-sub{font-size:11.5px;color:var(--g400)}
+.kpi.dark .kpi-sub{color:var(--g500)}
+.kpi-delta{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;
+  padding:1.5px 7px;border-radius:var(--rfull);margin-top:5px}
+.delta-up{background:var(--red50);color:var(--red700)}   /* over plan = red for budget */
+.delta-dn{background:var(--green50);color:var(--green700)}
+.delta-neu{background:var(--g150);color:var(--g600)}
+
+/* ══ CARD ══ */
+.card{background:var(--white);border:1px solid var(--g200);border-radius:var(--r12);box-shadow:var(--sh-xs)}
+.card-body{padding:18px 20px}
+.card-title{font-size:13.5px;font-weight:700;color:var(--g900)}
+.card-sub{font-size:12px;color:var(--g500);margin-top:1px}
+.mb14{margin-bottom:14px}.mb16{margin-bottom:16px}
+
+/* ══ GRIDS ══ */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
+.grid-5-3{display:grid;grid-template-columns:5fr 3fr;gap:14px;margin-bottom:16px}
+.chart-wrap{position:relative}
+canvas{display:block;width:100%!important}
+
+/* ══ TABLE ══ */
+.table-wrap{background:var(--white);border:1px solid var(--g200);border-radius:var(--r12);overflow:hidden;box-shadow:var(--sh-xs)}
+.table-header{padding:14px 18px;border-bottom:1px solid var(--g200);background:var(--white)}
+table{width:100%;border-collapse:collapse}
+thead th{text-align:left;font-size:11px;font-weight:600;color:var(--g400);text-transform:uppercase;
+  letter-spacing:.05em;padding:9px 16px;background:var(--g100);border-bottom:1px solid var(--g200);white-space:nowrap}
+thead th.r{text-align:right}
+tbody td{padding:11px 16px;font-size:13px;color:var(--g700);border-bottom:1px solid var(--g150);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{transition:background .1s}
+tbody tr:hover td{background:var(--g100)}
+td.r{text-align:right}
+td.mono{font-family:'SF Mono','Fira Code',monospace;font-size:12px}
+td.r.mono{text-align:right;font-family:'SF Mono','Fira Code',monospace;font-size:12px}
+.td-name{font-weight:600;color:var(--g900);font-size:13px}
+.td-muted{color:var(--g500);font-size:12px}
+tfoot td{padding:10px 16px;background:var(--g100);border-top:2px solid var(--g200);
+  font-family:'SF Mono','Fira Code',monospace;font-weight:700;color:var(--g700);font-size:12.5px}
+tfoot td:first-child{font-family:var(--font);color:var(--g500);font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+tfoot td.r{text-align:right}
+tfoot td.grand{color:var(--hd);font-size:14px}
+
+/* ══ BADGES ══ */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:var(--rfull);font-size:11px;font-weight:600;white-space:nowrap}
+.b-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.b-critical{background:var(--red50);color:var(--red700)}.b-critical .b-dot{background:var(--red600)}
+.b-high{background:var(--g150);color:var(--g700)}.b-high .b-dot{background:var(--g500)}
+.b-medium{background:var(--g100);color:var(--g500)}.b-medium .b-dot{background:var(--g300)}
+.b-ktlo{background:var(--g100);color:var(--g600)}.b-refresh{background:var(--g150);color:var(--g700)}
+.b-tlm{background:var(--hd-50);color:var(--hd-dark)}
+
+/* ══ SEGMENTED CONTROL ══ */
+.seg-wrap{background:var(--white);border:1px solid var(--g200);border-radius:var(--r12);
+  padding:12px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px;box-shadow:var(--sh-xs)}
+.seg-label{font-size:12.5px;font-weight:500;color:var(--g500);margin-right:4px}
+.seg-ctrl{display:flex;background:var(--g150);border:1px solid var(--g200);border-radius:var(--r6);padding:2px;gap:2px}
+.seg-btn{padding:5px 13px;border-radius:var(--r4);font-size:12px;font-weight:500;cursor:pointer;
+  border:none;background:none;font-family:var(--font);color:var(--g500);transition:all .12s;white-space:nowrap}
+.seg-btn.active{background:var(--white);color:var(--g900);font-weight:600;box-shadow:var(--sh-xs)}
+.seg-right{margin-left:auto;font-size:12px;color:var(--g400)}
+.seg-right strong{color:var(--g900);font-weight:700}
+
+/* ══ SEGMENT CONTROL ══ */
+.seg-ctrl{display:flex;gap:3px;background:var(--g150);border-radius:8px;padding:3px}
+.seg-btn{padding:4px 11px;border:none;border-radius:6px;font-size:11.5px;font-weight:500;cursor:pointer;background:transparent;color:var(--g500);transition:all .15s;white-space:nowrap}
+.seg-btn.active{background:var(--white);color:var(--g800);box-shadow:var(--sh-xs);font-weight:600}
+
+/* ══ MINI BARS ══ */
+.mini-bar{margin-bottom:10px}.mini-bar:last-child{margin-bottom:0}
+.mini-bar-top{display:flex;justify-content:space-between;font-size:12px;color:var(--g600);margin-bottom:5px}
+.mini-bar-top strong{font-weight:500;color:var(--g700)}
+.mini-bar-track{background:var(--g150);border-radius:var(--rfull);height:5px}
+.mini-bar-fill{border-radius:var(--rfull);height:5px;background:var(--g500)}
+
+/* ══ PRIORITY CARDS ══ */
+.pri-card{background:var(--white);border:1px solid var(--g200);border-radius:var(--r12);padding:18px 20px;box-shadow:var(--sh-xs)}
+.pri-count{font-size:36px;font-weight:800;letter-spacing:-.04em;line-height:1;margin:6px 0 4px}
+.pri-critical .pri-count{color:var(--red600)}
+.pri-high .pri-count{color:var(--g700)}
+.pri-medium .pri-count{color:var(--g500)}
+
+/* ══ YOY BAR ══ */
+.yoy-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.yoy-label{font-size:12px;color:var(--g600);width:120px;flex-shrink:0}
+.yoy-track{flex:1;background:var(--g150);border-radius:var(--r4);height:20px;position:relative}
+.yoy-bar-fy25{position:absolute;left:0;top:0;height:20px;border-radius:var(--r4) 0 0 var(--r4);background:var(--g300)}
+.yoy-bar-fy26{position:absolute;left:0;top:0;height:20px;border-radius:var(--r4);background:var(--g600);display:flex;align-items:center;padding-left:6px}
+.yoy-bar-label{font-size:10px;font-weight:600;color:white;white-space:nowrap}
+.yoy-amt{font-size:12px;font-weight:600;color:var(--g700);width:60px;text-align:right;font-family:monospace;flex-shrink:0}
+
+/* ══ MISC ══ */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--g300);border-radius:3px}
+.hint{font-size:11.5px;color:var(--g400);margin-top:8px;display:flex;align-items:center;gap:4px}
+.divider{height:1px;background:var(--g200);margin:14px 0}
+.group-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block;margin-right:6px}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="tb-mark">HD</div>
+  <span class="tb-name">Infrastructure Technology</span>
+  <span class="tb-sep">|</span>
+  <span class="tb-sub">SPP FY2026 Leadership View</span>
+  <div class="tb-right">
+    <span class="tb-pill">As of Oct 10, 2025</span>
+    <span class="tb-pill">FY 2026</span>
+    <span class="live-pill"><span class="live-dot"></span>Planning</span>
+  </div>
+</header>
+
+<div class="body-wrap">
+  <aside class="sidebar">
+    <nav class="s-nav">
+      <button class="s-item active" data-section="overview" onclick="switchTab('overview')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        Overview
+      </button>
+      <button class="s-item" data-section="labor" onclick="switchTab('labor')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Labor
+      </button>
+      <button class="s-item" data-section="hardcap" onclick="switchTab('hardcap')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+        Hardcap
+      </button>
+      <button class="s-item" data-section="initiatives" onclick="switchTab('initiatives')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+        Initiatives
+      </button>
+    </nav>
+    <div class="s-footer">
+      <strong>Source Data</strong>
+      SPP2026 Data Sets<br>
+      Labor · Hardcap · Initiatives
+      <div style="margin-top:6px;color:var(--g500);font-weight:500;font-size:11.5px">1,567 Total FTEs</div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- ═══════════════════════════ OVERVIEW ═══════════════════════════ -->
+    <div id="sec-overview" class="section">
+      <div class="page-hd">
+        <div>
+          <div class="page-title">Executive Overview</div>
+          <div class="page-sub">FY2026 Strategic Planning Process — Infrastructure Technology</div>
+        </div>
+        <div class="page-meta">Submitted Oct 10, 2025 · Includes 3% merit · No vacancy adjustment</div>
+      </div>
+
+      <div class="alert">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        <span>Total FY2026 request of <strong>$668.5M</strong> represents a <strong>+$263.2M (+64.9%)</strong> increase over FY25 plan of $405.3M — driven primarily by Hardcap (+$241.8M / +98.6%). Review key drivers below.</span>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi accent">
+          <div class="kpi-label">Total SPP Request</div>
+          <div class="kpi-val">$668.5M</div>
+          <div class="kpi-sub">FY2026 Labor + Hardcap + TLM</div>
+          <div class="kpi-delta delta-up">↑ +$263.2M vs FY25</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Labor Funding Request</div>
+          <div class="kpi-val">$175.7M</div>
+          <div class="kpi-sub">1,567 FTEs · includes 3% merit</div>
+          <div class="kpi-delta delta-up">↑ +$15.8M (+9.9%) vs FY25</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Hardcap Request</div>
+          <div class="kpi-val">$487.2M</div>
+          <div class="kpi-sub">Hardware $412.2M · Licenses $75.0M</div>
+          <div class="kpi-delta delta-up">↑ +$241.8M (+98.6%) vs FY25</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">TLM</div>
+          <div class="kpi-val">$5.5M</div>
+          <div class="kpi-sub">Technology Lifecycle Management</div>
+          <div class="kpi-delta delta-neu">New submission</div>
+        </div>
+      </div>
+
+      <div class="grid-5-3">
+        <!-- FY25 vs FY26 Chart -->
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">FY25 vs FY26 — Budget Request by Category</div>
+            <div class="card-sub" style="margin-bottom:14px">Gray = FY25 plan · Dark = FY26 request</div>
+            <div class="chart-wrap" style="height:220px"><canvas id="yoyChart"></canvas></div>
+          </div>
+        </div>
+        <!-- Composition -->
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">FY2026 Composition</div>
+            <div class="chart-wrap" style="height:160px;margin-top:12px"><canvas id="compChart"></canvas></div>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px" id="compLegend"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Budget by Org Group -->
+      <div class="card mb16">
+        <div class="card-body">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div>
+              <div class="card-title" id="orgChartTitle">Budget by Sr. Director</div>
+              <div class="card-sub" id="orgChartSub">Labor + Hardcap combined · sorted by total request</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <div class="seg-ctrl">
+                <button class="seg-btn active" id="orgBtn-srdirector" onclick="renderOrgChart('srdirector')">Sr. Director</button>
+                <button class="seg-btn" id="orgBtn-productarea" onclick="renderOrgChart('productarea')">Product Area</button>
+              </div>
+              <div id="orgLegend" style="display:flex;gap:12px">
+                <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--g500)"><div style="width:10px;height:10px;background:var(--hd);border-radius:2px"></div>Labor</div>
+                <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--g500)"><div style="width:10px;height:10px;background:var(--g200);border-radius:2px"></div>Hardcap</div>
+              </div>
+            </div>
+          </div>
+          <div class="chart-wrap" style="height:200px"><canvas id="orgChart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Key Drivers -->
+      <div style="margin-bottom:8px;font-size:12px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.05em">Key Drivers of Hardcap Increase</div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-body">
+            <div style="font-size:11px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Largest Single Item</div>
+            <div style="font-size:20px;font-weight:800;color:var(--g900);letter-spacing:-.02em">$75.0M</div>
+            <div style="font-size:13px;font-weight:600;color:var(--g700);margin-top:3px">VMware Broadcom ELA</div>
+            <div style="font-size:12px;color:var(--g500);margin-top:2px">5-year ELA renewal — Data Centers, DCs, Mexico, ASO, HD Supply</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <div style="font-size:11px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Store Device Refresh Cycle</div>
+            <div style="font-size:20px;font-weight:800;color:var(--g900);letter-spacing:-.02em">$115.6M</div>
+            <div style="font-size:13px;font-weight:600;color:var(--g700);margin-top:3px">POS Peripherals + Pin Pads + Scanners</div>
+            <div style="font-size:12px;color:var(--g500);margin-top:2px">$49.7M POS peripherals · $45.9M pin pads · $16.1M non-POS scanners</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <div style="font-size:11px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Network & UC Refresh</div>
+            <div style="font-size:20px;font-weight:800;color:var(--g900);letter-spacing:-.02em">$74.0M</div>
+            <div style="font-size:13px;font-weight:600;color:var(--g700);margin-top:3px">Voice + Non-Store Network Refresh</div>
+            <div style="font-size:12px;color:var(--g500);margin-top:2px">$39.0M UC voice (2,200 stores) · $35.0M non-store network refresh</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════ LABOR ═══════════════════════════ -->
+    <div id="sec-labor" class="section">
+      <div class="page-hd">
+        <div>
+          <div class="page-title">Labor Funding Request — $175.7M</div>
+          <div class="page-sub">Includes 3% merit · No Exec & Admin · No vacancy adjustment · TLM in process</div>
+        </div>
+        <div class="page-meta">FY25 Baseline: $159.9M · Variance: +$15.8M (+9.9%)</div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi accent">
+          <div class="kpi-label">Total Labor Request</div>
+          <div class="kpi-val">$175.7M</div>
+          <div class="kpi-sub">FY2026 KTLO + TLM</div>
+          <div class="kpi-delta delta-up">↑ +$15.8M vs FY25 $159.9M</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">KTLO / Capabilities</div>
+          <div class="kpi-val">$170.2M</div>
+          <div class="kpi-sub">THDs $145.1M · Cntrs $18.5M · SOWs $6.6M</div>
+          <div class="kpi-delta delta-up">↑ +$10.3M vs FY25</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">TLM</div>
+          <div class="kpi-val">$5.5M</div>
+          <div class="kpi-sub">Technology Lifecycle Management</div>
+          <div class="kpi-delta delta-neu">Finance target: $7.0M</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Total Headcount</div>
+          <div class="kpi-val">1,567</div>
+          <div class="kpi-sub">THDs 1,253 · Contractors 307 · SOWs 7</div>
+          <div class="kpi-delta delta-neu">+93 open positions</div>
+        </div>
+      </div>
+
+      <!-- Labor by Group table -->
+      <div class="table-wrap mb14">
+        <div class="table-header">
+          <div class="card-title">Labor by Organization Group</div>
+          <div class="card-sub">FY2026 funding request with headcount breakdown</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Group</th><th>Sr. Director</th>
+              <th class="r">THDs</th><th class="r">Contractors</th><th class="r">SOWs</th><th class="r">Total FTEs</th>
+              <th class="r">Labor Request</th><th class="r">% of Total</th>
+              <th class="r">vs FY25 Baseline</th>
+            </tr>
+          </thead>
+          <tbody id="laborGroupBody"></tbody>
+          <tfoot id="laborGroupFoot"></tfoot>
+        </table>
+      </div>
+
+      <!-- Labor by Category + Monthly Chart -->
+      <div class="grid-5-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">Monthly Labor Plan — FY2026</div>
+            <div class="card-sub" style="margin-bottom:12px">Feb 2026 – Jan 2027 · Quarterly spikes reflect merit/bonus</div>
+            <div class="chart-wrap" style="height:220px"><canvas id="laborMonthlyChart"></canvas></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">By Investment Category</div>
+            <div style="margin-top:14px" id="laborCatBars"></div>
+            <div class="divider"></div>
+            <div class="card-title" style="margin-bottom:12px">Wage Rate & Merit Impact</div>
+            <div id="meritBars"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detailed labor by category (open/named) -->
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="card-title">Headcount Detail — Named vs Open Positions</div>
+          <div class="card-sub">93 open positions across all groups · 0 estimated vacancy adjustment</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Group</th>
+              <th class="r">Named THDs</th><th class="r">Named Cntrs</th><th class="r">Named SOWs</th>
+              <th class="r">Open THDs</th><th class="r">Open Cntrs</th>
+              <th class="r">Total Opens</th><th class="r">Total Funded</th>
+            </tr>
+          </thead>
+          <tbody id="headcountBody"></tbody>
+          <tfoot id="headcountFoot"></tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════ HARDCAP ═══════════════════════════ -->
+    <div id="sec-hardcap" class="section">
+      <div class="page-hd">
+        <div>
+          <div class="page-title">Hardcap Funding Request — $487.2M</div>
+          <div class="page-sub">Hardware $412.2M · Software Licenses $75.0M</div>
+        </div>
+        <div class="page-meta">FY25 Plan: $245.4M · Increase: +$241.8M (+98.6%)</div>
+      </div>
+
+      <div class="alert">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        <span>Hardcap request nearly <strong>doubled vs FY25</strong>. Primary drivers: VMware Broadcom ELA ($75M), store device refresh cycle ($115.6M), UC Voice refresh ($39M), and non-store network refresh ($35M).</span>
+        <span class="alert-note">+$241.8M / +98.6%</span>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi accent">
+          <div class="kpi-label">Total Hardcap Request</div>
+          <div class="kpi-val">$487.2M</div>
+          <div class="kpi-sub">Hardware + Software Licenses</div>
+          <div class="kpi-delta delta-up">↑ +$241.8M (+98.6%) vs FY25</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Hardware — Refresh</div>
+          <div class="kpi-val">$374.7M</div>
+          <div class="kpi-sub">End-of-life hardware replacement</div>
+          <div class="kpi-delta delta-neu">76.9% of hardcap</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Hardware — Non-Refresh</div>
+          <div class="kpi-val">$112.5M</div>
+          <div class="kpi-sub">Net-new and enhancement purchases</div>
+          <div class="kpi-delta delta-neu">23.1% of hardcap (excl. licenses)</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Software Licenses</div>
+          <div class="kpi-val">$75.0M</div>
+          <div class="kpi-sub">VMware Broadcom ELA (5-year)</div>
+          <div class="kpi-delta delta-neu">15.4% of hardcap</div>
+        </div>
+      </div>
+
+      <!-- Hardcap by group table -->
+      <div class="table-wrap mb14">
+        <div class="table-header">
+          <div class="card-title">Hardcap by Organization Group</div>
+          <div class="card-sub">Submission amounts vs FY25 official template</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Group</th><th>Sr. Director</th>
+              <th class="r">FY2026 Request</th><th class="r">FY25 Plan</th>
+              <th class="r">Variance $</th><th class="r">Variance %</th>
+              <th class="r">% of Total</th>
+            </tr>
+          </thead>
+          <tbody id="hardcapGroupBody"></tbody>
+          <tfoot id="hardcapGroupFoot"></tfoot>
+        </table>
+      </div>
+
+      <!-- Top Hardcap items -->
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="card-title">Top 15 Hardcap Items by Amount</div>
+          <div class="card-sub">Ranked by individual purchase request</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Initiative / Purchase Description</th><th>Group</th>
+              <th class="r">Amount</th><th>Asset Type</th><th>Location</th>
+            </tr>
+          </thead>
+          <tbody id="topHardcapBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════ INITIATIVES ═══════════════════════════ -->
+    <div id="sec-initiatives" class="section">
+      <div class="page-hd">
+        <div>
+          <div class="page-title">Initiatives &amp; Priorities</div>
+          <div class="page-sub">108 funded activities · Labor investment by execution strategy</div>
+        </div>
+        <div class="page-meta">KTLO $166.9M · TLM $5.5M · Capabilities $3.3M</div>
+      </div>
+
+      <div class="kpi-grid-3" style="margin-bottom:16px">
+        <div class="kpi pri-card pri-critical">
+          <div class="kpi-label">Critical Priority</div>
+          <div class="pri-count">68</div>
+          <div class="kpi-sub">Activities · Must fund to maintain operations</div>
+        </div>
+        <div class="kpi pri-card pri-high">
+          <div class="kpi-label">High Priority</div>
+          <div class="pri-count">32</div>
+          <div class="kpi-sub">Activities · Significant risk if not funded</div>
+        </div>
+        <div class="kpi pri-card pri-medium">
+          <div class="kpi-label">Medium Priority</div>
+          <div class="pri-count">8</div>
+          <div class="kpi-sub">Activities · Moderate impact if deferred</div>
+        </div>
+      </div>
+
+      <!-- Execution Strategy table -->
+      <div class="table-wrap mb14">
+        <div class="table-header">
+          <div class="card-title">Labor by Execution Strategy</div>
+          <div class="card-sub">How funding is allocated across work types</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Execution Strategy</th>
+              <th class="r">Labor Request</th><th class="r">% of Total</th>
+              <th class="r">Critical</th><th class="r">High</th><th class="r">Medium</th>
+              <th class="r">Activities</th>
+            </tr>
+          </thead>
+          <tbody id="execStratBody"></tbody>
+          <tfoot id="execStratFoot"></tfoot>
+        </table>
+      </div>
+
+      <div class="grid-5-3">
+        <!-- Top initiatives -->
+        <div class="table-wrap">
+          <div class="table-header">
+            <div class="card-title">Top Labor Initiatives by Request</div>
+            <div class="card-sub">Ranked by FY2026 labor funding request</div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>Initiative Name</th><th>Group</th>
+                <th class="r">Labor $</th><th>Priority</th><th>Category</th>
+              </tr>
+            </thead>
+            <tbody id="topInitBody"></tbody>
+          </table>
+        </div>
+        <!-- Exec strategy chart -->
+        <div class="card" style="align-self:start">
+          <div class="card-body">
+            <div class="card-title">By Execution Strategy</div>
+            <div class="chart-wrap" style="height:200px;margin-top:12px"><canvas id="execChart"></canvas></div>
+            <div id="execLegend" style="margin-top:10px;display:flex;flex-direction:column;gap:5px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  DATA — sourced from SPP2026 Data Sets.xlsx & Dashboard View.xlsx
+// ═══════════════════════════════════════════════════════════════
+
+const GROUPS = [
+  {
+    id:'ids', name:'Infra. Delivery & Support', slt:'Scarberry, Shelley',
+    labor:72945069, laborFY25:66454740,
+    hardcap:226669020, hardcapFY25:null,
+    fteTHD:781, fteCtr:179, fteSOW:0,
+    namedTHD:736, namedCtr:157, namedSOW:0,
+    openTHD:55, openCtr:38, // estimated proportional
+    laborByCategory:{ 'Operations':31416091, 'Refresh':23532170, 'Response & Reliability':17807313, 'Other':189495 },
+  },
+  {
+    id:'cee', name:'Cloud Enablement & Eng.', slt:'Priest, Kevin / Joseph',
+    labor:57309721, laborFY25:52586339,
+    hardcap:140493000, hardcapFY25:null,
+    fteTHD:253, fteCtr:80, fteSOW:0,
+    namedTHD:253, namedCtr:80, namedSOW:0,
+    openTHD:0, openCtr:0,
+    laborByCategory:{ 'Operations':32064059, 'Response & Reliability':20786465, 'Refresh':3665475, 'OU Standardization':793721 },
+  },
+  {
+    id:'ntcs', name:'Network & Telemetry', slt:'Matsuo, Coleen',
+    labor:25694029, laborFY25:21069977,
+    hardcap:102057335, hardcapFY25:null,
+    fteTHD:105, fteCtr:24, fteSOW:4,
+    namedTHD:98, namedCtr:20, namedSOW:4,
+    openTHD:7, openCtr:4,
+    laborByCategory:{ 'Operations':11614154, 'Refresh':7554068, 'Response & Reliability':5494413, 'TLM':1031394 },
+  },
+  {
+    id:'psep', name:'Portfolio Svcs & Platforms', slt:'Bucklew, Aaron',
+    labor:19989452, laborFY25:22093439,
+    hardcap:17995053, hardcapFY25:null,
+    fteTHD:113, fteCtr:23, fteSOW:3,
+    namedTHD:106, namedCtr:21, namedSOW:3,
+    openTHD:7, openCtr:2,
+    laborByCategory:{ 'Operations':7451505, 'Response & Reliability':7864256, 'Refresh':4673692 },
+  },
+];
+
+const FY25_LABOR_TOTAL  = 159900930;
+const FY25_HARDCAP_TOTAL = 245382415;
+const FY26_LABOR_TOTAL  = 175748776;
+const FY26_HARDCAP_TOTAL = 487214408;
+const FY26_TLM          = 5540614;
+const FY26_GRAND_TOTAL  = FY26_LABOR_TOTAL + FY26_HARDCAP_TOTAL + FY26_TLM;
+
+// FY25 hardcap by group (from Dashboard View)
+const HC_FY25 = {ids:0, cee:0, ntcs:0, psep:0}; // Not broken out by group in FY25
+
+const MONTHLY_LABOR = [
+  {m:'Feb',plan:13838903},{m:'Mar',plan:13772179},{m:'Apr',plan:17255350},
+  {m:'May',plan:14094940},{m:'Jun',plan:14097412},{m:'Jul',plan:17556596},
+  {m:'Aug',plan:13794288},{m:'Sep',plan:13794288},{m:'Oct',plan:17189980},
+  {m:'Nov',plan:13759888},{m:'Dec',plan:13759888},{m:'Jan',plan:17141980},
+];
+
+const TOP_HARDCAP = [
+  {name:'VMware Broadcom ELA (5-yr renewal)',               group:'Cloud Enablement & Eng.', amt:75000000, type:'non-Refresh', loc:'Data Center'},
+  {name:'Store POS Peripherals',                             group:'Infra. Delivery & Support', amt:49744885, type:'Refresh',     loc:'Store'},
+  {name:'Pin Pad Refresh',                                   group:'Infra. Delivery & Support', amt:45870860, type:'Refresh',     loc:'Store'},
+  {name:'UC Refresh — Voice (2,200 stores)',                 group:'Network & Telemetry',     amt:39000000, type:'Refresh',     loc:'Store'},
+  {name:'Non-Store Network Refresh (~60 locations)',         group:'Network & Telemetry',     amt:35000000, type:'Refresh',     loc:'Non-Store'},
+  {name:'Device Infrastructure Refresh',                     group:'Infra. Delivery & Support', amt:22736750, type:'Refresh',     loc:'Non-Store'},
+  {name:'Laser Printers',                                    group:'Infra. Delivery & Support', amt:22300849, type:'Refresh',     loc:'Store'},
+  {name:'Cloud Enablement KTLO (HashiCorp Terraform ELA)',   group:'Cloud Enablement & Eng.', amt:22000000, type:'Refresh',     loc:'Data Center'},
+  {name:'Non-POS Scanner',                                   group:'Infra. Delivery & Support', amt:16139800, type:'Refresh',     loc:'Store'},
+  {name:'Mobile Clients',                                    group:'Infra. Delivery & Support', amt:15258166, type:'Refresh',     loc:'Store'},
+  {name:'Persistent VDI Hardware Replacement',               group:'Cloud Enablement & Eng.', amt:11000000, type:'Refresh',     loc:'Data Center'},
+  {name:'SCCP — Centralized Platform Compute & Storage',     group:'Cloud Enablement & Eng.', amt:11000000, type:'Refresh',     loc:'Data Center'},
+  {name:'Corporate Laptop',                                  group:'Infra. Delivery & Support', amt:10196519, type:'Refresh',     loc:'Non-Store'},
+  {name:'Mainframe CMOS04 Refresh',                          group:'Portfolio Svcs & Platforms', amt:10190053, type:'Refresh',    loc:'Data Center'},
+  {name:'Oracle Exadata Refresh (Supply Chain & Centralized)',group:'Cloud Enablement & Eng.', amt:10000000, type:'Refresh',     loc:'Data Center'},
+];
+
+const EXEC_STRATEGY = [
+  {name:'Operations',                   labor:82545809, critical:34, high:13, medium:1},
+  {name:'Response & Reliability',       labor:51952447, critical:21, high:16, medium:2},
+  {name:'Refresh',                      labor:39425405, critical:11, high: 7, medium:1},
+  {name:'TLM',                          labor: 1031394, critical: 1, high: 0, medium:0},
+  {name:'OU Standardization & M&A',     labor:  793721, critical: 1, high: 0, medium:0},
+];
+
+const TOP_INITIATIVES = [
+  {name:'Technology Support Center Operations',     group:'Infra. Delivery & Support', labor:31416091, priority:'Critical', cat:'Operations'},
+  {name:'Technology Field Captains Operations',     group:'Infra. Delivery & Support', labor:23532170, priority:'Critical', cat:'Operations'},
+  {name:'TechOps: Maintain Operational SLAs',       group:'Portfolio Svcs & Platforms', labor:7451505, priority:'Critical', cat:'Operations'},
+  {name:'Technology Deployment Center',             group:'Infra. Delivery & Support', labor:6670735,  priority:'Critical', cat:'Operations'},
+  {name:'DCF: Data Center Deployments & Migrations',group:'Portfolio Svcs & Platforms', labor:4565797, priority:'Critical', cat:'Refresh'},
+  {name:'TLM Tiny Homes FY26',                      group:'Cloud Enablement & Eng.',  labor:4509220,  priority:'Critical', cat:'TLM'},
+  {name:'NATM — FY26 Platform & Operations',        group:'Network & Telemetry',       labor:4377346,  priority:'Critical', cat:'Operations'},
+  {name:'EUC 26: Tools Consolidation & Optimization',group:'Cloud Enablement & Eng.', labor:4043828,  priority:'High',     cat:'Refresh'},
+  {name:'Workbench Labor',                           group:'Infra. Delivery & Support', labor:3882199, priority:'Critical', cat:'Operations'},
+  {name:'Device Engineering',                        group:'Infra. Delivery & Support', labor:3775389, priority:'Critical', cat:'Operations'},
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════════════
+
+function fmtM(v, dp=1) {
+  if (Math.abs(v) >= 1e9) return '$'+(v/1e9).toFixed(dp)+'B';
+  if (Math.abs(v) >= 1e6) return '$'+(v/1e6).toFixed(dp)+'M';
+  if (Math.abs(v) >= 1e3) return '$'+(v/1e3).toFixed(dp)+'K';
+  return '$'+v.toFixed(0);
+}
+function fmtPct(a,b){ return ((a-b)/b*100).toFixed(1)+'%'; }
+function varClass(v){ return v>0?'style="color:var(--red600);font-weight:600"':'style="color:var(--green600);font-weight:600"'; }
+function varSign(v){ return (v>=0?'+':'')+fmtM(v); }
+
+function priBadge(p){
+  const map={Critical:'b-critical',High:'b-high',Medium:'b-medium'};
+  return `<span class="badge ${map[p]||'b-medium'}"><span class="b-dot"></span>${p}</span>`;
+}
+
+const GROUP_COLORS = ['#344054','#667085','#98A2B3','#D0D5DD'];
+const GROUP_SHORT  = {ids:'IDS', cee:'CEE', ntcs:'NTC', psep:'PSP'};
+
+// ═══════════════════════════════════════════════════════════════
+//  OVERVIEW
+// ═══════════════════════════════════════════════════════════════
+
+function buildOverview(){
+  // FY25 vs FY26 grouped bar
+  new Chart(document.getElementById('yoyChart'),{
+    type:'bar',
+    data:{
+      labels:['Labor','Hardcap','TLM'],
+      datasets:[
+        {label:'FY25 Plan', data:[FY25_LABOR_TOTAL/1e6, FY25_HARDCAP_TOTAL/1e6, 0], backgroundColor:'#EAECF0', borderRadius:3},
+        {label:'FY26 Request', data:[FY26_LABOR_TOTAL/1e6, FY26_HARDCAP_TOTAL/1e6, FY26_TLM/1e6], backgroundColor:'#F96302', borderRadius:3},
+      ],
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'top',labels:{font:{size:11},color:'#667085',boxWidth:10,padding:12}},
+        tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${fmtM(ctx.raw*1e6)}`}},
+      },
+      scales:{
+        x:{ticks:{font:{size:12},color:'#667085'},grid:{display:false},border:{display:false}},
+        y:{ticks:{callback:v=>`$${v.toFixed(0)}M`,font:{size:10},color:'#98A2B3'},grid:{color:'#F2F4F7'},border:{display:false}},
+      },
+    },
+  });
+
+  // Composition donut
+  const compData = [FY26_LABOR_TOTAL, FY26_HARDCAP_TOTAL, FY26_TLM];
+  const compLabels = ['Labor','Hardcap','TLM'];
+  const compColors = ['#344054','#667085','#D0D5DD'];
+  new Chart(document.getElementById('compChart'),{
+    type:'doughnut',
+    data:{labels:compLabels, datasets:[{data:compData, backgroundColor:compColors, borderWidth:2, borderColor:'#fff'}]},
+    options:{responsive:true, maintainAspectRatio:false, cutout:'68%',
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${fmtM(ctx.raw)}`}}}},
+  });
+  const cl = document.getElementById('compLegend');
+  compLabels.forEach((l,i)=>{
+    const pct = (compData[i]/FY26_GRAND_TOTAL*100).toFixed(1);
+    cl.innerHTML += `<div style="display:flex;justify-content:space-between;font-size:12px"><div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:50%;background:${compColors[i]}"></div><span style="color:var(--g600)">${l}</span></div><span style="font-weight:600;color:var(--g700)">${fmtM(compData[i])} <span style="color:var(--g400);font-weight:400">(${pct}%)</span></span></div>`;
+  });
+
+  renderOrgChart('srdirector');
+}
+
+let _orgChartInst = null;
+function renderOrgChart(mode) {
+  // Update toggle buttons
+  ['srdirector','productarea'].forEach(m => {
+    const btn = document.getElementById('orgBtn-'+m);
+    if(btn) btn.classList.toggle('active', m === mode);
+  });
+
+  if(_orgChartInst){ _orgChartInst.destroy(); _orgChartInst = null; }
+
+  const titleEl = document.getElementById('orgChartTitle');
+  const subEl   = document.getElementById('orgChartSub');
+  const legend  = document.getElementById('orgLegend');
+
+  if(mode === 'srdirector'){
+    titleEl.textContent = 'Budget by Sr. Director';
+    subEl.textContent   = 'Labor + Hardcap combined · sorted by total request';
+    legend.style.display = 'flex';
+
+    const orgData = [...GROUPS].sort((a,b)=>(b.labor+b.hardcap)-(a.labor+a.hardcap));
+    _orgChartInst = new Chart(document.getElementById('orgChart'),{
+      type:'bar',
+      data:{
+        labels: orgData.map(g=>g.slt),
+        datasets:[
+          {label:'Labor',   data:orgData.map(g=>g.labor/1e6),   backgroundColor:'#F96302', borderRadius:3, stack:'a'},
+          {label:'Hardcap', data:orgData.map(g=>g.hardcap/1e6), backgroundColor:'#EAECF0', borderRadius:[4,4,0,0], stack:'a'},
+        ],
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{
+          legend:{display:false},
+          tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${fmtM(ctx.raw*1e6)}`}},
+        },
+        scales:{
+          x:{ticks:{font:{size:11},color:'#667085'},grid:{display:false},border:{display:false}},
+          y:{ticks:{callback:v=>`$${v.toFixed(0)}M`,font:{size:10},color:'#98A2B3'},grid:{color:'#F2F4F7'},border:{display:false}},
+        },
+      },
+    });
+  } else {
+    titleEl.textContent = 'Labor by Product Area';
+    subEl.textContent   = 'Execution strategy breakdown · labor only';
+    legend.style.display = 'none';
+
+    const paData = [...EXEC_STRATEGY].sort((a,b)=>b.labor-a.labor);
+    _orgChartInst = new Chart(document.getElementById('orgChart'),{
+      type:'bar',
+      data:{
+        labels: paData.map(e=>e.name),
+        datasets:[{
+          label:'Labor',
+          data: paData.map(e=>e.labor/1e6),
+          backgroundColor:'#F96302',
+          borderRadius:[4,4,0,0],
+        }],
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{
+          legend:{display:false},
+          tooltip:{callbacks:{label:ctx=>` Labor: ${fmtM(ctx.raw*1e6)}`}},
+        },
+        scales:{
+          x:{ticks:{font:{size:11},color:'#667085'},grid:{display:false},border:{display:false}},
+          y:{ticks:{callback:v=>`$${v.toFixed(0)}M`,font:{size:10},color:'#98A2B3'},grid:{color:'#F2F4F7'},border:{display:false}},
+        },
+      },
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  LABOR
+// ═══════════════════════════════════════════════════════════════
+
+function buildLabor(){
+  // Labor by group table
+  const body = document.getElementById('laborGroupBody');
+  GROUPS.forEach((g,i)=>{
+    const fteTotal = g.fteTHD + g.fteCtr + g.fteSOW;
+    const pct = (g.labor/FY26_LABOR_TOTAL*100).toFixed(1);
+    const varAmt = g.labor - g.laborFY25;
+    body.innerHTML += `<tr>
+      <td class="td-name"><span class="group-dot" style="background:${GROUP_COLORS[i]}"></span>${g.name}</td>
+      <td class="td-muted">${g.slt}</td>
+      <td class="r mono">${g.fteTHD.toLocaleString()}</td>
+      <td class="r mono">${g.fteCtr.toLocaleString()}</td>
+      <td class="r mono">${g.fteSOW}</td>
+      <td class="r mono" style="font-weight:700;color:var(--g900)">${fteTotal.toLocaleString()}</td>
+      <td class="r mono" style="font-weight:700;color:var(--g900)">${fmtM(g.labor)}</td>
+      <td class="r" style="font-size:12px;color:var(--g500)">${pct}%</td>
+      <td class="r mono" ${varClass(varAmt)}>${varSign(varAmt)}</td>
+    </tr>`;
+  });
+  const totalFTE = GROUPS.reduce((s,g)=>s+g.fteTHD+g.fteCtr+g.fteSOW,0);
+  document.getElementById('laborGroupFoot').innerHTML = `<tr>
+    <td colspan="2">Total</td>
+    <td class="r">${GROUPS.reduce((s,g)=>s+g.fteTHD,0).toLocaleString()}</td>
+    <td class="r">${GROUPS.reduce((s,g)=>s+g.fteCtr,0).toLocaleString()}</td>
+    <td class="r">${GROUPS.reduce((s,g)=>s+g.fteSOW,0)}</td>
+    <td class="r">${totalFTE.toLocaleString()}</td>
+    <td class="r grand">${fmtM(FY26_LABOR_TOTAL)}</td>
+    <td class="r">100%</td>
+    <td class="r" style="color:var(--red600);font-weight:700">+${fmtM(FY26_LABOR_TOTAL-FY25_LABOR_TOTAL)}</td>
+  </tr>`;
+
+  // Headcount detail table
+  const hcBody = document.getElementById('headcountBody');
+  GROUPS.forEach(g=>{
+    const totalNamed = g.namedTHD + g.namedCtr + g.namedSOW;
+    const totalOpen  = g.openTHD + g.openCtr;
+    const totalFunded = totalNamed + totalOpen;
+    hcBody.innerHTML += `<tr>
+      <td class="td-name">${g.name}</td>
+      <td class="r mono">${g.namedTHD}</td><td class="r mono">${g.namedCtr}</td><td class="r mono">${g.namedSOW}</td>
+      <td class="r mono">${g.openTHD}</td><td class="r mono">${g.openCtr}</td>
+      <td class="r mono" style="font-weight:700;color:var(--red600)">${totalOpen}</td>
+      <td class="r mono" style="font-weight:700;color:var(--g900)">${totalFunded}</td>
+    </tr>`;
+  });
+  document.getElementById('headcountFoot').innerHTML = `<tr>
+    <td>Total</td>
+    <td class="r">${GROUPS.reduce((s,g)=>s+g.namedTHD,0)}</td>
+    <td class="r">${GROUPS.reduce((s,g)=>s+g.namedCtr,0)}</td>
+    <td class="r">${GROUPS.reduce((s,g)=>s+g.namedSOW,0)}</td>
+    <td class="r">${GROUPS.reduce((s,g)=>s+g.openTHD,0)}</td>
+    <td class="r">${GROUPS.reduce((s,g)=>s+g.openCtr,0)}</td>
+    <td class="r" style="color:var(--red600)">93</td>
+    <td class="r grand">1,567</td>
+  </tr>`;
+
+  // Monthly labor chart
+  new Chart(document.getElementById('laborMonthlyChart'),{
+    type:'line',
+    data:{
+      labels:MONTHLY_LABOR.map(m=>m.m),
+      datasets:[{
+        label:'Monthly Labor Plan',
+        data:MONTHLY_LABOR.map(m=>m.plan/1e6),
+        borderColor:'#344054', backgroundColor:'rgba(52,64,84,.06)',
+        borderWidth:2, pointRadius:3, pointBackgroundColor:'#344054',
+        fill:true, tension:.3,
+      }],
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>` ${fmtM(ctx.raw*1e6)}`}},
+      },
+      scales:{
+        x:{ticks:{font:{size:10},color:'#98A2B3'},grid:{display:false},border:{display:false}},
+        y:{ticks:{callback:v=>`$${v.toFixed(0)}M`,font:{size:10},color:'#98A2B3'},
+           min:10, grid:{color:'#F2F4F7'},border:{display:false}},
+      },
+    },
+  });
+
+  // Investment category bars
+  const cats = {KTLO:170208162, TLM:5540614};
+  const catEl = document.getElementById('laborCatBars');
+  Object.entries(cats).forEach(([k,v])=>{
+    const pct = (v/FY26_LABOR_TOTAL*100).toFixed(1);
+    catEl.innerHTML += `<div class="mini-bar">
+      <div class="mini-bar-top"><strong>${k}</strong><span>${fmtM(v)} <span style="color:var(--g400)">(${pct}%)</span></span></div>
+      <div class="mini-bar-track"><div class="mini-bar-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  });
+
+  // Merit impact bars
+  const merit = [['Wage Rate Change',500381],['3% Merit',3302111]];
+  const meritEl = document.getElementById('meritBars');
+  merit.forEach(([k,v])=>{
+    const pct = (v/3802492*100).toFixed(0);
+    meritEl.innerHTML += `<div class="mini-bar">
+      <div class="mini-bar-top"><strong>${k}</strong><span>${fmtM(v)}</span></div>
+      <div class="mini-bar-track"><div class="mini-bar-fill" style="width:${pct}%;background:var(--g400)"></div></div>
+    </div>`;
+  });
+  meritEl.innerHTML += `<div style="font-size:11.5px;color:var(--g500);margin-top:6px">Total impact: <strong style="color:var(--g700)">$3.8M</strong></div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  HARDCAP
+// ═══════════════════════════════════════════════════════════════
+
+function buildHardcap(){
+  // FY25 hardcap by group (from dashboard — only total available)
+  const HC_FY25_BY_GROUP = {
+    ids:  66454740 * (226669020/FY26_HARDCAP_TOTAL) * 1, // estimated proportional
+    cee:  140493000 * 0, // priest FY25 unknown exact
+    ntcs: 102057335 * 0,
+    psep: 17995000,
+  };
+  // Use official FY25 totals from dashboard view
+  const officialFY25 = {ids:0, cee:52586339, ntcs:21069977, psep:22093439};
+
+  const body = document.getElementById('hardcapGroupBody');
+  GROUPS.forEach((g,i)=>{
+    const fy25 = officialFY25[g.id] || 0;
+    const varAmt = g.hardcap - fy25;
+    const varPct = fy25 > 0 ? (varAmt/fy25*100).toFixed(1)+'%' : 'N/A';
+    const pct = (g.hardcap/FY26_HARDCAP_TOTAL*100).toFixed(1);
+    body.innerHTML += `<tr>
+      <td class="td-name"><span class="group-dot" style="background:${GROUP_COLORS[i]}"></span>${g.name}</td>
+      <td class="td-muted">${g.slt}</td>
+      <td class="r mono" style="font-weight:700;color:var(--g900)">${fmtM(g.hardcap)}</td>
+      <td class="r mono" style="color:var(--g500)">${fy25>0?fmtM(fy25):'—'}</td>
+      <td class="r mono" ${fy25>0?varClass(varAmt):''}>${fy25>0?varSign(varAmt):'—'}</td>
+      <td class="r" style="font-size:12px;${fy25>0?'color:var(--red600);font-weight:600':'color:var(--g400)'}">${varPct}</td>
+      <td class="r" style="font-size:12px;color:var(--g500)">${pct}%</td>
+    </tr>`;
+  });
+  document.getElementById('hardcapGroupFoot').innerHTML = `<tr>
+    <td colspan="2">Total</td>
+    <td class="r grand">${fmtM(FY26_HARDCAP_TOTAL)}</td>
+    <td class="r" style="color:var(--g500)">${fmtM(FY25_HARDCAP_TOTAL)}</td>
+    <td class="r" style="color:var(--red600);font-weight:700">+${fmtM(FY26_HARDCAP_TOTAL-FY25_HARDCAP_TOTAL)}</td>
+    <td class="r" style="color:var(--red600);font-weight:700">+98.6%</td>
+    <td class="r">100%</td>
+  </tr>`;
+
+  // Top hardcap items
+  const hcBody = document.getElementById('topHardcapBody');
+  TOP_HARDCAP.forEach((item,i)=>{
+    const typeClass = item.type.toLowerCase().includes('refresh') ? 'b-refresh' : 'b-ktlo';
+    hcBody.innerHTML += `<tr>
+      <td style="color:var(--g400);font-size:12px;font-weight:600">${i+1}</td>
+      <td class="td-name" style="max-width:280px">${item.name}</td>
+      <td class="td-muted">${item.group}</td>
+      <td class="r mono" style="font-weight:700;color:var(--g900)">${fmtM(item.amt)}</td>
+      <td><span class="badge ${typeClass}">${item.type}</span></td>
+      <td class="td-muted">${item.loc}</td>
+    </tr>`;
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  INITIATIVES
+// ═══════════════════════════════════════════════════════════════
+
+function buildInitiatives(){
+  const totalLaborInit = EXEC_STRATEGY.reduce((s,e)=>s+e.labor,0);
+
+  // Exec strategy table
+  const esBody = document.getElementById('execStratBody');
+  EXEC_STRATEGY.forEach(e=>{
+    const pct = (e.labor/totalLaborInit*100).toFixed(1);
+    const activities = e.critical + e.high + e.medium;
+    esBody.innerHTML += `<tr>
+      <td class="td-name">${e.name}</td>
+      <td class="r mono" style="font-weight:700;color:var(--g900)">${fmtM(e.labor)}</td>
+      <td class="r" style="font-size:12px;color:var(--g500)">${pct}%</td>
+      <td class="r"><span style="color:var(--red600);font-weight:700">${e.critical}</span></td>
+      <td class="r"><span style="color:var(--g700);font-weight:600">${e.high}</span></td>
+      <td class="r"><span style="color:var(--g500)">${e.medium}</span></td>
+      <td class="r mono">${activities}</td>
+    </tr>`;
+  });
+  document.getElementById('execStratFoot').innerHTML = `<tr>
+    <td>Total</td>
+    <td class="r grand">${fmtM(totalLaborInit)}</td>
+    <td class="r">100%</td>
+    <td class="r" style="color:var(--red600)">68</td>
+    <td class="r">32</td>
+    <td class="r">8</td>
+    <td class="r">108</td>
+  </tr>`;
+
+  // Top initiatives
+  const initBody = document.getElementById('topInitBody');
+  TOP_INITIATIVES.forEach((ini,i)=>{
+    const catBadge = ini.cat==='TLM'?'b-tlm':ini.cat==='Refresh'?'b-refresh':'b-ktlo';
+    initBody.innerHTML += `<tr>
+      <td style="color:var(--g400);font-size:12px;font-weight:600">${i+1}</td>
+      <td class="td-name">${ini.name}</td>
+      <td class="td-muted">${ini.group.replace('Infra. Delivery & Support','IDS').replace('Cloud Enablement & Eng.','CEE').replace('Portfolio Svcs & Platforms','PSP').replace('Network & Telemetry','NTC')}</td>
+      <td class="r mono" style="font-weight:700;color:var(--g900)">${fmtM(ini.labor)}</td>
+      <td>${priBadge(ini.priority)}</td>
+      <td><span class="badge ${catBadge}">${ini.cat}</span></td>
+    </tr>`;
+  });
+
+  // Exec strategy donut
+  const execColors = ['#344054','#475467','#667085','#98A2B3','#D0D5DD'];
+  new Chart(document.getElementById('execChart'),{
+    type:'doughnut',
+    data:{
+      labels:EXEC_STRATEGY.map(e=>e.name),
+      datasets:[{data:EXEC_STRATEGY.map(e=>e.labor), backgroundColor:execColors, borderWidth:2, borderColor:'#fff'}],
+    },
+    options:{responsive:true, maintainAspectRatio:false, cutout:'62%',
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${fmtM(ctx.raw)}`}}}},
+  });
+  const execLeg = document.getElementById('execLegend');
+  EXEC_STRATEGY.forEach((e,i)=>{
+    const pct = (e.labor/totalLaborInit*100).toFixed(1);
+    execLeg.innerHTML += `<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px">
+      <div style="display:flex;align-items:center;gap:5px"><div style="width:7px;height:7px;border-radius:50%;background:${execColors[i]}"></div><span style="color:var(--g600)">${e.name}</span></div>
+      <span style="font-weight:600;color:var(--g700)">${pct}%</span>
+    </div>`;
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  NAV
+// ═══════════════════════════════════════════════════════════════
+
+const initialized={overview:false,labor:false,hardcap:false,initiatives:false};
+
+function switchTab(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.s-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  document.querySelector(`[data-section="${id}"]`).classList.add('active');
+  if(!initialized[id]){
+    initialized[id]=true;
+    if(id==='overview')    buildOverview();
+    if(id==='labor')       buildLabor();
+    if(id==='hardcap')     buildHardcap();
+    if(id==='initiatives') buildInitiatives();
+  }
+}
+
+switchTab('overview');
+</script>
+</body>
+</html>
