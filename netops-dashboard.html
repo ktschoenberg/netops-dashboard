@@ -1313,6 +1313,7 @@ const panelEl  = document.getElementById('panel');
 const overlayEl= document.getElementById('overlay');
 const panelTopbar= document.getElementById('panelTopbar');
 const panelBody  = document.getElementById('panelBody');
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 let panelStack = [];
 
@@ -1340,17 +1341,17 @@ function renderPanel(){
   const backBtn = canBack ? `<button class="panel-back" onclick="popPanel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>Back</button>` : '';
   const closeBtn = `<button class="panel-close" onclick="closePanel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
   if(view==='tech'){
-    panelTopbar.innerHTML = `${backBtn}<span class="panel-title">${props.name}</span>${closeBtn}`;
+    panelTopbar.innerHTML = `${backBtn}<span class="panel-title">${escHtml(props.name)}</span>${closeBtn}`;
     panelBody.innerHTML = renderTechProfile(props.name);
   } else if(view==='tickets'){
     const {label,filter} = props;
-    panelTopbar.innerHTML = `${backBtn}<span class="panel-title">${label}</span>${closeBtn}`;
+    panelTopbar.innerHTML = `${backBtn}<span class="panel-title">${escHtml(label)}</span>${closeBtn}`;
     panelBody.innerHTML = renderTicketList(filter);
   } else if(view==='detail'){
     panelTopbar.innerHTML = `${backBtn}<span class="panel-title">Ticket Detail</span>${closeBtn}`;
     panelBody.innerHTML = renderTicketDetail(props.num);
   } else if(view==='html'){
-    panelTopbar.innerHTML = `${backBtn}<span class="panel-title">${props.title}</span>${closeBtn}`;
+    panelTopbar.innerHTML = `${backBtn}<span class="panel-title">${escHtml(props.title)}</span>${closeBtn}`;
     panelBody.innerHTML = props.body;
   }
   panelBody.scrollTop = 0;
@@ -1785,6 +1786,14 @@ function buildTeamView(){
   buildTeamHoursChart();
   buildTeamTrendChart();
 
+  // AI Insights: all-time T for editorial pattern stats
+  const _aiK=T.filter(t=>t.who==='Khaled Shalati'&&t.type==='INC').length;
+  const _aiY=T.filter(t=>t.who==='Yadwinder Singh'&&(t.cat==='ISP & Fiber'||t.cat==='Hardware & Physical')).length;
+  const _aiJT=T.filter(t=>t.who==='Jason Candler').length;
+  const _aiJA=T.filter(t=>t.who==='Jason Candler'&&t.cat==='Circuit Decommission').length;
+  const _aiJPct=Math.round(_aiJT/Math.max(T.length,1)*100);
+  const _aiPC=[...new Set(T.filter(t=>t.who==='Patrick Djemba Tchounke').map(t=>t.cat))].length;
+
   document.getElementById('efficiencyViewHead').insertAdjacentHTML('beforebegin',
     '<div class="sec-head" style="margin-bottom:16px"><div>'
     +'<div class="sec-title" style="font-size:14px">AI-Powered Insights</div>'
@@ -1793,11 +1802,11 @@ function buildTeamView(){
     +'<div class="insights-wrap gap-22" style="margin-bottom:22px">'
     +'<div class="insights-col ins-col-positive">'
     +'<div class="insights-col-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Engineer Strengths</span></div>'
-    +'<div class="icard icard-positive" style="cursor:pointer" onclick="openTechProfile(\'Khaled Shalati\')"><div class="icard-head"><h4>Khaled Shalati: fastest INC responder on team</h4><span class="icard-tag">18 INC tickets</span></div>'
-    +'<p>Khaled handled 18 INC tickets in the period, the most of any engineer, including the full March 13 alert cluster (8 tickets in one day). His MTTR on monitoring events is well below team average, making him the de facto first responder for Juniper and SolarWinds alerts.</p>'
+    +'<div class="icard icard-positive" style="cursor:pointer" onclick="openTechProfile(\'Khaled Shalati\')"><div class="icard-head"><h4>Khaled Shalati: fastest INC responder on team</h4><span class="icard-tag">'+_aiK+' INC tickets</span></div>'
+    +'<p>Khaled handled '+_aiK+' INC tickets — the most of any engineer — including the full March 13 alert cluster. His MTTR on monitoring events is well below team average, making him the de facto first responder for Juniper and SolarWinds alerts.</p>'
     +'<div class="icard-metric">&#8594; Click to view his profile</div></div>'
-    +'<div class="icard icard-positive" style="cursor:pointer" onclick="openTechProfile(\'Yadwinder Singh\')"><div class="icard-head"><h4>Yadwinder Singh: 100% execution on all ISP work</h4><span class="icard-tag">4 fiber events, 0 errors</span></div>'
-    +'<p>Every ISP coordination and fiber event in the period was handled by Yadwinder, including a live DWDM reroute on April 13. All 4 executed without service disruption. Deep vendor and carrier management skills are concentrated here.</p>'
+    +'<div class="icard icard-positive" style="cursor:pointer" onclick="openTechProfile(\'Yadwinder Singh\')"><div class="icard-head"><h4>Yadwinder Singh: 100% execution on all ISP work</h4><span class="icard-tag">'+_aiY+' fiber events, 0 errors</span></div>'
+    +'<p>Every ISP coordination and fiber event in the period was handled by Yadwinder — all '+_aiY+' executed without service disruption, including a live DWDM reroute. Deep vendor and carrier management skills are concentrated here.</p>'
     +'<div class="icard-metric">&#8594; Click to view his profile</div></div>'
     +'<div class="icard icard-positive"><div class="icard-head"><h4>Multi-site coverage without dedicated site engineers</h4><span class="icard-tag">ATL + AUS</span></div>'
     +'<p>The team covers incidents across Atlanta and Austin data centers with no site-dedicated headcount. Six engineers handled cross-site work without coverage gaps in the period, a strong indicator of team flexibility and geographic reach.</p>'
@@ -1805,11 +1814,11 @@ function buildTeamView(){
     +'</div>'
     +'<div class="insights-col ins-col-improve">'
     +'<div class="insights-col-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Team Development</span></div>'
-    +'<div class="icard icard-improve" style="cursor:pointer" onclick="openTechProfile(\'Jason Candler\')"><div class="icard-head"><h4>Jason Candler: 41% of load, mostly one ticket type</h4><span class="icard-tag">24 / 59 tickets</span></div>'
-    +"<p>15 of Jason's 24 tickets are ADR circuit decommissions, a repeating pattern he handles alone. No other engineer has touched an ADR this period, creating a coverage gap. Cross-training one additional engineer would eliminate this single point of failure.</p>"
+    +'<div class="icard icard-improve" style="cursor:pointer" onclick="openTechProfile(\'Jason Candler\')"><div class="icard-head"><h4>Jason Candler: '+_aiJPct+'% of load, mostly one ticket type</h4><span class="icard-tag">'+_aiJT+' / '+T.length+' tickets</span></div>'
+    +'<p>'+_aiJA+' of Jason\'s '+_aiJT+' tickets are ADR circuit decommissions — a repeating pattern he handles alone. No other engineer has touched an ADR this period, creating a coverage gap. Cross-training one additional engineer would eliminate this single point of failure.</p>'
     +'<div class="icard-metric">&#8594; Click to view Jason\'s ticket breakdown</div></div>'
-    +'<div class="icard icard-improve" style="cursor:pointer" onclick="openTechProfile(\'Patrick Djemba Tchounke\')"><div class="icard-head"><h4>Patrick: widest category spread, above-avg MTTR</h4><span class="icard-tag">5 categories</span></div>'
-    +'<p>Patrick handled tickets across 5 different categories, more variety than any other engineer. Focused development in his top two categories (VLAN/Config and Connectivity) could reduce his MTTR and free senior bandwidth.</p>'
+    +'<div class="icard icard-improve" style="cursor:pointer" onclick="openTechProfile(\'Patrick Djemba Tchounke\')"><div class="icard-head"><h4>Patrick: widest category spread, above-avg MTTR</h4><span class="icard-tag">'+_aiPC+' categories</span></div>'
+    +'<p>Patrick handled tickets across '+_aiPC+' different categories — more variety than any other engineer. Focused development in his top two categories could reduce his MTTR and free senior bandwidth.</p>'
     +'<div class="icard-metric">&#8594; Click to view his profile</div></div>'
     +'<div class="icard icard-improve"><div class="icard-head"><h4>No documented backup for ISP vendor coordination</h4><span class="icard-tag">Single point of failure</span></div>'
     +'<p>Yadwinder Singh is the sole engineer with active carrier management experience this period. Adding one engineer to the next scheduled maintenance window would establish backup depth and eliminate the ISP coverage gap.</p>'
@@ -2578,6 +2587,20 @@ function buildDirectorView(){
 
   const heatDayMap={};
   Tf.forEach(t=>{if(t.opened) heatDayMap[t.opened]=(heatDayMap[t.opened]||0)+1;});
+
+  // ── AI Insights stats (derived from Tf) ──
+  const _aiResRate=parseFloat(resRate);
+  const _aiBenchDiff=Math.round(_aiResRate-93);
+  const _aiBenchStr=(_aiBenchDiff>=0?'+'+_aiBenchDiff:String(_aiBenchDiff))+' pts above benchmark';
+  const _aiINCTotal=Tf.filter(t=>t.type==='INC').length;
+  const _aiMonAlerts=Tf.filter(t=>t.cat==='Monitoring Alerts').length;
+  const _aiMonPct=_aiINCTotal>0?Math.round(_aiMonAlerts/_aiINCTotal*100):0;
+  const _aiCircuit=Tf.filter(t=>t.cat==='Circuit Decommission').length;
+  const _aiVlan=Tf.filter(t=>t.cat==='VLAN & Config').length;
+  const _aiCatMap={}; Tf.forEach(t=>{_aiCatMap[t.cat]=(_aiCatMap[t.cat]||0)+1;});
+  const _aiCatSorted=Object.entries(_aiCatMap).sort((a,b)=>b[1]-a[1]);
+  const _aiTop3Pct=Tf.length>0?Math.round(_aiCatSorted.slice(0,3).reduce((s,[,n])=>s+n,0)/Tf.length*100):0;
+  const _aiTop3Label=_aiCatSorted.slice(0,3).map(([c,n])=>c+' ('+Math.round(n/Tf.length*100)+'%)').join(', ');
   const heatCellColor=cnt=>cnt===0?'var(--g150)':cnt===1?'#D1FAE5':cnt===2?'#6EE7B7':'#059669';
   const _hToday=new Date();
   const _hTodayStr=_hToday.toISOString().slice(0,10);
@@ -2739,11 +2762,11 @@ function buildDirectorView(){
     <div class="insights-wrap" style="margin-bottom:22px">
       <div class="insights-col ins-col-positive">
         <div class="insights-col-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Operational Highlights</span></div>
-        <div class="icard icard-positive"><div class="icard-head"><h4>98.3% resolution rate &#8212; 5 pts above benchmark</h4><span class="icard-tag">58 / 59 closed</span></div>
-        <p>All but one ticket was resolved within the period with zero escalations to L4. The industry average for L3 net ops sits at 93% &#8212; this team exceeded it by over 5 points across every month in the selected range.</p>
+        <div class="icard icard-positive"><div class="icard-head"><h4>${resRate}% resolution rate &#8212; ${_aiBenchStr}</h4><span class="icard-tag">${closed.length} / ${Tf.length} closed</span></div>
+        <p>${Tf.length===closed.length?'All '+Tf.length+' tickets were':(Tf.length-closed.length)+' of '+Tf.length+' tickets were not'} resolved in the selected range, with zero escalations to L4. The industry average for L3 net ops is 93% — this team is ${_aiBenchDiff >= 0 ? _aiBenchDiff+' pts above' : Math.abs(_aiBenchDiff)+' pts below'} that mark.</p>
         <div class="icard-metric">&#8594; Benchmark: HDI 2024 Technical Support Practices Report</div></div>
-        <div class="icard icard-positive"><div class="icard-head"><h4>Top 3 categories account for ~75% of ticket volume</h4><span class="icard-tag">Predictable workload</span></div>
-        <p>Circuit Decommissions (25%), Monitoring Alerts (20%), and Connectivity &amp; Performance (18%) together make up roughly three quarters of all tickets. This concentration means runbooks and automation can target a small, well-defined problem set.</p>
+        <div class="icard icard-positive"><div class="icard-head"><h4>Top 3 categories account for ~${_aiTop3Pct}% of ticket volume</h4><span class="icard-tag">Predictable workload</span></div>
+        <p>${_aiTop3Label} — together ${_aiTop3Pct}% of all tickets. This concentration means runbooks and automation can target a small, well-defined problem set rather than an unpredictable spread.</p>
         <div class="icard-metric">&#8594; Stable category mix supports targeted automation planning</div></div>
         <div class="icard icard-positive" style="cursor:pointer" onclick="openFilteredPanel({label:'Monitoring Alerts',filter:{category:'Monitoring Alerts'}})"><div class="icard-head"><h4>Multi-ticket root causes resolved same-day with no queue buildup</h4><span class="icard-tag">March 13: 8 tickets, 1 day</span></div>
         <p>The March 13 Juniper alert storm generated 8 INC tickets in 26 minutes. All 8 were triaged and closed within the same business day, demonstrating the team handles burst events without SLA slippage or carryover.</p>
@@ -2751,14 +2774,14 @@ function buildDirectorView(){
       </div>
       <div class="insights-col ins-col-improve">
         <div class="insights-col-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Optimization Opportunities</span></div>
-        <div class="icard icard-improve" style="cursor:pointer" onclick="openFilteredPanel({label:'Monitoring Alerts',filter:{category:'Monitoring Alerts'}})"><div class="icard-head"><h4>30% of INC tickets are auto-generated monitoring noise</h4><span class="icard-tag">12 auto-gen INC</span></div>
-        <p>12 of 40 INC tickets were generated by monitoring systems firing in overlapping waves for the same root cause. A 5-minute suppression window or alert correlation rule would have prevented ~7 of those tickets from ever entering the queue.</p>
+        <div class="icard icard-improve" style="cursor:pointer" onclick="openFilteredPanel({label:'Monitoring Alerts',filter:{category:'Monitoring Alerts'}})"><div class="icard-head"><h4>${_aiMonPct}% of INC tickets are auto-generated monitoring noise</h4><span class="icard-tag">${_aiMonAlerts} / ${_aiINCTotal} INC</span></div>
+        <p>${_aiMonAlerts} of ${_aiINCTotal} INC tickets were generated by monitoring systems firing in overlapping waves for the same root cause. A 5-minute suppression window or alert correlation rule would eliminate most of this queue noise.</p>
         <div class="icard-metric">&#8594; Estimated reduction: ~7 tickets/month at current alert rate</div></div>
-        <div class="icard icard-improve" style="cursor:pointer" onclick="openFilteredPanel({label:'Circuit Decommission',filter:{category:'Circuit Decommission'}})"><div class="icard-head"><h4>Circuit decommissions are high-volume and fully repeatable</h4><span class="icard-tag">15 ADR tickets</span></div>
-        <p>15 ADR circuit-decommission tickets in the period, all following the same workflow. A ServiceNow automated task flow could handle intake, assignment, and closure without engineer involvement, recovering ~3.5 hrs/month of L3 time.</p>
+        <div class="icard icard-improve" style="cursor:pointer" onclick="openFilteredPanel({label:'Circuit Decommission',filter:{category:'Circuit Decommission'}})"><div class="icard-head"><h4>Circuit decommissions are high-volume and fully repeatable</h4><span class="icard-tag">${_aiCircuit} ADR tickets</span></div>
+        <p>${_aiCircuit} ADR circuit-decommission tickets in the selected range, all following the same workflow. A ServiceNow automated task flow could handle intake, assignment, and closure without engineer involvement.</p>
         <div class="icard-metric">&#8594; Click to view these tickets</div></div>
-        <div class="icard icard-improve" style="cursor:pointer" onclick="openFilteredPanel({label:'VLAN &amp; Config',filter:{category:'VLAN & Config'}})"><div class="icard-head"><h4>VLAN/DHCP requests arrive without standardized intake</h4><span class="icard-tag">7 repeat tickets</span></div>
-        <p>Seven VLAN and DHCP configuration tickets across the period, nearly all phrased identically and handled ad hoc at L3. A pre-approved change template routed through L2 would eliminate these from the L3 queue entirely.</p>
+        <div class="icard icard-improve" style="cursor:pointer" onclick="openFilteredPanel({label:'VLAN &amp; Config',filter:{category:'VLAN & Config'}})"><div class="icard-head"><h4>VLAN/DHCP requests arrive without standardized intake</h4><span class="icard-tag">${_aiVlan} repeat tickets</span></div>
+        <p>${_aiVlan} VLAN and DHCP configuration tickets in the selected range, nearly all phrased identically and handled ad hoc at L3. A pre-approved change template routed through L2 would eliminate these from the L3 queue entirely.</p>
         <div class="icard-metric">&#8594; Click to view these tickets</div></div>
       </div>
     </div>
@@ -3059,236 +3082,66 @@ function scrollTo(id){
   else document.getElementById(id)?.scrollIntoView({behavior:'smooth'});
 }
 
-/* ── Export PDF ── */
-function exportPDF(){
-  const activeView = document.querySelector('.view.active');
-  if(!activeView) return;
+/* ── PDF export shared helpers ── */
+let _cachedPrintCss=null;
+function _getPrintCss(){ return _cachedPrintCss||(_cachedPrintCss=document.querySelector('style')?.textContent||''); }
 
-  const PAGE_TITLES = {
-    'view-director' : 'Network Operations Dashboard',
-    'view-team'     : 'Team Performance',
-    'view-training' : 'Training Opportunities',
-    'view-transition': 'NOC Escalations',
-  };
-  const NAV_MAP = {
-    'view-director' : 'navDashboard',
-    'view-team'     : 'navTeam',
-    'view-training' : 'navTraining',
-    'view-transition': 'navTransition',
-  };
-  const pageTitle = PAGE_TITLES[activeView.id] || 'Network Operations Dashboard';
-  const activeNavId = NAV_MAP[activeView.id] || 'navDashboard';
-  const now = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-
-  const canvasMap = {};
-  activeView.querySelectorAll('canvas').forEach(c=>{
-    const key = c.id || ('_c'+Math.random());
-    try{ canvasMap[key] = c.toDataURL('image/png'); c.dataset.printId = key; }catch(e){}
+function _snapCanvases(viewEl){
+  const map={};
+  viewEl.querySelectorAll('canvas').forEach(c=>{
+    const key=c.id||('_c'+Math.random());
+    try{ map[key]=c.toDataURL('image/png'); c.dataset.printId=key; }catch(e){}
   });
+  return map;
+}
 
-  const sidebarEl = document.querySelector('.sidebar');
-  const sidebarClone = sidebarEl ? sidebarEl.cloneNode(true) : null;
-  if(sidebarClone){
-    sidebarClone.querySelectorAll('.s-item').forEach(btn=>{
-      btn.removeAttribute('onclick');
-      btn.classList.remove('active');
-      if(btn.id === activeNavId) btn.classList.add('active');
-    });
-    // pill badges not meaningful in static export
-    sidebarClone.querySelectorAll('.s-pill').forEach(p=>p.remove());
-  }
-
-  const contentClone = activeView.cloneNode(true);
-  contentClone.querySelectorAll('canvas').forEach(c=>{
-    const src = canvasMap[c.dataset.printId||c.id];
-    const ph = c.closest('[style*="height"]') || c.parentElement;
-    const h = ph ? (ph.style.height||'220px') : '220px';
+function _cloneContent(viewEl,canvasMap){
+  const clone=viewEl.cloneNode(true);
+  clone.querySelectorAll('canvas').forEach(c=>{
+    const src=canvasMap[c.dataset.printId||c.id];
+    const ph=c.closest('[style*="height"]')||c.parentElement;
+    const h=ph?(ph.style.height||'220px'):'220px';
     if(src){
-      const img = document.createElement('img');
-      img.src = src;
-      img.style.cssText = `width:100%;height:${h};object-fit:contain;display:block;`;
+      const img=document.createElement('img');
+      img.src=src; img.style.cssText=`width:100%;height:${h};object-fit:contain;display:block;`;
       c.replaceWith(img);
-    } else {
-      c.remove();
-    }
+    } else { c.remove(); }
   });
-  contentClone.querySelectorAll('button,.btn,input,select,.panel-overlay,.panel,[data-dr]').forEach(el=>el.remove());
+  clone.querySelectorAll('button,.btn,input,select,.panel-overlay,.panel,[data-dr]').forEach(el=>el.remove());
+  return clone;
+}
 
-  const css = document.querySelector('style')?.textContent || '';
+function _cloneSidebarHTML(activeNavId){
+  const el=document.querySelector('.sidebar');
+  if(!el) return '';
+  const clone=el.cloneNode(true);
+  clone.querySelectorAll('.s-item').forEach(btn=>{
+    btn.removeAttribute('onclick'); btn.classList.remove('active');
+    if(btn.id===activeNavId) btn.classList.add('active');
+  });
+  clone.querySelectorAll('.s-pill').forEach(p=>p.remove());
+  return clone.outerHTML;
+}
 
-  const printHTML = `<!DOCTYPE html>
+function _pdfPageHTML(sidebarHTML,contentHTML,title,now,isFirst=true){
+  return `<div class="pdf-page${isFirst?'':' page-break'}"><div class="pdf-root">${sidebarHTML}<div class="pdf-content"><div class="pdf-hdr"><div class="pdf-hdr-left"><div class="pdf-hdr-org">Network Operations Report Center</div><div class="pdf-hdr-title">${title}</div></div><div class="pdf-hdr-date">${now}</div></div>${contentHTML}</div></div></div>`;
+}
+
+function _openPrintWindow(pagesHTML,docTitle,now){
+  const css=_getPrintCss();
+  const html=`<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>${pageTitle} — ${now}</title>
+<title>${docTitle} — ${now}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-@page { size: A4 landscape; margin: 0; }
-*, *::before, *::after { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-${css}
-html, body { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Inter', system-ui, sans-serif; font-size: 12px; color: #101828; background: #fff; }
-/* ── Root layout: sidebar + content side by side ── */
-.pdf-root { display: flex; flex-direction: row; width: 100%; min-height: 100%; }
-/* ── Sidebar ── */
-.sidebar {
-  position: relative !important;
-  width: 196px !important;
-  min-width: 196px !important;
-  height: auto !important;
-  min-height: 100vh;
-  flex-shrink: 0;
-  display: flex !important;
-  flex-direction: column;
-  overflow: visible !important;
-}
-.s-item { cursor: default !important; pointer-events: none; }
-/* ── Content area ── */
-.pdf-content { flex: 1; padding: 14mm 12mm 14mm 12mm; overflow: visible; min-width: 0; }
-/* ── Content header ── */
-.pdf-hdr { display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 10px; border-bottom: 2px solid #F2F4F7; margin-bottom: 18px; page-break-after: avoid; }
-.pdf-hdr-left { display: flex; flex-direction: column; gap: 2px; }
-.pdf-hdr-org { font-size: 10px; font-weight: 600; color: #667085; text-transform: uppercase; letter-spacing: .06em; }
-.pdf-hdr-title { font-size: 16px; font-weight: 700; color: #101828; }
-.pdf-hdr-date { font-size: 11px; color: #667085; }
-/* ── Print layout fixes ── */
-.view { display: block !important; position: static !important; padding: 0 !important; }
-.page { padding: 0 !important; }
-.card, .digest-card, .table-card, .bench-card, .icard, .kpi, .tc { break-inside: avoid; }
-.sec-head { break-after: avoid; }
-.tw { overflow: visible !important; }
-table { width: 100%; font-size: 11px; }
-th, td { padding: 5px 8px !important; font-size: 11px !important; }
-.d-num { font-size: 20px !important; }
-.sv { font-size: 20px !important; }
-.insights-wrap { grid-template-columns: 1fr 1fr; gap: 12px; }
-.icard p { font-size: 11px !important; }
-.card, .digest-card { box-shadow: none !important; }
-.charts-3 { grid-template-columns: repeat(3,1fr) !important; }
-.bench-grid { grid-template-columns: repeat(3,1fr) !important; }
-</style>
-</head>
-<body>
-<div class="pdf-root">
-  ${sidebarClone ? sidebarClone.outerHTML : ''}
-  <div class="pdf-content">
-    <div class="pdf-hdr">
-      <div class="pdf-hdr-left">
-        <div class="pdf-hdr-org">ITO Network L3 &nbsp;·&nbsp; Network Operations Report Center</div>
-        <div class="pdf-hdr-title">${pageTitle}</div>
-      </div>
-      <div class="pdf-hdr-date">${now}</div>
-    </div>
-    ${contentClone.innerHTML}
-  </div>
-</div>
-<script>
-  window.addEventListener('load', function(){ setTimeout(function(){ window.print(); }, 700); });
-<\/script>
-</body>
-</html>`;
-
-  const win = window.open('', '_blank', 'width=1280,height=900');
-  if(!win){ alert('Pop-up blocked — please allow pop-ups for this page and try again.'); return; }
-  win.document.open();
-  win.document.write(printHTML);
-  win.document.close();
-}
-
-/* ── Export Full PDF (all pages) ── */
-async function exportAllPDF(){
-  const ALL_VIEWS=[
-    {id:'view-director',  navId:'navDashboard', cacheKey:'director',  buildFn:buildDirectorView,  title:'Network Operations Dashboard'},
-    {id:'view-team',      navId:'navTeam',      cacheKey:'team',      buildFn:buildTeamView,      title:'Team Performance'},
-    {id:'view-training',  navId:'navTraining',  cacheKey:'training',  buildFn:buildTrainingView,  title:'Training Opportunities'},
-    {id:'view-transition',navId:'navTransition',cacheKey:'transition',buildFn:buildTransitionPage,title:'NOC Escalations'},
-  ];
-  const rAF=()=>new Promise(r=>requestAnimationFrame(r));
-  const now=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-  const css=document.querySelector('style')?.textContent||'';
-  const prevActive=document.querySelector('.view.active');
-  const prevBuilt=new Set(builtViews); // snapshot so we can restore after export
-  const sidebarEl=document.querySelector('.sidebar');
-
-  const pageContents=[];
-  for(const v of ALL_VIEWS){
-    // Activate view and (re)build to capture current data
-    document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
-    document.getElementById(v.id).classList.add('active');
-    v.buildFn();
-    // Yield to let Chart.js complete its first requestAnimationFrame paint
-    await rAF();
-
-    const viewEl=document.getElementById(v.id);
-    const canvasMap={};
-    viewEl.querySelectorAll('canvas').forEach(c=>{
-      const key=c.id||('_c'+Math.random());
-      try{ canvasMap[key]=c.toDataURL('image/png'); c.dataset.printId=key; }catch(e){}
-    });
-
-    const contentClone=viewEl.cloneNode(true);
-    contentClone.querySelectorAll('canvas').forEach(c=>{
-      const src=canvasMap[c.dataset.printId||c.id];
-      const ph=c.closest('[style*="height"]')||c.parentElement;
-      const h=ph?(ph.style.height||'220px'):'220px';
-      if(src){
-        const img=document.createElement('img');
-        img.src=src;
-        img.style.cssText=`width:100%;height:${h};object-fit:contain;display:block;`;
-        c.replaceWith(img);
-      } else { c.remove(); }
-    });
-    contentClone.querySelectorAll('button,.btn,input,select,.panel-overlay,.panel,[data-dr]').forEach(el=>el.remove());
-
-    const sidebarClone=sidebarEl?sidebarEl.cloneNode(true):null;
-    if(sidebarClone){
-      sidebarClone.querySelectorAll('.s-item').forEach(btn=>{
-        btn.removeAttribute('onclick');
-        btn.classList.remove('active');
-        if(btn.id===v.navId) btn.classList.add('active');
-      });
-      sidebarClone.querySelectorAll('.s-pill').forEach(p=>p.remove());
-    }
-    pageContents.push({title:v.title,sidebarHTML:sidebarClone?sidebarClone.outerHTML:'',contentHTML:contentClone.innerHTML});
-  }
-
-  // Restore original view and builtViews state (export should not permanently mark views as built)
-  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
-  if(prevActive) prevActive.classList.add('active');
-  builtViews.clear();
-  prevBuilt.forEach(k=>builtViews.add(k));
-
-  const pagesHTML=pageContents.map((p,i)=>`
-<div class="pdf-page${i>0?' page-break':''}">
-  <div class="pdf-root">
-    ${p.sidebarHTML}
-    <div class="pdf-content">
-      <div class="pdf-hdr">
-        <div class="pdf-hdr-left">
-          <div class="pdf-hdr-org">Network Operations Report Center</div>
-          <div class="pdf-hdr-title">${p.title}</div>
-        </div>
-        <div class="pdf-hdr-date">${now}</div>
-      </div>
-      ${p.contentHTML}
-    </div>
-  </div>
-</div>`).join('\n');
-
-  const printHTML=`<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>Network Operations — Full Report — ${now}</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-@page { size: A4 landscape; margin: 0; }
+@page{size:A4 landscape;margin:0}
 *,*::before,*::after{box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 ${css}
-html,body{margin:0;padding:0;width:100%;font-family:'Inter',system-ui,sans-serif;font-size:12px;color:#101828;background:#fff}
-.pdf-page{width:100%;min-height:100vh}
-.pdf-page.page-break{page-break-before:always}
+html,body{margin:0;padding:0;width:100%;height:100%;font-family:'Inter',system-ui,sans-serif;font-size:12px;color:#101828;background:#fff}
+.pdf-page{width:100%;min-height:100vh}.pdf-page.page-break{page-break-before:always}
 .pdf-root{display:flex;flex-direction:row;width:100%;min-height:100vh}
 .sidebar{position:relative!important;width:196px!important;min-width:196px!important;height:auto!important;min-height:100vh;flex-shrink:0;display:flex!important;flex-direction:column;overflow:visible!important}
 .s-item{cursor:default!important;pointer-events:none}
@@ -3301,14 +3154,10 @@ html,body{margin:0;padding:0;width:100%;font-family:'Inter',system-ui,sans-serif
 .view{display:block!important;position:static!important;padding:0!important}
 .page{padding:0!important}
 .card,.digest-card,.table-card,.bench-card,.icard,.kpi,.tc{break-inside:avoid}
-.sec-head{break-after:avoid}
-.tw{overflow:visible!important}
-table{width:100%;font-size:11px}
-th,td{padding:5px 8px!important;font-size:11px!important}
-.d-num{font-size:20px!important}
-.sv{font-size:20px!important}
-.insights-wrap{grid-template-columns:1fr 1fr;gap:12px}
-.icard p{font-size:11px!important}
+.sec-head{break-after:avoid}.tw{overflow:visible!important}
+table{width:100%;font-size:11px}th,td{padding:5px 8px!important;font-size:11px!important}
+.d-num{font-size:20px!important}.sv{font-size:20px!important}
+.insights-wrap{grid-template-columns:1fr 1fr;gap:12px}.icard p{font-size:11px!important}
 .card,.digest-card{box-shadow:none!important}
 .charts-3{grid-template-columns:repeat(3,1fr)!important}
 .bench-grid{grid-template-columns:repeat(3,1fr)!important}
@@ -3316,15 +3165,58 @@ th,td{padding:5px 8px!important;font-size:11px!important}
 </head>
 <body>
 ${pagesHTML}
-<script>window.addEventListener('load',function(){setTimeout(function(){window.print();},900);});<\/script>
+<script>window.addEventListener('load',function(){setTimeout(function(){window.print();},700);});<\/script>
 </body>
 </html>`;
-
   const win=window.open('','_blank','width=1280,height=900');
-  if(!win){alert('Pop-up blocked — please allow pop-ups for this page and try again.');return;}
-  win.document.open();
-  win.document.write(printHTML);
-  win.document.close();
+  if(!win){ alert('Pop-up blocked — please allow pop-ups for this page and try again.'); return; }
+  win.document.open(); win.document.write(html); win.document.close();
+}
+
+/* ── Export this page (PDF) ── */
+function exportPDF(){
+  const activeView=document.querySelector('.view.active');
+  if(!activeView) return;
+  const PAGE_TITLES={'view-director':'Network Operations Dashboard','view-team':'Team Performance','view-training':'Training Opportunities','view-transition':'NOC Escalations'};
+  const NAV_MAP={'view-director':'navDashboard','view-team':'navTeam','view-training':'navTraining','view-transition':'navTransition'};
+  const pageTitle=PAGE_TITLES[activeView.id]||'Network Operations Dashboard';
+  const activeNavId=NAV_MAP[activeView.id]||'navDashboard';
+  const now=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const canvasMap=_snapCanvases(activeView);
+  const contentHTML=_cloneContent(activeView,canvasMap).innerHTML;
+  const sidebarHTML=_cloneSidebarHTML(activeNavId);
+  _openPrintWindow(_pdfPageHTML(sidebarHTML,contentHTML,pageTitle,now,true),pageTitle,now);
+}
+
+/* ── Export Full PDF (all pages) ── */
+async function exportAllPDF(){
+  const ALL_VIEWS=[
+    {id:'view-director',  navId:'navDashboard', buildFn:buildDirectorView,  title:'Network Operations Dashboard'},
+    {id:'view-team',      navId:'navTeam',      buildFn:buildTeamView,      title:'Team Performance'},
+    {id:'view-training',  navId:'navTraining',  buildFn:buildTrainingView,  title:'Training Opportunities'},
+    {id:'view-transition',navId:'navTransition',buildFn:buildTransitionPage,title:'NOC Escalations'},
+  ];
+  const rAF=()=>new Promise(r=>requestAnimationFrame(r));
+  const now=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const prevActive=document.querySelector('.view.active');
+  const prevBuilt=new Set(builtViews);
+
+  const pagesHTML=[];
+  for(const [i,v] of ALL_VIEWS.entries()){
+    document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+    document.getElementById(v.id).classList.add('active');
+    v.buildFn();
+    await rAF();
+    const canvasMap=_snapCanvases(document.getElementById(v.id));
+    const contentHTML=_cloneContent(document.getElementById(v.id),canvasMap).innerHTML;
+    pagesHTML.push(_pdfPageHTML(_cloneSidebarHTML(v.navId),contentHTML,v.title,now,i===0));
+  }
+
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  if(prevActive) prevActive.classList.add('active');
+  builtViews.clear(); prevBuilt.forEach(k=>builtViews.add(k));
+
+  _openPrintWindow(pagesHTML.join('\n'),'Network Operations — Full Report',now);
 }
 
 
