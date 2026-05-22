@@ -3196,24 +3196,28 @@ th, td { padding: 5px 8px !important; font-size: 11px !important; }
 }
 
 /* ── Export Full PDF (all pages) ── */
-function exportAllPDF(){
+async function exportAllPDF(){
   const ALL_VIEWS=[
     {id:'view-director',  navId:'navDashboard', cacheKey:'director',  buildFn:buildDirectorView,  title:'Network Operations Dashboard'},
     {id:'view-team',      navId:'navTeam',      cacheKey:'team',      buildFn:buildTeamView,      title:'Team Performance'},
     {id:'view-training',  navId:'navTraining',  cacheKey:'training',  buildFn:buildTrainingView,  title:'Training Opportunities'},
     {id:'view-transition',navId:'navTransition',cacheKey:'transition',buildFn:buildTransitionPage,title:'NOC Escalations'},
   ];
+  const rAF=()=>new Promise(r=>requestAnimationFrame(r));
   const now=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   const css=document.querySelector('style')?.textContent||'';
   const prevActive=document.querySelector('.view.active');
+  const prevBuilt=new Set(builtViews); // snapshot so we can restore after export
   const sidebarEl=document.querySelector('.sidebar');
 
-  const pageContents=ALL_VIEWS.map(v=>{
+  const pageContents=[];
+  for(const v of ALL_VIEWS){
     // Activate view and (re)build to capture current data
     document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
     document.getElementById(v.id).classList.add('active');
-    if(!builtViews.has(v.cacheKey)){ builtViews.add(v.cacheKey); }
     v.buildFn();
+    // Yield to let Chart.js complete its first requestAnimationFrame paint
+    await rAF();
 
     const viewEl=document.getElementById(v.id);
     const canvasMap={};
@@ -3245,12 +3249,14 @@ function exportAllPDF(){
       });
       sidebarClone.querySelectorAll('.s-pill').forEach(p=>p.remove());
     }
-    return {title:v.title,sidebarHTML:sidebarClone?sidebarClone.outerHTML:'',contentHTML:contentClone.innerHTML};
-  });
+    pageContents.push({title:v.title,sidebarHTML:sidebarClone?sidebarClone.outerHTML:'',contentHTML:contentClone.innerHTML});
+  }
 
-  // Restore original view
+  // Restore original view and builtViews state (export should not permanently mark views as built)
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   if(prevActive) prevActive.classList.add('active');
+  builtViews.clear();
+  prevBuilt.forEach(k=>builtViews.add(k));
 
   const pagesHTML=pageContents.map((p,i)=>`
 <div class="pdf-page${i>0?' page-break':''}">
