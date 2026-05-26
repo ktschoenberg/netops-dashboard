@@ -333,6 +333,66 @@ tbody tr:hover td{background:var(--g100)}
 .em-val{font-size:22px;font-weight:800;color:var(--white);letter-spacing:-.02em;line-height:1}
 .em-lbl{font-size:11px;color:rgba(255,255,255,.5);margin-top:3px}
 .em-delta{font-size:11.5px;font-weight:600;color:rgba(255,255,255,.75);margin-top:4px}
+
+/* ══ RESPONSIVE ══ */
+.ham-btn{display:none;padding:7px;background:none;border:none;cursor:pointer;color:var(--g700);border-radius:var(--r6);flex-shrink:0;align-items:center;justify-content:center;transition:background .12s}
+.ham-btn:hover{background:var(--g100)}
+.sidebar-mask{display:none;position:fixed;inset:0;background:rgba(16,24,40,.45);z-index:99;cursor:pointer}
+.sidebar-mask.show{display:block}
+
+/* 1100px — 3-col → 2-col */
+@media(max-width:1100px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .charts-3{grid-template-columns:repeat(2,1fr)}
+  .bench-grid{grid-template-columns:repeat(2,1fr)}
+  .digest-row{grid-template-columns:repeat(2,1fr)}
+  .team-grid{grid-template-columns:repeat(2,1fr)}
+  .exec-metrics{grid-template-columns:repeat(2,1fr)}
+}
+
+/* 900px — wide 2-col layouts stack */
+@media(max-width:900px){
+  .charts-row{grid-template-columns:1fr}
+  .insights-wrap{grid-template-columns:1fr}
+}
+
+/* 768px — sidebar off-canvas, full-width content */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);transition:transform .25s ease}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .ham-btn{display:flex}
+  .topbar{padding:0 14px}
+  .filterbar{padding:5px 14px}
+  .page{padding:14px 14px 40px}
+  .tb-crumb{display:none}
+  .live-pill{display:none}
+  .charts-3{grid-template-columns:1fr}
+  .bench-grid{grid-template-columns:1fr}
+  .digest-row{grid-template-columns:1fr}
+  .team-grid{grid-template-columns:1fr}
+  .panel{width:min(520px,100vw)}
+  /* Override inline grid styles inside JS-built views */
+  .view [style*="grid-template-columns:repeat(4,"]{grid-template-columns:repeat(2,1fr)!important}
+  .view [style*="grid-template-columns:repeat(3,"]{grid-template-columns:repeat(2,1fr)!important}
+  .view [style*="grid-template-columns:1fr 1fr 1fr"]{grid-template-columns:1fr!important}
+  .view [style*="grid-template-columns:1fr 1fr;"]{grid-template-columns:1fr!important}
+  .view [style*="grid-template-columns:3fr 2fr"]{grid-template-columns:1fr!important}
+  .view [style*="grid-template-columns:260px"]{grid-template-columns:1fr 1fr!important}
+}
+
+/* 480px — single column everything */
+@media(max-width:480px){
+  .kpi-grid{grid-template-columns:1fr}
+  .topbar{height:auto;min-height:58px;padding:8px 14px;flex-wrap:wrap}
+  .tb-sep{display:none}
+  .tb-right{flex-wrap:wrap;gap:6px}
+  .view [style*="grid-template-columns:repeat(4,"]{grid-template-columns:1fr!important}
+  .view [style*="grid-template-columns:repeat(3,"]{grid-template-columns:1fr!important}
+  .view [style*="grid-template-columns:repeat(2,"]{grid-template-columns:1fr!important}
+  .view [style*="grid-template-columns:1fr 1fr;"]{grid-template-columns:1fr!important}
+  .view [style*="grid-template-columns:260px"]{grid-template-columns:1fr!important}
+}
 </style>
 </head>
 <body>
@@ -405,10 +465,16 @@ tbody tr:hover td{background:var(--g100)}
     </div>
   </div>
 </aside>
+<div class="sidebar-mask" id="sidebarMask" onclick="toggleSidebar()"></div>
 
 <!-- ══ MAIN ══ -->
 <main class="main" id="top">
   <div class="topbar">
+    <button class="ham-btn" id="hamBtn" onclick="toggleSidebar()" aria-label="Toggle menu">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
     <div>
       <div class="tb-title">Network Operations Dashboard <em style="font-weight:400;color:var(--orange600)">(beta)</em></div>
       <div class="tb-crumb">ITO Network L3 &nbsp;·&nbsp; ServiceNow</div>
@@ -1648,9 +1714,18 @@ function setDateRange(range){
   else if(id==='view-team'){ builtViews.delete('team'); buildTeamView(); }
   else if(id==='view-transition'){ builtViews.delete('transition'); buildTransitionPage(); }
 }
+function toggleSidebar(){
+  document.querySelector('.sidebar').classList.toggle('open');
+  document.getElementById('sidebarMask').classList.toggle('show');
+}
+function closeSidebar(){
+  document.querySelector('.sidebar').classList.remove('open');
+  document.getElementById('sidebarMask').classList.remove('show');
+}
 function setSidebarActive(id){
   document.querySelectorAll('.s-item').forEach(b=>b.classList.remove('active'));
   document.getElementById(id)?.classList.add('active');
+  if(window.innerWidth<=768) closeSidebar();
 }
 
 function showView(viewId, navId, cacheKey, buildFn){
