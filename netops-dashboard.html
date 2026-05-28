@@ -474,24 +474,37 @@ tbody tr:hover td{background:var(--g100)}
   .kb-config-row{grid-template-columns:1fr}
   .kb-rendered{padding:16px}
 }
-/* KB ticket picker */
-.kb-ticket-search{width:100%;padding:8px 12px;border:1px solid var(--g300);border-radius:var(--r6);font-size:13px;font-family:inherit;margin-bottom:8px;box-sizing:border-box}
-.kb-ticket-search:focus{outline:none;border-color:var(--orange500);box-shadow:0 0 0 3px rgba(245,148,60,.12)}
-.kb-ticket-list{max-height:260px;overflow-y:auto;border:1px solid var(--g200);border-radius:var(--r8);background:#fff}
-.kb-ticket-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--g100);cursor:pointer;transition:background .12s;user-select:none}
-.kb-ticket-row:last-child{border-bottom:none}
-.kb-ticket-row:hover{background:var(--g50)}
-.kb-ticket-row.kb-selected{background:rgba(251,146,60,.07);border-left:3px solid var(--orange500);padding-left:11px}
-.kb-ticket-num{font-size:11px;font-weight:700;color:var(--orange600);white-space:nowrap;font-family:monospace;width:108px;flex-shrink:0}
-.kb-ticket-desc{font-size:13px;color:var(--g800);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.kb-ticket-meta{font-size:11px;color:var(--g500);white-space:nowrap;text-align:right}
-.kb-ticket-empty{padding:24px;text-align:center;color:var(--g400);font-size:13px}
-.kb-selected-card{background:rgba(251,146,60,.06);border:1px solid var(--orange300);border-radius:var(--r8);padding:14px 16px;margin-top:10px;display:flex;align-items:flex-start;gap:12px}
-.kb-selected-icon{font-size:22px;flex-shrink:0}
-.kb-selected-num{font-size:12px;font-weight:700;color:var(--orange600);font-family:monospace;margin-bottom:2px}
-.kb-selected-desc{font-size:14px;font-weight:600;color:var(--g900);margin-bottom:4px;line-height:1.3}
+/* KB ticket combobox */
+.kb-combo-wrap{position:relative}
+.kb-combo-input-row{display:flex;align-items:center;gap:0;border:1px solid var(--g300);border-radius:var(--r8);background:#fff;transition:border .15s,box-shadow .15s;overflow:hidden}
+.kb-combo-input-row:focus-within{border-color:var(--orange500);box-shadow:0 0 0 3px rgba(245,148,60,.12)}
+.kb-combo-icon{padding:0 10px 0 12px;color:var(--g400);display:flex;align-items:center;flex-shrink:0}
+.kb-combo-input{flex:1;padding:10px 4px;border:none;font-size:13px;font-family:inherit;color:var(--g800);background:transparent;min-width:0}
+.kb-combo-input:focus{outline:none}
+.kb-combo-input::placeholder{color:var(--g400)}
+.kb-combo-clear{padding:0 12px;background:none;border:none;color:var(--g400);cursor:pointer;font-size:16px;line-height:1;display:none}
+.kb-combo-clear:hover{color:var(--g700)}
+.kb-combo-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--g200);border-radius:var(--r8);box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:50;overflow:hidden;display:none}
+.kb-combo-dropdown.open{display:block}
+.kb-combo-section{padding:6px 12px 4px;font-size:10px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.06em}
+.kb-combo-row{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;transition:background .1s}
+.kb-combo-row:hover,.kb-combo-row.kb-combo-active{background:var(--g50)}
+.kb-combo-row.kb-combo-active{background:rgba(251,146,60,.06)}
+.kb-combo-badge{font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;white-space:nowrap;flex-shrink:0}
+.kb-combo-badge.INC{background:#fef3c7;color:#92400e}
+.kb-combo-badge.ADR{background:#dbeafe;color:#1e40af}
+.kb-combo-num{font-size:11px;font-weight:700;color:var(--g500);font-family:monospace;white-space:nowrap;flex-shrink:0;width:96px}
+.kb-combo-desc{font-size:13px;color:var(--g800);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kb-combo-meta{font-size:11px;color:var(--g400);white-space:nowrap;flex-shrink:0}
+.kb-combo-empty{padding:20px 14px;font-size:13px;color:var(--g400);text-align:center}
+.kb-combo-footer{padding:7px 12px;font-size:11px;color:var(--g400);border-top:1px solid var(--g100);background:var(--g50)}
+/* Selected ticket card */
+.kb-selected-card{display:flex;align-items:center;gap:12px;border:1px solid var(--g200);border-radius:var(--r8);padding:14px 16px;margin-top:10px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.kb-selected-cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.kb-selected-body{flex:1;min-width:0}
+.kb-selected-num{font-size:11px;font-weight:700;color:var(--orange600);font-family:monospace;margin-bottom:3px}
+.kb-selected-desc{font-size:14px;font-weight:600;color:var(--g900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
 .kb-selected-meta{font-size:12px;color:var(--g500)}
-.kb-create-from-ticket-btn{margin-top:12px}
 .kb-create-btn{background:none;border:none;font-size:12px;color:var(--orange600);font-weight:600;cursor:pointer;padding:0;text-decoration:underline}
 /* KB template library */
 .kb-tpl-search{width:100%;padding:9px 12px;border:1px solid var(--g300);border-radius:var(--r8);font-size:13px;font-family:inherit;margin-bottom:16px;box-sizing:border-box;transition:border .15s}
@@ -7766,77 +7779,127 @@ const _GROQ_KEY = '';
 function openKBFromTicket(num){
   const ticket = T.find(t=>t.num===num);
   if(!ticket) return;
-  // Switch to KB view
   showView('view-kb','navKB','kb',buildKBView);
-  // After view builds, pre-select this ticket
   requestAnimationFrame(()=>{
-    window._kbSelectedTicket = ticket;
-    kbApplySelectedTicket(ticket);
+    kbComboSelect(num);
     document.getElementById('view-kb').scrollIntoView({behavior:'smooth',block:'start'});
   });
 }
 
-function kbRenderTicketRows(search){
-  const lower = (search||'').toLowerCase().trim();
-  const src = [...T].sort((a,b)=>b.opened.localeCompare(a.opened));
-  const filtered = lower
-    ? src.filter(t=>
-        t.num.toLowerCase().includes(lower)||
-        t.desc.toLowerCase().includes(lower)||
-        t.who.toLowerCase().includes(lower)||
-        t.cat.toLowerCase().includes(lower))
-    : src.slice(0,40);
-  if(!filtered.length) return '<div class="kb-ticket-empty">No tickets match your search.</div>';
-  const catIcons={'Connectivity & Performance':'🔗','VLAN & Config':'🏷️','Monitoring Alerts':'🔔','Change Monitoring':'📋','Circuit Decommission':'🔌','Hardware & Physical':'🖥️','ISP & Fiber':'📡','Other / General':'🔧'};
-  return filtered.map(t=>`
-    <div class="kb-ticket-row" id="kbtr-${t.num}" onclick="kbSelectTicketRow('${t.num}')">
-      <span class="kb-ticket-num">${t.num}</span>
-      <span class="kb-ticket-desc" title="${escHtml(t.desc)}">${catIcons[t.cat]||'📄'} ${escHtml(t.desc)}</span>
-      <span class="kb-ticket-meta">${escHtml(t.who.split(' ')[0])} · ${t.month}</span>
+// ── Combobox state ────────────────────
+let _kbComboIdx = -1;
+
+function kbComboRows(list, sectionLabel){
+  const catColors={'Connectivity & Performance':'#f97316','VLAN & Config':'#3b82f6','Monitoring Alerts':'#eab308','Change Monitoring':'#8b5cf6','Circuit Decommission':'#ec4899','Hardware & Physical':'#6b7280','ISP & Fiber':'#10b981','Other / General':'#94a3b8'};
+  const rows = list.map(t=>`
+    <div class="kb-combo-row" data-num="${t.num}" onclick="kbComboSelect('${t.num}')">
+      <span class="kb-combo-badge ${t.type}">${t.type}</span>
+      <span class="kb-combo-num">${t.num}</span>
+      <span class="kb-combo-desc" title="${escHtml(t.desc)}">${escHtml(t.desc)}</span>
+      <span class="kb-combo-meta">${escHtml(t.who.split(' ')[0])} · ${t.month}</span>
     </div>`).join('');
+  return (sectionLabel ? `<div class="kb-combo-section">${sectionLabel}</div>` : '') + rows;
 }
 
-function kbRefreshTicketList(val){
-  const el = document.getElementById('kbTicketList');
-  if(el) el.innerHTML = kbRenderTicketRows(val);
-  // Clear selected if search changed
+function kbComboRecent(){
+  const recent = [...T].sort((a,b)=>b.opened.localeCompare(a.opened)).slice(0,6);
+  return kbComboRows(recent, 'Recent');
+}
+
+function kbComboInput(val){
+  _kbComboIdx = -1;
+  const drop = document.getElementById('kbComboDropdown');
+  const list = document.getElementById('kbComboList');
+  const clear = document.getElementById('kbComboClear');
+  if(clear) clear.style.display = val ? 'block' : 'none';
+  drop.classList.add('open');
+  const q = val.toLowerCase().trim();
+  if(!q){ list.innerHTML = kbComboRecent(); return; }
+  const hits = [...T]
+    .filter(t=> t.num.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q) || t.who.toLowerCase().includes(q) || t.cat.toLowerCase().includes(q))
+    .sort((a,b)=>b.opened.localeCompare(a.opened))
+    .slice(0,8);
+  list.innerHTML = hits.length
+    ? kbComboRows(hits, hits.length + ' result' + (hits.length===1?'':'s'))
+    : '<div class="kb-combo-empty">No tickets found.</div>';
+}
+
+function kbComboOpen(){
+  const drop = document.getElementById('kbComboDropdown');
+  drop.classList.add('open');
+  // Close on outside click
+  setTimeout(()=>{ document.addEventListener('click', _kbComboOutside, {once:true}); }, 0);
+}
+
+function _kbComboOutside(e){
+  const wrap = document.getElementById('kbComboWrap');
+  if(wrap && !wrap.contains(e.target)){
+    document.getElementById('kbComboDropdown').classList.remove('open');
+  } else {
+    // Re-attach if click was inside
+    setTimeout(()=>{ document.addEventListener('click', _kbComboOutside, {once:true}); }, 0);
+  }
+}
+
+function kbComboKey(e){
+  const rows = document.querySelectorAll('#kbComboList .kb-combo-row');
+  if(!rows.length) return;
+  if(e.key==='ArrowDown'){ e.preventDefault(); _kbComboIdx=Math.min(_kbComboIdx+1,rows.length-1); kbComboHighlight(rows); }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); _kbComboIdx=Math.max(_kbComboIdx-1,0); kbComboHighlight(rows); }
+  else if(e.key==='Enter' && _kbComboIdx>=0){ e.preventDefault(); rows[_kbComboIdx].click(); }
+  else if(e.key==='Escape'){ document.getElementById('kbComboDropdown').classList.remove('open'); }
+}
+
+function kbComboHighlight(rows){
+  rows.forEach((r,i)=>r.classList.toggle('kb-combo-active', i===_kbComboIdx));
+  if(_kbComboIdx>=0) rows[_kbComboIdx].scrollIntoView({block:'nearest'});
+}
+
+function kbComboClear(){
+  const input = document.getElementById('kbComboInput');
+  if(input) input.value='';
+  document.getElementById('kbComboClear').style.display='none';
+  document.getElementById('kbComboList').innerHTML = kbComboRecent();
   window._kbSelectedTicket = null;
   const card = document.getElementById('kbSelectedTicketCard');
   if(card){ card.style.display='none'; card.innerHTML=''; }
 }
 
-function kbSelectTicketRow(num){
+function kbComboSelect(num){
   const ticket = T.find(t=>t.num===num);
   if(!ticket) return;
-  // Highlight row
-  document.querySelectorAll('.kb-ticket-row').forEach(r=>r.classList.remove('kb-selected'));
-  const row = document.getElementById('kbtr-'+num);
-  if(row) row.classList.add('kb-selected');
+  // Fill input with ticket number, close dropdown
+  const input = document.getElementById('kbComboInput');
+  if(input) input.value = ticket.num + ' — ' + ticket.desc.slice(0,50);
+  document.getElementById('kbComboDropdown').classList.remove('open');
+  document.getElementById('kbComboClear').style.display='block';
   window._kbSelectedTicket = ticket;
   kbApplySelectedTicket(ticket);
 }
 
+function kbSelectTicketRow(num){ kbComboSelect(num); }
+
 function kbApplySelectedTicket(ticket){
-  const catIcons={'Connectivity & Performance':'🔗','VLAN & Config':'🏷️','Monitoring Alerts':'🔔','Change Monitoring':'📋','Circuit Decommission':'🔌','Hardware & Physical':'🖥️','ISP & Fiber':'📡','Other / General':'🔧'};
-  const icon = catIcons[ticket.cat]||'📄';
+  const catColors={'Connectivity & Performance':'#f97316','VLAN & Config':'#3b82f6','Monitoring Alerts':'#eab308','Change Monitoring':'#8b5cf6','Circuit Decommission':'#ec4899','Hardware & Physical':'#6b7280','ISP & Fiber':'#10b981','Other / General':'#94a3b8'};
+  const color = catColors[ticket.cat]||'#94a3b8';
   const dateStr = ticket.opened ? new Date(ticket.opened+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
   const card = document.getElementById('kbSelectedTicketCard');
   if(!card) return;
-  card.style.display = 'flex';
+  card.style.display = 'block';
   card.innerHTML = `
-    <div class="kb-selected-card" style="width:100%">
-      <div class="kb-selected-icon">${icon}</div>
-      <div style="flex:1;min-width:0">
+    <div class="kb-selected-card">
+      <div class="kb-selected-cat-dot" style="background:${color};margin-top:5px"></div>
+      <div class="kb-selected-body">
         <div class="kb-selected-num">${escHtml(ticket.num)}</div>
         <div class="kb-selected-desc">${escHtml(ticket.desc)}</div>
-        <div class="kb-selected-meta">${escHtml(ticket.who)} · ${escHtml(ticket.cat)} · ${dateStr} · ${ticket.state}</div>
+        <div class="kb-selected-meta">${escHtml(ticket.who)} · ${escHtml(ticket.cat)} · ${dateStr}</div>
       </div>
-      <button class="btn btn-primary btn-sm kb-create-from-ticket-btn" onclick="kbGenerateFromSelectedTicket()">
+      <button class="btn btn-primary btn-sm" style="flex-shrink:0" onclick="kbGenerateFromSelectedTicket()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        Build KB from Ticket
+        Build KB
       </button>
     </div>`;
-  card.scrollIntoView({behavior:'smooth', block:'nearest'});
+  card.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
 function kbGenerateFromSelectedTicket(){
@@ -9239,8 +9302,24 @@ function buildKBView(){
 
   <!-- 1. From a ticket -->
   <div class="kb-sec-label">1 · From a ticket</div>
-  <input class="kb-ticket-search" type="text" id="kbTicketSearch" placeholder="Search by number, description, assignee, or category…" oninput="kbRefreshTicketList(this.value)">
-  <div class="kb-ticket-list" id="kbTicketList">${kbRenderTicketRows('')}</div>
+  <div class="kb-combo-wrap" id="kbComboWrap">
+    <div class="kb-combo-input-row">
+      <span class="kb-combo-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </span>
+      <input class="kb-combo-input" id="kbComboInput" type="text"
+        placeholder="Search tickets by number, description, assignee…"
+        autocomplete="off"
+        oninput="kbComboInput(this.value)"
+        onfocus="kbComboOpen()"
+        onkeydown="kbComboKey(event)">
+      <button class="kb-combo-clear" id="kbComboClear" onclick="kbComboClear()" tabindex="-1">×</button>
+    </div>
+    <div class="kb-combo-dropdown" id="kbComboDropdown">
+      <div id="kbComboList">${kbComboRecent()}</div>
+      <div class="kb-combo-footer">↑↓ navigate · Enter select · Esc close</div>
+    </div>
+  </div>
   <div id="kbSelectedTicketCard" style="display:none"></div>
 
   <div class="kb-divider-or">or describe / improve</div>
