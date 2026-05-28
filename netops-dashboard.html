@@ -7704,7 +7704,7 @@ function buildTransMttrCharts(labels,l2Data,l3Data,months){
 }
 
 /* ═══════════════════════════════════════
-   KB GENERATOR
+   KB GENERATOR  (no API required)
 ═══════════════════════════════════════ */
 
 // ── Navigation ────────────────────────
@@ -7770,35 +7770,15 @@ function kbRenderMd(md){
 function buildKBView(){
   const page = document.getElementById('kbPage');
   if(!page) return;
-  const hasKey = !!sessionStorage.getItem('kbApiKey');
   page.innerHTML = `
 <div class="kb-wrap">
   <!-- Header -->
   <div class="kb-header">
     <div class="kb-head-text">
       <div class="kb-head-title">KB Article Generator</div>
-      <div class="kb-head-sub">Generate professional knowledge base articles with AI — improve existing docs or create from scratch</div>
+      <div class="kb-head-sub">Instantly generate a structured KB draft — or build a prompt to paste into Claude.ai / ChatGPT</div>
     </div>
-    <button class="btn btn-ghost btn-sm" onclick="toggleKBSettings()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-      </svg>
-      API Settings
-    </button>
   </div>
-
-  <!-- API Settings panel -->
-  <div id="kbSettingsPanel" class="kb-settings-panel" style="display:none">
-    <label>Anthropic API Key</label>
-    <input type="password" id="kbApiKeyInput" placeholder="sk-ant-api03-..." value="${sessionStorage.getItem('kbApiKey')||''}">
-    <button class="btn btn-primary btn-sm" onclick="saveKBApiKey()">Save Key</button>
-    <span class="kb-key-status ${hasKey?'set':''}" id="kbKeyStatus">${hasKey?'✓ Key saved':'No key set'}</span>
-    <span style="font-size:12px;color:var(--g400);margin-left:auto">Stored in session only — cleared when tab closes</span>
-  </div>
-
-  ${!hasKey ? `<div class="kb-error-box" id="kbNoKeyBanner">
-    <strong>API key required.</strong> Click <em>API Settings</em> above to enter your Anthropic API key. The key is stored only for this browser session.
-  </div>` : ''}
 
   <!-- Mode toggle -->
   <div class="kb-mode-row">
@@ -7872,40 +7852,44 @@ function buildKBView(){
     <textarea id="kbPromptText" class="kb-textarea" rows="7"
       placeholder="Describe what you need — be as specific or brief as you like. For example:&#10;&#10;BGP session drops after ISP maintenance window on core routers. Need troubleshooting steps to verify neighbors, check route tables, review logs, and an escalation path if not restored within 30 minutes."></textarea>
     <div style="margin-top:8px;font-size:12px;color:var(--g400)">
-      Tip: Include the technology, symptom, environment, and any constraints — the more detail you provide, the better the output.
+      Tip: Include the technology, symptom, environment, and any constraints for best results.
     </div>
   </div>
 
-  <!-- Generate -->
+  <!-- Action buttons -->
   <div class="kb-generate-row">
+    <button class="btn btn-ghost btn-sm" id="kbCopyPromptBtn" onclick="kbCopyAIPrompt()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+      </svg>
+      Copy AI Prompt
+    </button>
     <button class="btn btn-primary" id="kbGenerateBtn" onclick="generateKBArticle()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
       </svg>
-      Generate KB Article
+      Build Smart Draft
     </button>
   </div>
+  <div style="font-size:12px;color:var(--g400);text-align:right;margin-top:6px">
+    <strong>Build Smart Draft</strong> — instant structured template, edit inline &nbsp;·&nbsp;
+    <strong>Copy AI Prompt</strong> — paste into <a href="https://claude.ai" target="_blank" style="color:var(--orange600)">Claude.ai</a> or ChatGPT for a polished result
+  </div>
 
-  <!-- Error box (populated dynamically) -->
+  <!-- Error box -->
   <div id="kbErrorBox" class="kb-error-box" style="display:none"></div>
 
   <!-- Output -->
   <div id="kbOutput" class="kb-output" style="display:none">
     <div class="kb-output-header">
-      <span class="kb-output-label">Generated Article</span>
+      <span class="kb-output-label" id="kbOutputLabel">Smart Draft</span>
       <div class="kb-output-actions">
         <button class="btn btn-ghost btn-sm" onclick="kbCopyArticle()">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           Copy
         </button>
-        <button class="btn btn-ghost btn-sm" onclick="kbDownload('md')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          .md
-        </button>
-        <button class="btn btn-ghost btn-sm" onclick="kbDownload('txt')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          .txt
-        </button>
+        <button class="btn btn-ghost btn-sm" onclick="kbDownload('md')">↓ .md</button>
+        <button class="btn btn-ghost btn-sm" onclick="kbDownload('txt')">↓ .txt</button>
       </div>
     </div>
     <div class="kb-rendered" id="kbRendered"></div>
@@ -7916,7 +7900,6 @@ function buildKBView(){
   </div>
 </div>`;
 
-  // restore drag-over cleanup
   window._kbMode = window._kbMode || 'improve';
   if(window._kbMode === 'create') setKBMode('create');
 }
@@ -7930,31 +7913,13 @@ function setKBMode(mode){
   document.getElementById('kbCreateSection').style.display  = mode==='create'  ? '' : 'none';
 }
 
-// ── API Key management ────────────────
-function toggleKBSettings(){
-  const p = document.getElementById('kbSettingsPanel');
-  p.style.display = p.style.display==='none' ? 'flex' : 'none';
-}
-function saveKBApiKey(){
-  const val = document.getElementById('kbApiKeyInput').value.trim();
-  if(val){ sessionStorage.setItem('kbApiKey', val); }
-  else    { sessionStorage.removeItem('kbApiKey'); }
-  const has = !!val;
-  const st = document.getElementById('kbKeyStatus');
-  st.textContent = has ? '✓ Key saved' : 'No key set';
-  st.className = 'kb-key-status' + (has ? ' set' : '');
-  const banner = document.getElementById('kbNoKeyBanner');
-  if(banner) banner.style.display = has ? 'none' : '';
-}
-
 // ── File handling ─────────────────────
 function kbHandleFile(e){
   const file = e.target.files[0];
   if(!file) return;
   const reader = new FileReader();
   reader.onload = ev => {
-    const text = ev.target.result;
-    document.getElementById('kbExistingText').value = text;
+    document.getElementById('kbExistingText').value = ev.target.result;
     document.getElementById('kbDropLoaded').style.display = 'flex';
     document.getElementById('kbDropFileName').textContent = file.name;
   };
@@ -7965,135 +7930,262 @@ function kbHandleDrop(e){
   document.getElementById('kbDropZone').classList.remove('drag-over');
   const file = e.dataTransfer.files[0];
   if(!file) return;
-  const fake = { target: { files: [file] } };
-  kbHandleFile(fake);
+  kbHandleFile({ target: { files: [file] } });
 }
 
-// ── Build system prompt ───────────────
-function _kbSystemPrompt(type, audience, detail){
-  const typeGuides = {
-    troubleshooting: 'Structure as: Overview, Applies To, Symptoms, Prerequisites, Troubleshooting Steps (numbered), Verification, Additional Notes, Related Articles.',
-    howto:           'Structure as: Overview, Applies To, Prerequisites, Procedure (numbered steps), Verification, Troubleshooting Common Issues, Related Articles.',
-    runbook:         'Structure as: Purpose, Scope, Prerequisites, Runbook Steps (numbered with sub-steps), Rollback Procedure, Verification, On-Call Escalation.',
-    reference:       'Structure as: Overview, Quick Reference, Detailed Reference, Common Questions, Related Articles.',
-    escalation:      'Structure as: Purpose, Escalation Triggers, Escalation Path (table), Contact Information, SLA Targets, Communication Templates.',
-    config:          'Structure as: Overview, Prerequisites, Configuration Steps (numbered), Validation Steps, Rollback, Common Issues.',
+// ── Template engine helpers ───────────
+const KB_SECTION_MAPS = {
+  troubleshooting: ['Overview','Applies To','Symptoms','Prerequisites','Troubleshooting Steps','Verification','Escalation','Additional Notes','Related Articles'],
+  howto:           ['Overview','Applies To','Prerequisites','Procedure','Verification','Common Issues','Related Articles'],
+  runbook:         ['Purpose','Scope / Applies To','Prerequisites','Runbook Steps','Rollback Procedure','Verification','On-Call Escalation','Revision History'],
+  reference:       ['Overview','Quick Reference','Detailed Reference','Common Questions','Related Articles'],
+  escalation:      ['Purpose','Escalation Triggers','Escalation Path','Contact Information','SLA Targets','Communication Templates','Related Articles'],
+  config:          ['Overview','Prerequisites','Configuration Steps','Validation','Rollback','Common Issues','Related Articles'],
+};
+const KB_AUDIENCE_NOTES = {
+  noc:        '> **Audience:** NOC / L1–L2 Operators\n',
+  l3:         '> **Audience:** Network L3 Engineers\n',
+  general:    '> **Audience:** General IT Staff\n',
+  management: '> **Audience:** Management\n',
+};
+function _kbTitleCase(str){
+  return str.replace(/\b\w/g, c => c.toUpperCase());
+}
+function _kbExtractTitle(text, type){
+  // Try first markdown heading
+  const h1 = text.match(/^#+ (.+)/m);
+  if(h1) return h1[1].trim();
+  // Try first non-empty line
+  const first = text.split('\n').find(l => l.trim().length > 5);
+  if(first) return first.trim().replace(/[#*`]/g,'').trim();
+  const typeLabel = {troubleshooting:'Troubleshooting',howto:'Procedure',runbook:'Runbook',reference:'Reference',escalation:'Escalation Procedure',config:'Configuration Guide'};
+  return typeLabel[type] || 'Knowledge Base Article';
+}
+function _kbDescToTitle(desc, type){
+  const prefixes = {troubleshooting:'Troubleshooting: ',howto:'How To: ',runbook:'Runbook: ',reference:'Reference: ',escalation:'Escalation: ',config:'Configuration: '};
+  // Take first sentence or 60 chars
+  const first = desc.split(/[.\n]/)[0].trim();
+  const short = first.length > 70 ? first.slice(0,67)+'…' : first;
+  return (prefixes[type]||'') + _kbTitleCase(short);
+}
+function _kbStepBoilerplate(section, type, aud, detail){
+  const detailed = detail === 'detailed';
+  const brief    = detail === 'brief';
+  const stepHint = detailed
+    ? '\n   - Verify the expected output\n   - If this step fails, see [Common Issues](#common-issues)'
+    : '';
+
+  const maps = {
+    'Overview':           `Provide a brief description of what this article covers, including the problem statement or goal.\n`,
+    'Applies To':         `- **Systems:** *(list affected systems, platforms, or software)*\n- **Environments:** Production / Non-Production\n- **Impact:** *(describe scope of impact)*\n`,
+    'Symptoms':           `Engineers may observe one or more of the following:\n\n- [ ] *(Symptom 1 — e.g., "Interface shows as down in monitoring")*\n- [ ] *(Symptom 2)*\n- [ ] *(Symptom 3)*\n`,
+    'Prerequisites':      `Before proceeding, ensure you have:\n\n- [ ] Access to *(system/tool)*\n- [ ] *(Required permissions)*\n- [ ] *(Any pre-checks or baseline information to gather)*\n`,
+    'Troubleshooting Steps': `### Step 1: Initial Assessment\n\n1. Confirm the issue is actively occurring\n2. Gather baseline data *(logs, alerts, affected devices)*${stepHint}\n\n### Step 2: Isolate the Problem\n\n1. *(Action — e.g., "Check interface status")*\n   \`\`\`\n   show interface <interface-name>\n   \`\`\`\n2. *(Next action)*${stepHint}\n\n### Step 3: Apply Resolution\n\n1. *(Resolution step 1)*\n2. *(Resolution step 2)*\n\n> **⚠ Warning:** *(Note any risk or caution here)*\n`,
+    'Procedure':          `1. *(Step 1 — be specific and actionable)*${stepHint}\n2. *(Step 2)*${stepHint}\n3. *(Step 3)*${stepHint}\n\n> **Note:** *(Add any important notes or warnings here)*\n`,
+    'Runbook Steps':      `### Phase 1: Preparation\n\n1. *(Pre-check or notification step)*\n2. *(Validate prerequisites)*\n\n### Phase 2: Execution\n\n1. *(Primary action)*\n   \`\`\`\n   # Command example\n   \`\`\`\n2. *(Next action)*\n\n### Phase 3: Validation\n\n1. *(Confirm successful execution)*\n`,
+    'Verification':       `After completing the steps above, confirm resolution by:\n\n- [ ] *(Check 1 — e.g., "Verify interface shows as up")*\n- [ ] *(Check 2)*\n- [ ] No new alerts in monitoring\n`,
+    'Escalation':         `If the issue is not resolved within **30 minutes**, escalate:\n\n| Level | Team | Contact | When to Escalate |\n|---|---|---|---|\n| L2 | Network Operations | *(contact)* | After 15 min |\n| L3 | Network Engineering | *(contact)* | After 30 min |\n| Vendor | *(ISP/Vendor name)* | *(ticket/phone)* | Hardware fault confirmed |\n`,
+    'On-Call Escalation': `| Priority | Condition | Escalate To | Response SLA |\n|---|---|---|---|\n| P1 | *(condition)* | On-call L3 | 15 min |\n| P2 | *(condition)* | NOC lead | 30 min |\n`,
+    'Escalation Path':    `| Step | Action | Owner | SLA |\n|---|---|---|---|\n| 1 | *(initial response)* | NOC | 15 min |\n| 2 | *(escalation trigger)* | L2/L3 | 30 min |\n| 3 | *(vendor/management)* | Manager | 1 hr |\n`,
+    'Escalation Triggers': `Escalate immediately when any of the following conditions are met:\n\n- *(Trigger 1 — e.g., "Service impacting more than 10 users")*\n- *(Trigger 2)*\n- *(Trigger 3)*\n`,
+    'Contact Information':  `| Role | Name | Method | Hours |\n|---|---|---|---|\n| NOC Lead | *(name)* | *(contact)* | 24/7 |\n| L3 On-Call | *(name)* | *(pager/phone)* | 24/7 |\n| Management | *(name)* | *(contact)* | Business hours |\n`,
+    'SLA Targets':          `| Severity | Initial Response | Update Frequency | Resolution Target |\n|---|---|---|---|\n| Critical (P1) | 15 min | Every 30 min | 4 hrs |\n| High (P2) | 30 min | Every 1 hr | 8 hrs |\n| Medium (P3) | 2 hrs | Every 4 hrs | 24 hrs |\n`,
+    'Communication Templates': `**Initial Notification:**\n> We are currently investigating *(issue description)*. Impact: *(scope)*. Next update in 30 minutes.\n\n**Resolution:**\n> The issue affecting *(system)* has been resolved at *(time)*. Root cause: *(brief summary)*.\n`,
+    'Rollback Procedure':   `If the procedure must be reversed:\n\n1. *(Rollback step 1)*\n2. *(Rollback step 2)*\n3. Verify rollback completed successfully\n\n> **Note:** Notify *(stakeholders)* before initiating rollback.\n`,
+    'Common Issues':        `| Symptom | Likely Cause | Resolution |\n|---|---|---|\n| *(Symptom 1)* | *(Cause)* | *(Fix)* |\n| *(Symptom 2)* | *(Cause)* | *(Fix)* |\n`,
+    'Quick Reference':      `| Command / Action | Description |\n|---|---|\n| \`*(command 1)*\` | *(What it does)* |\n| \`*(command 2)*\` | *(What it does)* |\n`,
+    'Detailed Reference':   `*(Provide in-depth technical reference material, including parameter definitions, expected values, and examples.)*\n`,
+    'Common Questions':     `**Q: *(Question 1)?**\nA: *(Answer)*\n\n**Q: *(Question 2)?**\nA: *(Answer)*\n`,
+    'Additional Notes':     `- *(Any additional context, tips, or edge cases)*\n- *(Known limitations or caveats)*\n`,
+    'Related Articles':     `- *(Article title)* — *(brief description or link)*\n- *(Article title)*\n`,
+    'Scope / Applies To':   `- **Applies to:** *(list systems, teams, or environments)*\n- **Out of scope:** *(what this runbook does NOT cover)*\n`,
+    'Purpose':              `*(Describe the purpose of this document, what process it governs, and when it should be used.)*\n`,
+    'Configuration Steps':  `1. *(Step 1 — include exact commands where applicable)*\n   \`\`\`\n   # example command\n   \`\`\`\n2. *(Step 2)*\n3. *(Step 3)*\n`,
+    'Validation':           `Verify the configuration is applied correctly:\n\n\`\`\`\n# Verification command\n\`\`\`\n\nExpected output: *(describe expected result)*\n`,
+    'Revision History':     `| Date | Author | Change |\n|---|---|---|\n| *(date)* | *(author)* | Initial draft |\n`,
+    'Overview':             `*(Brief description of what this article covers.)*\n`,
   };
-  const audienceGuides = {
-    noc:        'Write for NOC/L1-L2 operators: include exact commands to run, precise thresholds, clear decision trees, and when to escalate. Avoid assuming deep networking knowledge.',
-    l3:         'Write for experienced Network L3 engineers: technical depth is appropriate, include CLI examples, expect familiarity with routing protocols and enterprise networking.',
-    general:    'Write for general IT staff: minimize jargon, explain acronyms, focus on step-by-step clarity.',
-    management: 'Write for management: high-level impact statements, business context, minimal technical commands.',
-  };
-  const detailGuides = {
-    standard: 'Use standard depth — enough context to complete the task independently.',
-    detailed: 'Be comprehensive and thorough — include sub-steps, warnings, expected outputs, and edge cases.',
-    brief:    'Be concise — quick-reference style, bullet points preferred, minimal prose.',
-  };
-  return `You are an expert technical writer for a Network Operations team at a large enterprise (The Home Depot).
-Your task is to write a professional, accurate, and clear Knowledge Base article.
-
-ARTICLE TYPE: ${type}
-${typeGuides[type]||typeGuides.troubleshooting}
-
-AUDIENCE: ${audience}
-${audienceGuides[audience]||audienceGuides.noc}
-
-DETAIL LEVEL: ${detail}
-${detailGuides[detail]||detailGuides.standard}
-
-FORMAT RULES:
-- Use Markdown formatting (headings, bullet lists, numbered steps, code blocks for commands)
-- Use ## for major sections, ### for sub-sections
-- Wrap CLI commands, file paths, hostnames, and interface names in backticks
-- Use **bold** for important warnings, critical steps, and key terms
-- Include a clear article title as # H1
-- Be accurate and professional; do not hallucinate specific IP addresses, hostnames, or device names unless provided
-- Keep the tone direct and action-oriented`;
+  return maps[section] || `*(Add content for this section.)*\n`;
 }
 
-// ── Generate ──────────────────────────
-async function generateKBArticle(){
-  const apiKey = sessionStorage.getItem('kbApiKey');
-  const errorBox = document.getElementById('kbErrorBox');
-  const output   = document.getElementById('kbOutput');
-  errorBox.style.display = 'none';
-  output.style.display   = 'none';
+// ── Improve existing: restructure & reformat ──
+function kbImproveTemplate(type, aud, detail, existingText){
+  const sections = KB_SECTION_MAPS[type] || KB_SECTION_MAPS.troubleshooting;
+  const title = _kbExtractTitle(existingText, type);
+  const audNote = KB_AUDIENCE_NOTES[aud] || '';
+  const brief = detail === 'brief';
 
-  if(!apiKey){
-    errorBox.innerHTML = '<strong>No API key.</strong> Click <em>API Settings</em> at the top to enter your Anthropic API key.';
-    errorBox.style.display = 'block';
-    return;
+  // Strip existing headings and collect raw content blocks
+  const rawLines = existingText.split('\n');
+  const contentBySection = {};
+  let currentSection = '_intro';
+  contentBySection['_intro'] = [];
+  for(const line of rawLines){
+    const hm = line.match(/^#{1,3} (.+)/);
+    if(hm){
+      currentSection = hm[1].trim();
+      if(!contentBySection[currentSection]) contentBySection[currentSection] = [];
+    } else {
+      contentBySection[currentSection] = contentBySection[currentSection] || [];
+      contentBySection[currentSection].push(line);
+    }
   }
 
+  let md = `# ${title}\n\n`;
+  md += audNote + '\n';
+
+  if(!brief){
+    md += `> **Last Updated:** ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})} &nbsp;·&nbsp; **Status:** Draft\n\n---\n\n`;
+  }
+
+  for(const section of sections){
+    md += `## ${section}\n\n`;
+    // Try to find matching content from original
+    const matchKey = Object.keys(contentBySection).find(k =>
+      k.toLowerCase().includes(section.toLowerCase().split(' ')[0]) ||
+      section.toLowerCase().includes(k.toLowerCase().split(' ')[0])
+    );
+    if(matchKey && contentBySection[matchKey]){
+      const content = contentBySection[matchKey].join('\n').trim();
+      if(content) { md += content + '\n\n'; continue; }
+    }
+    // Fallback to intro content for Overview
+    if(section === 'Overview' && contentBySection['_intro']){
+      const intro = contentBySection['_intro'].join('\n').trim();
+      if(intro){ md += intro + '\n\n'; continue; }
+    }
+    md += _kbStepBoilerplate(section, type, aud, detail) + '\n';
+  }
+  return md.trimEnd();
+}
+
+// ── Create from scratch: structured template ──
+function kbCreateTemplate(type, aud, detail, desc){
+  const sections = KB_SECTION_MAPS[type] || KB_SECTION_MAPS.troubleshooting;
+  const title = _kbDescToTitle(desc, type);
+  const audNote = KB_AUDIENCE_NOTES[aud] || '';
+  const brief = detail === 'brief';
+
+  let md = `# ${title}\n\n`;
+  md += audNote + '\n';
+  if(!brief){
+    md += `> **Last Updated:** ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})} &nbsp;·&nbsp; **Status:** Draft\n\n---\n\n`;
+  }
+
+  // Put the user's description into Overview
+  for(const section of sections){
+    md += `## ${section}\n\n`;
+    if(section === 'Overview'){
+      md += desc.trim() + '\n\n';
+    } else {
+      md += _kbStepBoilerplate(section, type, aud, detail) + '\n';
+    }
+  }
+  return md.trimEnd();
+}
+
+// ── AI Prompt builder ─────────────────
+function _kbBuildAIPrompt(mode, type, aud, detail, content){
+  const typeLabels = {troubleshooting:'Troubleshooting Guide',howto:'How-To / Procedure',runbook:'Runbook',reference:'Reference / FAQ',escalation:'Escalation Procedure',config:'Configuration Guide'};
+  const audLabels  = {noc:'NOC / L1–L2 operators',l3:'Network L3 engineers',general:'general IT staff',management:'management'};
+  const detailLabels = {standard:'standard depth',detailed:'very detailed with step-by-step sub-steps, command examples, expected outputs, and warnings',brief:'brief / quick-reference style with bullet points and minimal prose'};
+  const sections = (KB_SECTION_MAPS[type]||KB_SECTION_MAPS.troubleshooting).map(s=>`"${s}"`).join(', ');
+
+  const systemContext = `You are an expert technical writer for a Network Operations team at a large enterprise.
+Write a professional, complete, and well-structured Knowledge Base article in Markdown.
+
+Requirements:
+- Article type: ${typeLabels[type]||type}
+- Audience: ${audLabels[aud]||aud} — calibrate technical depth accordingly
+- Detail level: ${detailLabels[detail]||detail}
+- Include these sections (use ## for headings): ${sections}
+- Use numbered lists for steps, bullet lists for items, and code blocks (\`\`\`) for any CLI commands or file paths
+- Wrap commands, interface names, and hostnames in backtick code spans
+- Use **bold** for warnings, critical steps, and key terms
+- Be accurate, actionable, and direct`;
+
+  if(mode === 'improve'){
+    return `${systemContext}
+
+TASK: Significantly improve and professionally rewrite the KB article below. Fix structure, clarity, completeness, and formatting. Preserve all accurate technical information. Add any missing standard sections.
+
+---
+
+${content}`;
+  } else {
+    return `${systemContext}
+
+TASK: Write a complete KB article based on this description:
+
+${content}`;
+  }
+}
+
+// ── Main generate function ────────────
+function generateKBArticle(){
   const mode   = window._kbMode || 'improve';
   const type   = document.getElementById('kbArticleType').value;
   const aud    = document.getElementById('kbAudience').value;
   const detail = document.getElementById('kbDetail').value;
+  const errorBox = document.getElementById('kbErrorBox');
+  errorBox.style.display = 'none';
 
-  let userContent = '';
+  let content = '';
   if(mode === 'improve'){
-    const text = document.getElementById('kbExistingText').value.trim();
-    if(!text){ errorBox.innerHTML = 'Please paste your existing KB article text or upload a file.'; errorBox.style.display='block'; return; }
-    userContent = `Please significantly improve and professionally rewrite this existing KB article. Fix structure, clarity, completeness, and formatting. Retain all accurate technical information.\n\n---\n\n${text}`;
+    content = document.getElementById('kbExistingText').value.trim();
+    if(!content){ errorBox.innerHTML = 'Please paste your existing KB article text or upload a file.'; errorBox.style.display='block'; return; }
   } else {
-    const prompt = document.getElementById('kbPromptText').value.trim();
-    if(!prompt){ errorBox.innerHTML = 'Please describe what you need the KB article to cover.'; errorBox.style.display='block'; return; }
-    userContent = `Write a complete KB article based on this description:\n\n${prompt}`;
+    content = document.getElementById('kbPromptText').value.trim();
+    if(!content){ errorBox.innerHTML = 'Please describe what you need the KB article to cover.'; errorBox.style.display='block'; return; }
   }
 
-  // Show loading state
-  const btn = document.getElementById('kbGenerateBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="kb-spin">⟳</span>&nbsp; Generating…';
+  const md = mode === 'improve'
+    ? kbImproveTemplate(type, aud, detail, content)
+    : kbCreateTemplate(type, aud, detail, content);
 
-  output.style.display = 'block';
-  document.getElementById('kbRendered').innerHTML = '<div class="kb-loading-row"><span class="kb-spin" style="font-size:22px">⟳</span><div style="margin-top:12px;font-size:13px">Generating article…</div></div>';
-  document.getElementById('kbRaw').value = '';
+  window._kbLastMd = md;
+  document.getElementById('kbOutputLabel').textContent = 'Smart Draft — edit the italicised placeholders to complete';
+  document.getElementById('kbRendered').innerHTML = kbRenderMd(md);
+  document.getElementById('kbRaw').value = md;
   document.getElementById('kbRaw').style.display = 'none';
+  document.querySelector('.kb-raw-bar button').textContent = 'View raw markdown';
+  document.getElementById('kbOutput').style.display = 'block';
+  document.getElementById('kbOutput').scrollIntoView({behavior:'smooth',block:'start'});
+}
 
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type':      'application/json',
-        'x-api-key':         apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
-      body: JSON.stringify({
-        model:      'claude-opus-4-5',
-        max_tokens: 4096,
-        system:     _kbSystemPrompt(type, aud, detail),
-        messages:   [{ role: 'user', content: userContent }],
-      }),
-    });
+// ── Copy AI Prompt ────────────────────
+function kbCopyAIPrompt(){
+  const mode   = window._kbMode || 'improve';
+  const type   = document.getElementById('kbArticleType').value;
+  const aud    = document.getElementById('kbAudience').value;
+  const detail = document.getElementById('kbDetail').value;
+  const errorBox = document.getElementById('kbErrorBox');
+  errorBox.style.display = 'none';
 
-    if(!resp.ok){
-      const err = await resp.json().catch(()=>({error:{message:resp.statusText}}));
-      throw new Error(err.error?.message || `HTTP ${resp.status}`);
-    }
-
-    const data = await resp.json();
-    const md = data.content?.[0]?.text || '';
-    window._kbLastMd = md;
-    document.getElementById('kbRendered').innerHTML = kbRenderMd(md);
-    document.getElementById('kbRaw').value = md;
-
-  } catch(err) {
-    output.style.display = 'none';
-    let msg = err.message || String(err);
-    if(msg.includes('Failed to fetch') || msg.includes('NetworkError')){
-      msg = 'Network error — the Anthropic API may not allow direct browser requests from this origin. '
-          + 'Try running the dashboard via a local server, or use a CORS proxy. '
-          + 'Original error: ' + msg;
-    }
-    errorBox.innerHTML = `<strong>Generation failed:</strong> ${escHtml(msg)}`;
-    errorBox.style.display = 'block';
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Generate KB Article';
+  let content = '';
+  if(mode === 'improve'){
+    content = document.getElementById('kbExistingText').value.trim();
+    if(!content){ errorBox.innerHTML = 'Please paste your existing KB article text or upload a file first.'; errorBox.style.display='block'; return; }
+  } else {
+    content = document.getElementById('kbPromptText').value.trim();
+    if(!content){ errorBox.innerHTML = 'Please describe what you need the KB article to cover.'; errorBox.style.display='block'; return; }
   }
+
+  const prompt = _kbBuildAIPrompt(mode, type, aud, detail, content);
+  navigator.clipboard.writeText(prompt).then(() => {
+    const btn = document.getElementById('kbCopyPromptBtn');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+    btn.style.background = '#dcfce7'; btn.style.borderColor = '#86efac'; btn.style.color = '#16a34a';
+    setTimeout(()=>{ btn.innerHTML = orig; btn.style = ''; }, 2000);
+  }).catch(()=>{
+    // Fallback: show in output box
+    window._kbLastMd = prompt;
+    document.getElementById('kbOutputLabel').textContent = 'AI Prompt — copy this and paste into Claude.ai or ChatGPT';
+    document.getElementById('kbRendered').innerHTML = '<pre style="white-space:pre-wrap;font-size:12px;color:var(--g700)">' + escHtml(prompt) + '</pre>';
+    document.getElementById('kbRaw').value = prompt;
+    document.getElementById('kbOutput').style.display = 'block';
+  });
 }
 
 // ── Copy / Download / Raw toggle ──────
@@ -8105,20 +8197,16 @@ function kbCopyArticle(){
     const orig = btn.innerHTML;
     btn.innerHTML = btn.innerHTML.replace('Copy','Copied!');
     setTimeout(()=>{ btn.innerHTML = orig; }, 1500);
-  }).catch(()=>{ /* ignore */ });
+  }).catch(()=>{});
 }
 function kbDownload(fmt){
   const md = document.getElementById('kbRaw').value;
   if(!md) return;
   const title = (md.match(/^# (.+)$/m)||[])[1] || 'kb-article';
   const slug  = title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-  const ext   = fmt === 'md' ? '.md' : '.txt';
   const blob  = new Blob([md], { type: 'text/plain' });
-  const a     = document.createElement('a');
-  a.href      = URL.createObjectURL(blob);
-  a.download  = slug + ext;
-  a.click();
-  URL.revokeObjectURL(a.href);
+  const a     = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: slug + (fmt==='md'?'.md':'.txt') });
+  a.click(); URL.revokeObjectURL(a.href);
 }
 function kbToggleRaw(){
   const raw = document.getElementById('kbRaw');
