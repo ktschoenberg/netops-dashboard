@@ -579,6 +579,35 @@ tbody tr:hover td{background:var(--g100)}
   .kb-cat-panel-right{width:auto;border-top:1px solid var(--g100)}
 }
 @media(max-width:540px){.kb-cat-grid{grid-template-columns:repeat(2,1fr)}}
+/* ── KB Word-doc editor ── */
+.kb-doc-toolbar{display:flex;align-items:center;gap:2px;padding:6px 12px;background:var(--g50);border-bottom:1px solid var(--g200);flex-wrap:wrap}
+.kb-doc-btn{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;padding:0 5px;border:none;background:none;border-radius:5px;cursor:pointer;color:var(--g600);font-size:13px;font-weight:700;transition:all .12s;font-family:inherit;flex-shrink:0;line-height:1}
+.kb-doc-btn:hover{background:var(--g200);color:var(--g900)}
+.kb-doc-btn.active{background:var(--g200);color:var(--g900)}
+.kb-doc-style{height:28px;padding:0 6px;border:1px solid var(--g200);border-radius:5px;font-size:12px;font-family:inherit;color:var(--g700);background:#fff;cursor:pointer;outline:none}
+.kb-doc-style:focus{border-color:var(--orange500)}
+.kb-doc-sep{width:1px;height:18px;background:var(--g300);margin:0 3px;flex-shrink:0}
+.kb-doc-actions{display:flex;align-items:center;gap:6px;margin-left:auto}
+.kb-output-label2{font-size:12px;font-weight:600;color:var(--g500);padding:0 8px;white-space:nowrap}
+.kb-doc-body{padding:36px 52px;min-height:460px;font-size:14px;line-height:1.75;color:var(--g700);outline:none;cursor:text}
+.kb-doc-body:focus{outline:none}
+.kb-doc-body h1{font-size:21px;font-weight:700;color:var(--g900);margin:0 0 18px;padding-bottom:12px;border-bottom:2px solid var(--g200)}
+.kb-doc-body h2{font-size:15px;font-weight:700;color:var(--g800);margin:24px 0 10px;padding-left:10px;border-left:3px solid var(--orange500)}
+.kb-doc-body h3{font-size:13px;font-weight:700;color:var(--g700);margin:16px 0 8px}
+.kb-doc-body p{margin:0 0 12px}
+.kb-doc-body ul,.kb-doc-body ol{margin:0 0 12px;padding-left:22px}
+.kb-doc-body li{margin-bottom:5px}
+.kb-doc-body strong{font-weight:700;color:var(--g800)}
+.kb-doc-body em{font-style:italic}
+.kb-doc-body code{background:var(--g100);padding:1px 5px;border-radius:3px;font-family:monospace;font-size:12px;color:var(--orange700)}
+.kb-doc-body pre{background:#1e293b;color:#e2e8f0;padding:16px;border-radius:var(--r8);overflow-x:auto;margin:12px 0;font-size:13px;line-height:1.5}
+.kb-doc-body pre code{background:none;color:inherit;padding:0}
+.kb-doc-body blockquote{border-left:3px solid var(--orange500);padding:8px 14px;margin:12px 0;background:var(--orange50);border-radius:0 var(--r6) var(--r6) 0;color:var(--g600)}
+.kb-doc-body hr{border:none;border-top:1px solid var(--g200);margin:22px 0}
+.kb-doc-body table{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:13px}
+.kb-doc-body th{background:var(--g100);text-align:left;padding:8px 12px;font-weight:700;border:1px solid var(--g200);color:var(--g700)}
+.kb-doc-body td{padding:7px 12px;border:1px solid var(--g200)}
+@media(max-width:768px){.kb-doc-body{padding:24px 18px}}
 </style>
 </head>
 <body>
@@ -7959,15 +7988,10 @@ function kbGenerateFromSelectedTicket(){
   const ticket = window._kbSelectedTicket;
   if(!ticket) return;
   const md = buildKBFromTicket(ticket);
-  window._kbLastMd = md;
-  document.getElementById('kbOutputLabel').textContent = ticket.num + ' — fill in the highlighted sections';
+  const label = document.getElementById('kbOutputLabel');
+  if(label) label.textContent = ticket.num + ' — click to edit';
   document.getElementById('kbRendered').innerHTML = kbRenderMd(md);
-  document.getElementById('kbRendered').style.display = '';
   document.getElementById('kbRaw').value = md;
-  const ep = document.getElementById('kbEditPane');
-  if(ep) ep.style.display = 'none';
-  const eb = document.getElementById('kbEditBtn');
-  if(eb) eb.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit';
   document.getElementById('kbErrorBox').style.display = 'none';
   document.getElementById('kbOutput').style.display = 'block';
   document.getElementById('kbOutput').scrollIntoView({behavior:'smooth',block:'start'});
@@ -9281,20 +9305,13 @@ function kbRenderTemplateGrid(filter=''){
 function kbSelectTemplate(id){
   const tpl = KB_TEMPLATES.find(t => t.id === id);
   if(!tpl) return;
-  // Highlight selected card
   document.querySelectorAll('.kb-tpl-card').forEach(c => c.classList.remove('selected'));
   const card = document.getElementById('kbtpl-'+id);
   if(card) card.classList.add('selected');
-  // Render output — always open in preview mode
-  const md = tpl.md;
-  window._kbLastMd = md;
-  document.getElementById('kbOutputLabel').textContent = tpl.name + ' — fill in the italicised placeholders';
-  document.getElementById('kbRendered').innerHTML = kbRenderMd(md);
-  document.getElementById('kbRendered').style.display = '';
-  document.getElementById('kbRaw').value = md;
-  document.getElementById('kbEditPane').style.display = 'none';
-  const eb = document.getElementById('kbEditBtn');
-  if(eb) eb.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit';
+  const label = document.getElementById('kbOutputLabel');
+  if(label) label.textContent = tpl.name + ' — click to edit';
+  document.getElementById('kbRendered').innerHTML = kbRenderMd(tpl.md);
+  document.getElementById('kbRaw').value = tpl.md;
   document.getElementById('kbErrorBox').style.display = 'none';
   document.getElementById('kbOutput').style.display = 'block';
   document.getElementById('kbOutput').scrollIntoView({behavior:'smooth',block:'start'});
@@ -9533,37 +9550,65 @@ function buildKBView(){
 
   <!-- ── Output ── -->
   <div id="kbOutput" class="kb-output" style="display:none">
-    <div class="kb-output-header">
-      <span class="kb-output-label" id="kbOutputLabel">Smart Draft</span>
-      <div class="kb-output-actions">
-        <button class="btn btn-ghost btn-sm" id="kbEditBtn" onclick="kbToggleEdit()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          Edit
-        </button>
-        <button class="btn btn-ghost btn-sm" onclick="kbCopyArticle()">
+
+    <!-- Formatting toolbar -->
+    <div class="kb-doc-toolbar" id="kbDocToolbar">
+      <!-- Undo / Redo -->
+      <button class="kb-doc-btn" onclick="kbDocFmt('undo')" title="Undo (⌘Z)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+      </button>
+      <button class="kb-doc-btn" onclick="kbDocFmt('redo')" title="Redo (⌘Y)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 14 20 9 15 4"/><path d="M4 20v-7a4 4 0 0 1 4-4h12"/></svg>
+      </button>
+      <div class="kb-doc-sep"></div>
+      <!-- Style picker -->
+      <select class="kb-doc-style" id="kbDocStylePicker" onchange="kbDocHeading(this.value);this.blur()" title="Paragraph style">
+        <option value="p">Normal</option>
+        <option value="h1">Heading 1</option>
+        <option value="h2">Heading 2</option>
+        <option value="h3">Heading 3</option>
+      </select>
+      <div class="kb-doc-sep"></div>
+      <!-- Bold / Italic -->
+      <button class="kb-doc-btn" id="kbDocBold" onclick="kbDocFmt('bold')" title="Bold (⌘B)"><b>B</b></button>
+      <button class="kb-doc-btn" id="kbDocItalic" onclick="kbDocFmt('italic')" title="Italic (⌘I)"><i>I</i></button>
+      <div class="kb-doc-sep"></div>
+      <!-- Lists -->
+      <button class="kb-doc-btn" onclick="kbDocFmt('insertUnorderedList')" title="Bullet list">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="3" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="3" cy="18" r="1" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <button class="kb-doc-btn" onclick="kbDocFmt('insertOrderedList')" title="Numbered list">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4"/><path d="M4 10h2"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+      </button>
+      <div class="kb-doc-sep"></div>
+      <!-- Blockquote / HR -->
+      <button class="kb-doc-btn" onclick="kbDocBlockquote()" title="Blockquote">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><path d="M8 12h13"/><path d="M8 18h13"/><line x1="3" y1="12" x2="3" y2="18"/></svg>
+      </button>
+      <button class="kb-doc-btn" onclick="kbDocFmt('insertHorizontalRule')" title="Horizontal rule">—</button>
+      <!-- Right: label + export actions -->
+      <div class="kb-doc-actions">
+        <span class="kb-output-label2" id="kbOutputLabel">Smart Draft</span>
+        <button class="btn btn-ghost btn-sm" onclick="kbCopyArticle()" title="Copy as plain text">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           Copy
         </button>
-        <button class="btn btn-ghost btn-sm" onclick="kbDownload('md')">↓ .md</button>
+        <button class="btn btn-ghost btn-sm" onclick="kbDownload('md')" title="Export as Markdown">↓ .md</button>
         <button class="btn btn-primary btn-sm" onclick="kbDownloadPDF()">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
           Download PDF
         </button>
       </div>
     </div>
-    <!-- Preview mode -->
-    <div class="kb-rendered" id="kbRendered"></div>
-    <!-- Edit mode (hidden by default) -->
-    <div id="kbEditPane" class="kb-edit-split" style="display:none">
-      <div class="kb-editor-left">
-        <div class="kb-pane-label">Edit Markdown</div>
-        <textarea id="kbRaw" class="kb-editor-textarea" oninput="kbSyncPreview(this.value)" spellcheck="false"></textarea>
-      </div>
-      <div class="kb-editor-right">
-        <div class="kb-pane-label">Live Preview</div>
-        <div id="kbEditPreview" class="kb-rendered"></div>
-      </div>
-    </div>
+
+    <!-- Editable document body -->
+    <div class="kb-doc-body" id="kbRendered" contenteditable="true" spellcheck="true"
+         onkeyup="kbDocUpdateState()" onmouseup="kbDocUpdateState()"
+         onkeydown="kbDocKeydown(event)"></div>
+
+    <!-- Hidden markdown store (for .md export) -->
+    <textarea id="kbRaw" style="display:none"></textarea>
+
   </div>
 
 </div>`;
@@ -9893,7 +9938,8 @@ async function generateKBArticle(){
       ? kbImproveTemplate(type, aud, detail, content)
       : kbCreateTemplate(type, aud, detail, content);
     window._kbLastMd = md;
-    document.getElementById('kbOutputLabel').textContent = 'Smart Draft — fill in the italicised placeholders to complete';
+    const lbl = document.getElementById('kbOutputLabel');
+    if(lbl) lbl.textContent = 'Smart Draft — click to edit';
     document.getElementById('kbRendered').innerHTML = kbRenderMd(md);
     document.getElementById('kbRaw').value = md;
     document.getElementById('kbOutput').style.display = 'block';
@@ -10005,66 +10051,150 @@ function kbCopyAIPrompt(){
   });
 }
 
-// ── Copy / Download / Raw toggle ──────
+// ── Copy (plain text from editor) ────
 function kbCopyArticle(){
-  const md = document.getElementById('kbRaw').value;
-  if(!md) return;
-  navigator.clipboard.writeText(md).then(() => {
+  const el = document.getElementById('kbRendered');
+  if(!el || !el.innerText.trim()) return;
+  navigator.clipboard.writeText(el.innerText).then(() => {
     const btn = event.currentTarget;
     const orig = btn.innerHTML;
     btn.innerHTML = btn.innerHTML.replace('Copy','Copied!');
     setTimeout(()=>{ btn.innerHTML = orig; }, 1500);
   }).catch(()=>{});
 }
+
+// ── Download .md (convert editor HTML → Markdown) ────
 function kbDownload(fmt){
-  const md = document.getElementById('kbRaw').value;
-  if(!md) return;
+  const el = document.getElementById('kbRendered');
+  if(!el || !el.innerText.trim()) return;
+  const md = kbHtmlToMd(el);
   const title = (md.match(/^# (.+)$/m)||[])[1] || 'kb-article';
   const slug  = title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
   const blob  = new Blob([md], { type: 'text/plain' });
   const a     = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: slug + (fmt==='md'?'.md':'.txt') });
   a.click(); URL.revokeObjectURL(a.href);
 }
-// ── Edit / Preview toggle ─────────────
-function kbToggleEdit(){
-  const editPane    = document.getElementById('kbEditPane');
-  const previewPane = document.getElementById('kbRendered');
-  const editBtn     = document.getElementById('kbEditBtn');
-  const isEditing   = editPane.style.display !== 'none';
 
-  if(isEditing){
-    // Save edited content back → switch to preview
-    const md = document.getElementById('kbRaw').value;
-    window._kbLastMd = md;
-    previewPane.innerHTML = kbRenderMd(md);
-    previewPane.style.display = '';
-    editPane.style.display = 'none';
-    editBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit';
-  } else {
-    // Open editor with current markdown
-    const md = window._kbLastMd || document.getElementById('kbRaw').value;
-    document.getElementById('kbRaw').value = md;
-    document.getElementById('kbEditPreview').innerHTML = kbRenderMd(md);
-    previewPane.style.display = 'none';
-    editPane.style.display = 'flex';
-    editBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Done';
-    document.getElementById('kbRaw').focus();
+// ── HTML → Markdown converter ────────
+function kbHtmlToMd(root){
+  function walk(node){
+    if(node.nodeType === 3) return node.textContent.replace(/\n\s+/g,' ');
+    if(node.nodeType !== 1) return '';
+    const tag = node.tagName.toLowerCase();
+    const kids = () => [...node.childNodes].map(walk).join('');
+    switch(tag){
+      case 'br':         return '\n';
+      case 'h1':         return '# ' + kids().trim() + '\n\n';
+      case 'h2':         return '## ' + kids().trim() + '\n\n';
+      case 'h3':         return '### ' + kids().trim() + '\n\n';
+      case 'h4':         return '#### ' + kids().trim() + '\n\n';
+      case 'p':          { const t = kids().trim(); return t ? t + '\n\n' : ''; }
+      case 'strong': case 'b': return '**' + kids() + '**';
+      case 'em': case 'i':     return '*' + kids() + '*';
+      case 'u':          return kids();
+      case 'del': case 's':    return '~~' + kids() + '~~';
+      case 'a':          return '[' + kids() + '](' + (node.getAttribute('href')||'') + ')';
+      case 'code':       return node.closest('pre') ? node.textContent : '`' + node.textContent + '`';
+      case 'pre':        return '```\n' + node.textContent.trim() + '\n```\n\n';
+      case 'blockquote': return kids().trim().split('\n').map(l => '> ' + l).join('\n') + '\n\n';
+      case 'hr':         return '---\n\n';
+      case 'ul': {
+        return [...node.querySelectorAll(':scope > li')]
+          .map(li => '- ' + walk(li).trim()).join('\n') + '\n\n';
+      }
+      case 'ol': {
+        return [...node.querySelectorAll(':scope > li')]
+          .map((li,i) => (i+1) + '. ' + walk(li).trim()).join('\n') + '\n\n';
+      }
+      case 'li':         return kids();
+      case 'table': {
+        const rows = [...node.querySelectorAll('tr')];
+        if(!rows.length) return '';
+        const cells = r => [...r.querySelectorAll('th,td')].map(c => c.textContent.trim());
+        const hdr = cells(rows[0]);
+        const body = rows.slice(1).map(r => '| ' + cells(r).join(' | ') + ' |');
+        return '| ' + hdr.join(' | ') + ' |\n' +
+               '| ' + hdr.map(() => '---').join(' | ') + ' |\n' +
+               body.join('\n') + '\n\n';
+      }
+      default: return kids();
+    }
   }
+  return walk(root).trim().replace(/\n{3,}/g, '\n\n');
 }
 
-// ── Live preview sync while editing ───
-function kbSyncPreview(md){
-  window._kbLastMd = md;
-  document.getElementById('kbEditPreview').innerHTML = kbRenderMd(md);
+// ── No-op shims (kept for backward compat) ────
+function kbToggleEdit(){}
+function kbSyncPreview(){}
+
+// ── Word-doc editor helpers ───────────
+function kbDocFmt(cmd, val){
+  document.getElementById('kbRendered').focus();
+  document.execCommand(cmd, false, val || null);
+  kbDocUpdateState();
+}
+
+function kbDocHeading(tag){
+  document.getElementById('kbRendered').focus();
+  document.execCommand('formatBlock', false, tag);
+  kbDocUpdateState();
+  // Reset picker to show current state
+  setTimeout(kbDocUpdateState, 0);
+}
+
+function kbDocBlockquote(){
+  const sel = window.getSelection();
+  if(!sel.rangeCount) return;
+  const anchor = sel.anchorNode;
+  const block  = (anchor.nodeType===1 ? anchor : anchor.parentElement)
+                  .closest('p,h1,h2,h3,h4,li,blockquote,div') ||
+                 anchor.parentElement;
+  if(!block) return;
+  if(block.tagName === 'BLOCKQUOTE'){
+    // Unwrap: move children out of blockquote
+    const frag = document.createDocumentFragment();
+    const p = document.createElement('p');
+    p.innerHTML = block.innerHTML;
+    frag.appendChild(p);
+    block.parentNode.replaceChild(frag, block);
+  } else {
+    document.execCommand('formatBlock', false, 'blockquote');
+  }
+  kbDocUpdateState();
+}
+
+function kbDocUpdateState(){
+  // Bold / italic active state
+  try{
+    document.getElementById('kbDocBold')?.classList.toggle('active', document.queryCommandState('bold'));
+    document.getElementById('kbDocItalic')?.classList.toggle('active', document.queryCommandState('italic'));
+  }catch(e){}
+  // Style picker sync
+  try{
+    const val = document.queryCommandValue('formatBlock').toLowerCase();
+    const picker = document.getElementById('kbDocStylePicker');
+    if(picker){
+      if(['h1','h2','h3','h4'].includes(val)) picker.value = val;
+      else picker.value = 'p';
+    }
+  }catch(e){}
+}
+
+function kbDocKeydown(e){
+  // Tab → indent (don't navigate away)
+  if(e.key === 'Tab'){
+    e.preventDefault();
+    document.execCommand('insertText', false, '    ');
+  }
 }
 
 // ── PDF download ──────────────────────
 function kbDownloadPDF(){
-  const md = window._kbLastMd || document.getElementById('kbRaw').value;
-  if(!md){ return; }
-  const title = (md.match(/^# (.+)$/m)||[])[1] || 'KB Article';
+  const editorEl = document.getElementById('kbRendered');
+  if(!editorEl || !editorEl.innerText.trim()) return;
+  const title = (editorEl.querySelector('h1')?.textContent || 'KB Article').trim();
   const now   = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-  const body  = kbRenderMd(md);
+  const body  = editorEl.innerHTML;
   const html  = `<!DOCTYPE html><html><head><meta charset="utf-8">
 <title>${escHtml(title)}</title>
 <style>
