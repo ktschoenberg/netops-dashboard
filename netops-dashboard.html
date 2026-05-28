@@ -474,6 +474,25 @@ tbody tr:hover td{background:var(--g100)}
   .kb-config-row{grid-template-columns:1fr}
   .kb-rendered{padding:16px}
 }
+/* KB ticket picker */
+.kb-ticket-search{width:100%;padding:8px 12px;border:1px solid var(--g300);border-radius:var(--r6);font-size:13px;font-family:inherit;margin-bottom:8px;box-sizing:border-box}
+.kb-ticket-search:focus{outline:none;border-color:var(--orange500);box-shadow:0 0 0 3px rgba(245,148,60,.12)}
+.kb-ticket-list{max-height:260px;overflow-y:auto;border:1px solid var(--g200);border-radius:var(--r8);background:#fff}
+.kb-ticket-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--g100);cursor:pointer;transition:background .12s;user-select:none}
+.kb-ticket-row:last-child{border-bottom:none}
+.kb-ticket-row:hover{background:var(--g50)}
+.kb-ticket-row.kb-selected{background:rgba(251,146,60,.07);border-left:3px solid var(--orange500);padding-left:11px}
+.kb-ticket-num{font-size:11px;font-weight:700;color:var(--orange600);white-space:nowrap;font-family:monospace;width:108px;flex-shrink:0}
+.kb-ticket-desc{font-size:13px;color:var(--g800);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kb-ticket-meta{font-size:11px;color:var(--g500);white-space:nowrap;text-align:right}
+.kb-ticket-empty{padding:24px;text-align:center;color:var(--g400);font-size:13px}
+.kb-selected-card{background:rgba(251,146,60,.06);border:1px solid var(--orange300);border-radius:var(--r8);padding:14px 16px;margin-top:10px;display:flex;align-items:flex-start;gap:12px}
+.kb-selected-icon{font-size:22px;flex-shrink:0}
+.kb-selected-num{font-size:12px;font-weight:700;color:var(--orange600);font-family:monospace;margin-bottom:2px}
+.kb-selected-desc{font-size:14px;font-weight:600;color:var(--g900);margin-bottom:4px;line-height:1.3}
+.kb-selected-meta{font-size:12px;color:var(--g500)}
+.kb-create-from-ticket-btn{margin-top:12px}
+.kb-create-btn{background:none;border:none;font-size:12px;color:var(--orange600);font-weight:600;cursor:pointer;padding:0;text-decoration:underline}
 /* KB template library */
 .kb-tpl-search{width:100%;padding:9px 12px;border:1px solid var(--g300);border-radius:var(--r8);font-size:13px;font-family:inherit;margin-bottom:16px;box-sizing:border-box;transition:border .15s}
 .kb-tpl-search:focus{outline:none;border-color:var(--orange500);box-shadow:0 0 0 3px rgba(245,148,60,.12)}
@@ -1564,6 +1583,7 @@ function renderTechProfile(name){
       <div class="pl-ticket-right">
         ${typeBadge(t.type)}
         ${stateBadge(t.state)}
+        <button class="kb-create-btn" onclick="event.stopPropagation();openKBFromTicket('${t.num}')" title="Create KB article from this ticket">KB ↗</button>
       </div>
     </div>
   `).join('');
@@ -1623,6 +1643,7 @@ function renderTicketList(filter){
       <div class="pl-ticket-right">
         ${typeBadge(t.type)}
         ${stateBadge(t.state)}
+        <button class="kb-create-btn" onclick="event.stopPropagation();openKBFromTicket('${t.num}')" title="Create KB article from this ticket">KB ↗</button>
       </div>
     </div>
   `).join('');
@@ -7741,6 +7762,207 @@ function buildTransMttrCharts(labels,l2Data,l3Data,months){
 //    Get one free (no credit card) at https://console.groq.com
 const _GROQ_KEY = '';
 
+// ── KB from ticket helpers ────────────
+function openKBFromTicket(num){
+  const ticket = T.find(t=>t.num===num);
+  if(!ticket) return;
+  // Switch to KB view
+  showView('view-kb','navKB','kb',buildKBView);
+  // After view builds, pre-select this ticket
+  requestAnimationFrame(()=>{
+    window._kbSelectedTicket = ticket;
+    kbApplySelectedTicket(ticket);
+    document.getElementById('view-kb').scrollIntoView({behavior:'smooth',block:'start'});
+  });
+}
+
+function kbRenderTicketRows(search){
+  const lower = (search||'').toLowerCase().trim();
+  const src = [...T].sort((a,b)=>b.opened.localeCompare(a.opened));
+  const filtered = lower
+    ? src.filter(t=>
+        t.num.toLowerCase().includes(lower)||
+        t.desc.toLowerCase().includes(lower)||
+        t.who.toLowerCase().includes(lower)||
+        t.cat.toLowerCase().includes(lower))
+    : src.slice(0,40);
+  if(!filtered.length) return '<div class="kb-ticket-empty">No tickets match your search.</div>';
+  const catIcons={'Connectivity & Performance':'🔗','VLAN & Config':'🏷️','Monitoring Alerts':'🔔','Change Monitoring':'📋','Circuit Decommission':'🔌','Hardware & Physical':'🖥️','ISP & Fiber':'📡','Other / General':'🔧'};
+  return filtered.map(t=>`
+    <div class="kb-ticket-row" id="kbtr-${t.num}" onclick="kbSelectTicketRow('${t.num}')">
+      <span class="kb-ticket-num">${t.num}</span>
+      <span class="kb-ticket-desc" title="${escHtml(t.desc)}">${catIcons[t.cat]||'📄'} ${escHtml(t.desc)}</span>
+      <span class="kb-ticket-meta">${escHtml(t.who.split(' ')[0])} · ${t.month}</span>
+    </div>`).join('');
+}
+
+function kbRefreshTicketList(val){
+  const el = document.getElementById('kbTicketList');
+  if(el) el.innerHTML = kbRenderTicketRows(val);
+  // Clear selected if search changed
+  window._kbSelectedTicket = null;
+  const card = document.getElementById('kbSelectedTicketCard');
+  if(card){ card.style.display='none'; card.innerHTML=''; }
+}
+
+function kbSelectTicketRow(num){
+  const ticket = T.find(t=>t.num===num);
+  if(!ticket) return;
+  // Highlight row
+  document.querySelectorAll('.kb-ticket-row').forEach(r=>r.classList.remove('kb-selected'));
+  const row = document.getElementById('kbtr-'+num);
+  if(row) row.classList.add('kb-selected');
+  window._kbSelectedTicket = ticket;
+  kbApplySelectedTicket(ticket);
+}
+
+function kbApplySelectedTicket(ticket){
+  const catIcons={'Connectivity & Performance':'🔗','VLAN & Config':'🏷️','Monitoring Alerts':'🔔','Change Monitoring':'📋','Circuit Decommission':'🔌','Hardware & Physical':'🖥️','ISP & Fiber':'📡','Other / General':'🔧'};
+  const icon = catIcons[ticket.cat]||'📄';
+  const dateStr = ticket.opened ? new Date(ticket.opened+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
+  const card = document.getElementById('kbSelectedTicketCard');
+  if(!card) return;
+  card.style.display = 'flex';
+  card.innerHTML = `
+    <div class="kb-selected-card" style="width:100%">
+      <div class="kb-selected-icon">${icon}</div>
+      <div style="flex:1;min-width:0">
+        <div class="kb-selected-num">${escHtml(ticket.num)}</div>
+        <div class="kb-selected-desc">${escHtml(ticket.desc)}</div>
+        <div class="kb-selected-meta">${escHtml(ticket.who)} · ${escHtml(ticket.cat)} · ${dateStr} · ${ticket.state}</div>
+      </div>
+      <button class="btn btn-primary btn-sm kb-create-from-ticket-btn" onclick="kbGenerateFromSelectedTicket()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Build KB from Ticket
+      </button>
+    </div>`;
+  card.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function kbGenerateFromSelectedTicket(){
+  const ticket = window._kbSelectedTicket;
+  if(!ticket) return;
+  const md = buildKBFromTicket(ticket);
+  window._kbLastMd = md;
+  document.getElementById('kbOutputLabel').textContent = ticket.num + ' — fill in the highlighted sections';
+  document.getElementById('kbRendered').innerHTML = kbRenderMd(md);
+  document.getElementById('kbRendered').style.display = '';
+  document.getElementById('kbRaw').value = md;
+  const ep = document.getElementById('kbEditPane');
+  if(ep) ep.style.display = 'none';
+  const eb = document.getElementById('kbEditBtn');
+  if(eb) eb.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit';
+  document.getElementById('kbErrorBox').style.display = 'none';
+  document.getElementById('kbOutput').style.display = 'block';
+  document.getElementById('kbOutput').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function buildKBFromTicket(ticket){
+  const catTemplateMap={
+    'Connectivity & Performance':'connectivity-ts',
+    'VLAN & Config':'vlan-ts',
+    'Monitoring Alerts':'monitoring-ts',
+    'Change Monitoring':'change-monitoring-proc',
+    'Circuit Decommission':'circuit-decomm',
+    'Hardware & Physical':'hardware-ts',
+    'ISP & Fiber':'isp-fiber-ts',
+    'Other / General':'general-ts',
+  };
+  const tplId = catTemplateMap[ticket.cat]||'general-ts';
+  const tpl = KB_TEMPLATES.find(t=>t.id===tplId);
+  const dateStr = ticket.opened
+    ? new Date(ticket.opened+'T12:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})
+    : '';
+  // Clean up desc — title case, remove system noise
+  const rawDesc = ticket.desc.split('·')[0].split('||')[0].trim();
+  const cleanTitle = rawDesc.replace(/\b(\w)/g,c=>c.toUpperCase());
+  const isINC = ticket.type==='INC';
+  const articleType = isINC ? 'Troubleshooting' : 'Procedure';
+  const relatedArticle = tpl ? tpl.name : ticket.cat;
+
+  return `# ${articleType}: ${cleanTitle}
+
+> **Ticket:** ${ticket.num} · **Assignee:** ${ticket.who} · **Date:** ${dateStr}
+> **Category:** ${ticket.cat} · **Type:** ${isINC ? 'Incident (INC)' : 'Change/ADR'}
+
+---
+
+## Overview
+
+*(Summarize what happened and how it was resolved in 2–3 sentences.)*
+
+**Original ticket:** ${ticket.desc}
+
+## Applies To
+
+- **Ticket Number:** ${ticket.num}
+- **Primary Assignee:** ${ticket.who}
+- **Date:** ${dateStr}
+- **Category:** ${ticket.cat}
+- **Environment:** Production
+
+## Symptoms
+
+*(What did monitoring, alerts, or users report? List observable symptoms.)*
+
+- [ ] *(Symptom 1)*
+- [ ] *(Symptom 2)*
+- [ ] *(Symptom 3)*
+
+## Root Cause
+
+*(What was the underlying cause of this issue or the reason for this change?)*
+
+> **Root cause:** *(fill in)*
+
+## ${isINC ? 'Resolution Steps' : 'Procedure Steps'}
+
+*(Document the exact steps taken so the team can replicate this fix.)*
+
+1. *(Step 1 — be specific, include commands)*
+   \`\`\`
+   *(command)*
+   \`\`\`
+
+2. *(Step 2)*
+
+3. *(Step 3)*
+
+> **⚠ Note:** *(Any risks, caveats, or things to watch out for)*
+
+## Verification
+
+*(How was resolution or successful completion confirmed?)*
+
+- [ ] *(Verification step 1)*
+- [ ] Monitoring alerts cleared / no new alerts in 10-minute window
+- [ ] *(Confirmation from stakeholder or user)*
+
+## Lessons Learned
+
+*(Optional: What could prevent this in future? Any monitoring gaps? Improvement suggestions?)*
+
+- *(Finding or recommendation)*
+
+## Related Tickets
+
+- ${ticket.num} — ${ticket.desc}
+
+## Related Articles
+
+- ${relatedArticle}
+- NOC Escalation Procedure`;
+}
+
+function kbToggleTemplates(){
+  const sec = document.getElementById('kbTplSection');
+  const icon = document.getElementById('kbTplToggleIcon');
+  if(!sec) return;
+  const showing = sec.style.display !== 'none';
+  sec.style.display = showing ? 'none' : '';
+  icon.textContent = showing ? '▶ show' : '▼ hide';
+}
+
 // ── Template library ──────────────────
 const KB_TEMPLATES = [
   {
@@ -9011,16 +9233,20 @@ function buildKBView(){
   <div class="kb-header">
     <div class="kb-head-text">
       <div class="kb-head-title">KB Article Generator</div>
-      <div class="kb-head-sub" id="kbHeadSub">${_GROQ_KEY ? 'AI-powered · generate a professional KB article in seconds' : 'Pick a template to get started — or describe what you need below'}</div>
+      <div class="kb-head-sub">Generate from a ticket · describe a scenario · or pick a template</div>
     </div>
   </div>
 
-  <!-- Template Library -->
-  <div class="kb-sec-label">Start from a template</div>
-  <input class="kb-tpl-search" type="text" placeholder="Search templates…" oninput="document.getElementById('kbTplGrid').innerHTML=kbRenderTemplateGrid(this.value)">
-  <div class="kb-tpl-grid" id="kbTplGrid">${kbRenderTemplateGrid()}</div>
+  <!-- 1. From a ticket -->
+  <div class="kb-sec-label">1 · From a ticket</div>
+  <input class="kb-ticket-search" type="text" id="kbTicketSearch" placeholder="Search by number, description, assignee, or category…" oninput="kbRefreshTicketList(this.value)">
+  <div class="kb-ticket-list" id="kbTicketList">${kbRenderTicketRows('')}</div>
+  <div id="kbSelectedTicketCard" style="display:none"></div>
 
-  <div class="kb-divider-or">or create custom</div>
+  <div class="kb-divider-or">or describe / improve</div>
+
+  <!-- 2. From description / improve -->
+  <div class="kb-sec-label">2 · From description or existing article</div>
 
   <!-- Mode toggle -->
   <div class="kb-mode-row">
@@ -9117,6 +9343,17 @@ function buildKBView(){
     ${_GROQ_KEY
       ? '<strong>Generate with AI</strong> — full article via Llama 3 (Groq) &nbsp;·&nbsp; <strong>Copy Prompt</strong> — paste into <a href="https://claude.ai" target="_blank" style="color:var(--orange600)">Claude.ai</a> or ChatGPT'
       : '<strong>Build Smart Draft</strong> — instant structured template &nbsp;·&nbsp; <strong>Copy Prompt</strong> — paste into <a href="https://claude.ai" target="_blank" style="color:var(--orange600)">Claude.ai</a> or ChatGPT'}
+  </div>
+
+  <!-- 3. Template library (collapsed) -->
+  <div class="kb-divider-or">or start from a template</div>
+  <div class="kb-sec-label" style="cursor:pointer" onclick="kbToggleTemplates()">
+    3 · Template library
+    <span id="kbTplToggleIcon" style="margin-left:6px;color:var(--g400)">▶ show</span>
+  </div>
+  <div id="kbTplSection" style="display:none">
+    <input class="kb-tpl-search" type="text" placeholder="Search templates…" oninput="document.getElementById('kbTplGrid').innerHTML=kbRenderTemplateGrid(this.value)">
+    <div class="kb-tpl-grid" id="kbTplGrid">${kbRenderTemplateGrid()}</div>
   </div>
 
   <!-- Error box -->
