@@ -448,9 +448,19 @@ tbody tr:hover td{background:var(--g100)}
 .kb-rendered table{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:13px}
 .kb-rendered th{background:var(--g100);text-align:left;padding:8px 12px;font-weight:700;border:1px solid var(--g200);color:var(--g700)}
 .kb-rendered td{padding:7px 12px;border:1px solid var(--g200)}
-.kb-raw-bar{padding:8px 16px;background:var(--g50);border-top:1px solid var(--g200);display:flex;align-items:center;gap:8px}
-.kb-raw-bar button{background:none;border:none;font-size:12px;color:var(--g500);cursor:pointer;text-decoration:underline;padding:0}
-.kb-raw{width:100%;padding:16px;border:none;border-top:1px solid var(--g200);font-family:monospace;font-size:12px;line-height:1.6;resize:vertical;min-height:180px;background:var(--g50);box-sizing:border-box;color:var(--g700);display:none}
+.kb-edit-split{display:flex;min-height:520px;border-top:1px solid var(--g200)}
+.kb-editor-left{flex:1;display:flex;flex-direction:column;border-right:1px solid var(--g200);min-width:0}
+.kb-editor-right{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.kb-pane-label{font-size:11px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.05em;padding:7px 14px;background:var(--g50);border-bottom:1px solid var(--g200);flex-shrink:0}
+.kb-editor-textarea{flex:1;width:100%;border:none;resize:none;font-family:'SFMono-Regular',Consolas,monospace;font-size:12px;line-height:1.65;padding:16px;color:var(--g800);box-sizing:border-box;min-height:460px;background:#fafafa}
+.kb-editor-textarea:focus{outline:none;background:#fff}
+.kb-editor-right .kb-rendered{overflow-y:auto;padding:20px 24px;margin:0;border-radius:0;max-height:600px}
+@media(max-width:768px){
+  .kb-edit-split{flex-direction:column}
+  .kb-editor-left{border-right:none;border-bottom:1px solid var(--g200)}
+  .kb-editor-textarea{min-height:220px}
+  .kb-editor-right .kb-rendered{max-height:320px}
+}
 .kb-loading-row{padding:48px;text-align:center;color:var(--g400)}
 .kb-spin{animation:kbspin 1s linear infinite;display:inline-block}
 @keyframes kbspin{to{transform:rotate(360deg)}}
@@ -8917,14 +8927,16 @@ function kbSelectTemplate(id){
   document.querySelectorAll('.kb-tpl-card').forEach(c => c.classList.remove('selected'));
   const card = document.getElementById('kbtpl-'+id);
   if(card) card.classList.add('selected');
-  // Render output
+  // Render output — always open in preview mode
   const md = tpl.md;
   window._kbLastMd = md;
   document.getElementById('kbOutputLabel').textContent = tpl.name + ' — fill in the italicised placeholders';
   document.getElementById('kbRendered').innerHTML = kbRenderMd(md);
+  document.getElementById('kbRendered').style.display = '';
   document.getElementById('kbRaw').value = md;
-  document.getElementById('kbRaw').style.display = 'none';
-  document.querySelector('.kb-raw-bar button').textContent = 'View raw markdown';
+  document.getElementById('kbEditPane').style.display = 'none';
+  const eb = document.getElementById('kbEditBtn');
+  if(eb) eb.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit';
   document.getElementById('kbErrorBox').style.display = 'none';
   document.getElementById('kbOutput').style.display = 'block';
   document.getElementById('kbOutput').scrollIntoView({behavior:'smooth',block:'start'});
@@ -9115,19 +9127,34 @@ function buildKBView(){
     <div class="kb-output-header">
       <span class="kb-output-label" id="kbOutputLabel">Smart Draft</span>
       <div class="kb-output-actions">
+        <button class="btn btn-ghost btn-sm" id="kbEditBtn" onclick="kbToggleEdit()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Edit
+        </button>
         <button class="btn btn-ghost btn-sm" onclick="kbCopyArticle()">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           Copy
         </button>
         <button class="btn btn-ghost btn-sm" onclick="kbDownload('md')">↓ .md</button>
-        <button class="btn btn-ghost btn-sm" onclick="kbDownload('txt')">↓ .txt</button>
+        <button class="btn btn-primary btn-sm" onclick="kbDownloadPDF()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Download PDF
+        </button>
       </div>
     </div>
+    <!-- Preview mode -->
     <div class="kb-rendered" id="kbRendered"></div>
-    <div class="kb-raw-bar">
-      <button onclick="kbToggleRaw()">View raw markdown</button>
+    <!-- Edit mode (hidden by default) -->
+    <div id="kbEditPane" class="kb-edit-split" style="display:none">
+      <div class="kb-editor-left">
+        <div class="kb-pane-label">Edit Markdown</div>
+        <textarea id="kbRaw" class="kb-editor-textarea" oninput="kbSyncPreview(this.value)" spellcheck="false"></textarea>
+      </div>
+      <div class="kb-editor-right">
+        <div class="kb-pane-label">Live Preview</div>
+        <div id="kbEditPreview" class="kb-rendered"></div>
+      </div>
     </div>
-    <textarea id="kbRaw" class="kb-raw" readonly></textarea>
   </div>
 </div>`;
 
@@ -9380,8 +9407,6 @@ async function generateKBArticle(){
     document.getElementById('kbOutputLabel').textContent = 'Smart Draft — fill in the italicised placeholders to complete';
     document.getElementById('kbRendered').innerHTML = kbRenderMd(md);
     document.getElementById('kbRaw').value = md;
-    document.getElementById('kbRaw').style.display = 'none';
-    document.querySelector('.kb-raw-bar button').textContent = 'View raw markdown';
     document.getElementById('kbOutput').style.display = 'block';
     document.getElementById('kbOutput').scrollIntoView({behavior:'smooth',block:'start'});
     return;
@@ -9394,8 +9419,6 @@ async function generateKBArticle(){
   document.getElementById('kbOutputLabel').textContent = 'AI Article — generating…';
   document.getElementById('kbRendered').innerHTML = '<div class="kb-loading-row"><span class="kb-spin" style="font-size:22px">⟳</span></div>';
   document.getElementById('kbRaw').value = '';
-  document.getElementById('kbRaw').style.display = 'none';
-  document.querySelector('.kb-raw-bar button').textContent = 'View raw markdown';
   document.getElementById('kbOutput').style.display = 'block';
   document.getElementById('kbOutput').scrollIntoView({behavior:'smooth',block:'start'});
 
@@ -9513,12 +9536,77 @@ function kbDownload(fmt){
   const a     = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: slug + (fmt==='md'?'.md':'.txt') });
   a.click(); URL.revokeObjectURL(a.href);
 }
-function kbToggleRaw(){
-  const raw = document.getElementById('kbRaw');
-  const btn = document.querySelector('.kb-raw-bar button');
-  const show = raw.style.display === 'none';
-  raw.style.display = show ? 'block' : 'none';
-  btn.textContent   = show ? 'Hide raw markdown' : 'View raw markdown';
+// ── Edit / Preview toggle ─────────────
+function kbToggleEdit(){
+  const editPane    = document.getElementById('kbEditPane');
+  const previewPane = document.getElementById('kbRendered');
+  const editBtn     = document.getElementById('kbEditBtn');
+  const isEditing   = editPane.style.display !== 'none';
+
+  if(isEditing){
+    // Save edited content back → switch to preview
+    const md = document.getElementById('kbRaw').value;
+    window._kbLastMd = md;
+    previewPane.innerHTML = kbRenderMd(md);
+    previewPane.style.display = '';
+    editPane.style.display = 'none';
+    editBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit';
+  } else {
+    // Open editor with current markdown
+    const md = window._kbLastMd || document.getElementById('kbRaw').value;
+    document.getElementById('kbRaw').value = md;
+    document.getElementById('kbEditPreview').innerHTML = kbRenderMd(md);
+    previewPane.style.display = 'none';
+    editPane.style.display = 'flex';
+    editBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Done';
+    document.getElementById('kbRaw').focus();
+  }
+}
+
+// ── Live preview sync while editing ───
+function kbSyncPreview(md){
+  window._kbLastMd = md;
+  document.getElementById('kbEditPreview').innerHTML = kbRenderMd(md);
+}
+
+// ── PDF download ──────────────────────
+function kbDownloadPDF(){
+  const md = window._kbLastMd || document.getElementById('kbRaw').value;
+  if(!md){ return; }
+  const title = (md.match(/^# (.+)$/m)||[])[1] || 'KB Article';
+  const now   = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const body  = kbRenderMd(md);
+  const html  = `<!DOCTYPE html><html><head><meta charset="utf-8">
+<title>${escHtml(title)}</title>
+<style>
+  @page{margin:0.9in 1in}
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;line-height:1.75;color:#111827;max-width:780px;margin:0 auto;padding:0}
+  h1{font-size:22px;font-weight:800;color:#0f172a;border-bottom:2px solid #e5e7eb;padding-bottom:12px;margin:0 0 20px}
+  h2{font-size:14px;font-weight:700;color:#1e293b;margin:24px 0 9px;border-left:3px solid #f97316;padding-left:10px}
+  h3{font-size:13px;font-weight:700;color:#374151;margin:16px 0 7px}
+  p{margin:0 0 10px;color:#374151}
+  ul,ol{margin:0 0 10px;padding-left:20px}
+  li{margin-bottom:4px;color:#374151}
+  strong{font-weight:700;color:#111827}
+  code{background:#f3f4f6;padding:1px 5px;border-radius:3px;font-family:'SFMono-Regular',Consolas,monospace;font-size:11.5px;color:#c2410c}
+  pre{background:#1e293b;color:#e2e8f0;padding:14px 16px;border-radius:6px;margin:12px 0;font-size:11.5px;line-height:1.55;overflow-x:auto;page-break-inside:avoid}
+  pre code{background:none;color:inherit;padding:0}
+  blockquote{border-left:3px solid #f97316;padding:6px 14px;margin:10px 0;background:#fff7ed;color:#92400e;border-radius:0 4px 4px 0}
+  table{width:100%;border-collapse:collapse;margin:0 0 14px;font-size:12px;page-break-inside:avoid}
+  th{background:#f9fafb;padding:7px 10px;text-align:left;font-weight:700;border:1px solid #e5e7eb;color:#374151}
+  td{padding:6px 10px;border:1px solid #e5e7eb;color:#374151}
+  hr{border:none;border-top:1px solid #e5e7eb;margin:20px 0}
+  .footer{margin-top:36px;padding-top:10px;border-top:1px solid #e5e7eb;font-size:11px;color:#9ca3af;display:flex;justify-content:space-between}
+  @media print{html,body{max-width:none;width:100%}}
+</style></head>
+<body>
+${body}
+<div class="footer"><span>Network Operations — Knowledge Base</span><span>${escHtml(now)}</span></div>
+<script>window.onload=()=>{window.print();}<\/script>
+</body></html>`;
+  const w = window.open('','_blank','width=860,height=700');
+  if(w){ w.document.write(html); w.document.close(); }
 }
 
 /* ═══════════════════════════════════════
