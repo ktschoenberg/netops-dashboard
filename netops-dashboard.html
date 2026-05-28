@@ -393,6 +393,77 @@ tbody tr:hover td{background:var(--g100)}
   .view [style*="grid-template-columns:1fr 1fr;"]{grid-template-columns:1fr!important}
   .view [style*="grid-template-columns:260px"]{grid-template-columns:1fr!important}
 }
+
+/* ── KB Generator ── */
+.kb-wrap{max-width:900px;margin:0 auto}
+.kb-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;gap:12px}
+.kb-head-text{}
+.kb-head-title{font-size:20px;font-weight:700;color:var(--g900);line-height:1.2}
+.kb-head-sub{font-size:13px;color:var(--g500);margin-top:4px}
+.kb-settings-panel{background:var(--g50);border:1px solid var(--g200);border-radius:var(--r8);padding:14px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.kb-settings-panel label{font-size:13px;font-weight:600;color:var(--g700);white-space:nowrap}
+.kb-settings-panel input[type=password]{flex:1;min-width:220px;padding:7px 10px;border:1px solid var(--g300);border-radius:var(--r6);font-size:13px;font-family:inherit}
+.kb-settings-panel input[type=password]:focus{outline:none;border-color:var(--orange500);box-shadow:0 0 0 3px rgba(245,148,60,.12)}
+.kb-key-status{font-size:12px;padding:3px 8px;border-radius:99px;background:var(--g100);color:var(--g500);white-space:nowrap}
+.kb-key-status.set{background:#dcfce7;color:#16a34a}
+.kb-mode-row{display:flex;gap:4px;margin-bottom:22px;background:var(--g100);padding:4px;border-radius:var(--r8);width:fit-content}
+.kb-mode-btn{padding:8px 20px;border:none;background:none;border-radius:6px;font-size:13px;font-weight:500;color:var(--g600);cursor:pointer;transition:all .15s;white-space:nowrap}
+.kb-mode-btn.active{background:#fff;color:var(--g900);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.kb-config-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}
+.kb-config-group label{display:block;font-size:11px;font-weight:700;color:var(--g500);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.kb-config-group select{width:100%;padding:8px 10px;border:1px solid var(--g300);border-radius:var(--r6);font-size:13px;color:var(--g800);background:#fff;cursor:pointer;font-family:inherit}
+.kb-config-group select:focus{outline:none;border-color:var(--orange500)}
+.kb-drop-zone{border:2px dashed var(--g300);border-radius:var(--r8);padding:30px 20px;text-align:center;background:var(--g50);cursor:pointer;transition:all .15s;margin-bottom:12px}
+.kb-drop-zone:hover,.kb-drop-zone.drag-over{border-color:var(--orange400);background:rgba(251,146,60,.05)}
+.kb-drop-icon{color:var(--g400);margin-bottom:10px}
+.kb-drop-text{font-size:14px;color:var(--g600)}
+.kb-drop-btn{background:none;border:none;color:var(--orange600);font-weight:600;cursor:pointer;text-decoration:underline;font-size:14px;padding:0}
+.kb-drop-hint{font-size:12px;color:var(--g400);margin-top:5px}
+.kb-drop-loaded{font-size:13px;color:#16a34a;font-weight:500;margin-top:6px;display:none;align-items:center;gap:5px;justify-content:center}
+.kb-divider{text-align:center;color:var(--g400);font-size:12px;margin:16px 0;position:relative}
+.kb-divider::before,.kb-divider::after{content:'';position:absolute;top:50%;height:1px;background:var(--g200);width:42%}
+.kb-divider::before{left:0}.kb-divider::after{right:0}
+.kb-textarea{width:100%;padding:12px;border:1px solid var(--g300);border-radius:var(--r8);font-size:13px;line-height:1.65;resize:vertical;font-family:inherit;color:var(--g800);box-sizing:border-box;transition:border .15s}
+.kb-textarea:focus{outline:none;border-color:var(--orange500);box-shadow:0 0 0 3px rgba(245,148,60,.12)}
+.kb-generate-row{display:flex;justify-content:flex-end;padding-top:18px;margin-top:18px;border-top:1px solid var(--g100)}
+.kb-output{margin-top:28px;border:1px solid var(--g200);border-radius:var(--r8);overflow:hidden}
+.kb-output-header{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:var(--g50);border-bottom:1px solid var(--g200)}
+.kb-output-label{font-size:13px;font-weight:700;color:var(--g800)}
+.kb-output-actions{display:flex;gap:7px}
+.kb-rendered{padding:24px 28px;line-height:1.75;font-size:14px;color:var(--g700)}
+.kb-rendered h1{font-size:21px;font-weight:700;color:var(--g900);margin:0 0 18px;padding-bottom:12px;border-bottom:2px solid var(--g200)}
+.kb-rendered h2{font-size:15px;font-weight:700;color:var(--g800);margin:24px 0 10px;display:flex;align-items:center;gap:8px}
+.kb-rendered h2::before{content:'';display:inline-block;width:3px;height:15px;background:var(--orange500);border-radius:2px;flex-shrink:0}
+.kb-rendered h3{font-size:13px;font-weight:700;color:var(--g700);margin:16px 0 8px}
+.kb-rendered p{margin:0 0 12px}
+.kb-rendered ul,.kb-rendered ol{margin:0 0 12px;padding-left:22px}
+.kb-rendered li{margin-bottom:5px}
+.kb-rendered strong{font-weight:700;color:var(--g800)}
+.kb-rendered em{font-style:italic}
+.kb-rendered code{background:var(--g100);padding:1px 5px;border-radius:3px;font-family:monospace;font-size:12px;color:var(--orange700)}
+.kb-rendered pre{background:#1e293b;color:#e2e8f0;padding:16px;border-radius:var(--r8);overflow-x:auto;margin:12px 0;font-size:13px;line-height:1.5}
+.kb-rendered pre code{background:none;color:inherit;padding:0}
+.kb-rendered blockquote{border-left:3px solid var(--orange400);padding:8px 14px;margin:12px 0;background:rgba(251,146,60,.04);border-radius:0 var(--r6) var(--r6) 0;color:var(--g600)}
+.kb-rendered hr{border:none;border-top:1px solid var(--g200);margin:22px 0}
+.kb-rendered table{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:13px}
+.kb-rendered th{background:var(--g100);text-align:left;padding:8px 12px;font-weight:700;border:1px solid var(--g200);color:var(--g700)}
+.kb-rendered td{padding:7px 12px;border:1px solid var(--g200)}
+.kb-raw-bar{padding:8px 16px;background:var(--g50);border-top:1px solid var(--g200);display:flex;align-items:center;gap:8px}
+.kb-raw-bar button{background:none;border:none;font-size:12px;color:var(--g500);cursor:pointer;text-decoration:underline;padding:0}
+.kb-raw{width:100%;padding:16px;border:none;border-top:1px solid var(--g200);font-family:monospace;font-size:12px;line-height:1.6;resize:vertical;min-height:180px;background:var(--g50);box-sizing:border-box;color:var(--g700);display:none}
+.kb-loading-row{padding:48px;text-align:center;color:var(--g400)}
+.kb-spin{animation:kbspin 1s linear infinite;display:inline-block}
+@keyframes kbspin{to{transform:rotate(360deg)}}
+.kb-error-box{margin-top:16px;padding:14px 16px;background:#fef2f2;border:1px solid #fecaca;border-radius:var(--r8);color:#dc2626;font-size:13px;line-height:1.6}
+@media(max-width:768px){
+  .kb-config-row{grid-template-columns:1fr 1fr}
+  .kb-header{flex-direction:column}
+  .kb-mode-btn{padding:8px 14px}
+}
+@media(max-width:480px){
+  .kb-config-row{grid-template-columns:1fr}
+  .kb-rendered{padding:16px}
+}
 </style>
 </head>
 <body>
@@ -453,6 +524,12 @@ tbody tr:hover td{background:var(--g100)}
         <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
       </svg>
       Open Items
+    </button>
+    <button class="s-item" id="navKB" onclick="openKBPage()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+      </svg>
+      KB Generator
     </button>
   </nav>
 
@@ -520,6 +597,10 @@ tbody tr:hover td{background:var(--g100)}
 
   <div id="view-team" class="view">
     <div class="page" id="teamPage"></div>
+  </div>
+
+  <div id="view-kb" class="view">
+    <div class="page" id="kbPage"></div>
   </div>
 
 </main>
@@ -7620,6 +7701,431 @@ function buildTransMttrCharts(labels,l2Data,l3Data,months){
       }
     });
   });
+}
+
+/* ═══════════════════════════════════════
+   KB GENERATOR
+═══════════════════════════════════════ */
+
+// ── Navigation ────────────────────────
+function openKBPage(){
+  showView('view-kb','navKB','kb',buildKBView);
+}
+
+// ── Simple Markdown → HTML renderer ──
+function kbRenderMd(md){
+  if(!md) return '';
+  // Escape HTML in code blocks first, then process other markdown
+  const codeBlocks = [];
+  md = md.replace(/```([\w]*)\n?([\s\S]*?)```/g, (_,lang,code) => {
+    const idx = codeBlocks.length;
+    codeBlocks.push(`<pre><code>${code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>`);
+    return `\x00CB${idx}\x00`;
+  });
+  // Inline code
+  const inlineCodes = [];
+  md = md.replace(/`([^`]+)`/g, (_,c) => {
+    const idx = inlineCodes.length;
+    inlineCodes.push(`<code>${c.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code>`);
+    return `\x00IC${idx}\x00`;
+  });
+  // Headers
+  md = md.replace(/^#{4,6} (.+)$/gm, (_,t) => `<h3>${t}</h3>`);
+  md = md.replace(/^### (.+)$/gm,    (_,t) => `<h3>${t}</h3>`);
+  md = md.replace(/^## (.+)$/gm,     (_,t) => `<h2>${t}</h2>`);
+  md = md.replace(/^# (.+)$/gm,      (_,t) => `<h1>${t}</h1>`);
+  // HR
+  md = md.replace(/^(-{3,}|\*{3,}|_{3,})$/gm, '<hr>');
+  // Blockquotes
+  md = md.replace(/^> (.+)$/gm, (_,t) => `<blockquote>${t}</blockquote>`);
+  // Bold & italic
+  md = md.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+  md = md.replace(/\*\*(.+?)\*\*/g,     '<strong>$1</strong>');
+  md = md.replace(/\*(.+?)\*/g,         '<em>$1</em>');
+  md = md.replace(/__(.+?)__/g,         '<strong>$1</strong>');
+  md = md.replace(/_(.+?)_/g,           '<em>$1</em>');
+  // Lists — collect consecutive li into ul/ol
+  md = md.replace(/((?:^[ \t]*[-*+] .+\n?)+)/gm, block => {
+    const items = block.trim().split('\n').map(l => `<li>${l.replace(/^[ \t]*[-*+] /,'')}</li>`).join('');
+    return `<ul>${items}</ul>`;
+  });
+  md = md.replace(/((?:^[ \t]*\d+\. .+\n?)+)/gm, block => {
+    const items = block.trim().split('\n').map(l => `<li>${l.replace(/^[ \t]*\d+\. /,'')}</li>`).join('');
+    return `<ol>${items}</ol>`;
+  });
+  // Paragraphs — wrap lines that aren't already HTML tags
+  md = md.split('\n\n').map(block => {
+    block = block.trim();
+    if(!block) return '';
+    if(/^<(h[1-6]|ul|ol|li|pre|blockquote|hr|table)/.test(block)) return block;
+    return `<p>${block.replace(/\n/g,'<br>')}</p>`;
+  }).join('\n');
+  // Restore code blocks & inline code
+  codeBlocks.forEach((html,i) => { md = md.replace(`\x00CB${i}\x00`, html); });
+  inlineCodes.forEach((html,i) => { md = md.replace(`\x00IC${i}\x00`, html); });
+  return md;
+}
+
+// ── Build the view ────────────────────
+function buildKBView(){
+  const page = document.getElementById('kbPage');
+  if(!page) return;
+  const hasKey = !!sessionStorage.getItem('kbApiKey');
+  page.innerHTML = `
+<div class="kb-wrap">
+  <!-- Header -->
+  <div class="kb-header">
+    <div class="kb-head-text">
+      <div class="kb-head-title">KB Article Generator</div>
+      <div class="kb-head-sub">Generate professional knowledge base articles with AI — improve existing docs or create from scratch</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="toggleKBSettings()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+      API Settings
+    </button>
+  </div>
+
+  <!-- API Settings panel -->
+  <div id="kbSettingsPanel" class="kb-settings-panel" style="display:none">
+    <label>Anthropic API Key</label>
+    <input type="password" id="kbApiKeyInput" placeholder="sk-ant-api03-..." value="${sessionStorage.getItem('kbApiKey')||''}">
+    <button class="btn btn-primary btn-sm" onclick="saveKBApiKey()">Save Key</button>
+    <span class="kb-key-status ${hasKey?'set':''}" id="kbKeyStatus">${hasKey?'✓ Key saved':'No key set'}</span>
+    <span style="font-size:12px;color:var(--g400);margin-left:auto">Stored in session only — cleared when tab closes</span>
+  </div>
+
+  ${!hasKey ? `<div class="kb-error-box" id="kbNoKeyBanner">
+    <strong>API key required.</strong> Click <em>API Settings</em> above to enter your Anthropic API key. The key is stored only for this browser session.
+  </div>` : ''}
+
+  <!-- Mode toggle -->
+  <div class="kb-mode-row">
+    <button class="kb-mode-btn active" id="kbModeImprove" onclick="setKBMode('improve')">
+      ✦ &nbsp;Improve Existing KB
+    </button>
+    <button class="kb-mode-btn" id="kbModeCreate" onclick="setKBMode('create')">
+      + &nbsp;Create from Scratch
+    </button>
+  </div>
+
+  <!-- Config row -->
+  <div class="kb-config-row">
+    <div class="kb-config-group">
+      <label>Article Type</label>
+      <select id="kbArticleType">
+        <option value="troubleshooting">Troubleshooting Guide</option>
+        <option value="howto">How-To / Procedure</option>
+        <option value="runbook">Runbook</option>
+        <option value="reference">Reference / FAQ</option>
+        <option value="escalation">Escalation Procedure</option>
+        <option value="config">Configuration Guide</option>
+      </select>
+    </div>
+    <div class="kb-config-group">
+      <label>Audience</label>
+      <select id="kbAudience">
+        <option value="noc">NOC / L1–L2</option>
+        <option value="l3">Network L3 Engineers</option>
+        <option value="general">General IT</option>
+        <option value="management">Management</option>
+      </select>
+    </div>
+    <div class="kb-config-group">
+      <label>Detail Level</label>
+      <select id="kbDetail">
+        <option value="standard">Standard</option>
+        <option value="detailed">Detailed / Step-by-step</option>
+        <option value="brief">Brief / Quick Reference</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Improve section -->
+  <div id="kbImproveSection">
+    <div class="kb-drop-zone" id="kbDropZone"
+      ondragover="event.preventDefault();this.classList.add('drag-over')"
+      ondragleave="this.classList.remove('drag-over')"
+      ondrop="kbHandleDrop(event)"
+      onclick="document.getElementById('kbFileInput').click()">
+      <div class="kb-drop-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+      </div>
+      <div class="kb-drop-text">Drop your KB article here &nbsp;or&nbsp; <button class="kb-drop-btn" onclick="event.stopPropagation();document.getElementById('kbFileInput').click()">browse files</button></div>
+      <div class="kb-drop-hint">Supports .txt and .md files</div>
+      <div class="kb-drop-loaded" id="kbDropLoaded">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <span id="kbDropFileName"></span>
+      </div>
+    </div>
+    <input type="file" id="kbFileInput" accept=".txt,.md,.text" style="display:none" onchange="kbHandleFile(event)">
+    <div class="kb-divider">— or paste the text below —</div>
+    <textarea id="kbExistingText" class="kb-textarea" rows="10" placeholder="Paste your existing KB article here…"></textarea>
+  </div>
+
+  <!-- Create section -->
+  <div id="kbCreateSection" style="display:none">
+    <textarea id="kbPromptText" class="kb-textarea" rows="7"
+      placeholder="Describe what you need — be as specific or brief as you like. For example:&#10;&#10;BGP session drops after ISP maintenance window on core routers. Need troubleshooting steps to verify neighbors, check route tables, review logs, and an escalation path if not restored within 30 minutes."></textarea>
+    <div style="margin-top:8px;font-size:12px;color:var(--g400)">
+      Tip: Include the technology, symptom, environment, and any constraints — the more detail you provide, the better the output.
+    </div>
+  </div>
+
+  <!-- Generate -->
+  <div class="kb-generate-row">
+    <button class="btn btn-primary" id="kbGenerateBtn" onclick="generateKBArticle()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+      </svg>
+      Generate KB Article
+    </button>
+  </div>
+
+  <!-- Error box (populated dynamically) -->
+  <div id="kbErrorBox" class="kb-error-box" style="display:none"></div>
+
+  <!-- Output -->
+  <div id="kbOutput" class="kb-output" style="display:none">
+    <div class="kb-output-header">
+      <span class="kb-output-label">Generated Article</span>
+      <div class="kb-output-actions">
+        <button class="btn btn-ghost btn-sm" onclick="kbCopyArticle()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="kbDownload('md')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          .md
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="kbDownload('txt')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          .txt
+        </button>
+      </div>
+    </div>
+    <div class="kb-rendered" id="kbRendered"></div>
+    <div class="kb-raw-bar">
+      <button onclick="kbToggleRaw()">View raw markdown</button>
+    </div>
+    <textarea id="kbRaw" class="kb-raw" readonly></textarea>
+  </div>
+</div>`;
+
+  // restore drag-over cleanup
+  window._kbMode = window._kbMode || 'improve';
+  if(window._kbMode === 'create') setKBMode('create');
+}
+
+// ── Mode switching ────────────────────
+function setKBMode(mode){
+  window._kbMode = mode;
+  document.getElementById('kbModeImprove').classList.toggle('active', mode==='improve');
+  document.getElementById('kbModeCreate').classList.toggle('active',  mode==='create');
+  document.getElementById('kbImproveSection').style.display = mode==='improve' ? '' : 'none';
+  document.getElementById('kbCreateSection').style.display  = mode==='create'  ? '' : 'none';
+}
+
+// ── API Key management ────────────────
+function toggleKBSettings(){
+  const p = document.getElementById('kbSettingsPanel');
+  p.style.display = p.style.display==='none' ? 'flex' : 'none';
+}
+function saveKBApiKey(){
+  const val = document.getElementById('kbApiKeyInput').value.trim();
+  if(val){ sessionStorage.setItem('kbApiKey', val); }
+  else    { sessionStorage.removeItem('kbApiKey'); }
+  const has = !!val;
+  const st = document.getElementById('kbKeyStatus');
+  st.textContent = has ? '✓ Key saved' : 'No key set';
+  st.className = 'kb-key-status' + (has ? ' set' : '');
+  const banner = document.getElementById('kbNoKeyBanner');
+  if(banner) banner.style.display = has ? 'none' : '';
+}
+
+// ── File handling ─────────────────────
+function kbHandleFile(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const text = ev.target.result;
+    document.getElementById('kbExistingText').value = text;
+    document.getElementById('kbDropLoaded').style.display = 'flex';
+    document.getElementById('kbDropFileName').textContent = file.name;
+  };
+  reader.readAsText(file);
+}
+function kbHandleDrop(e){
+  e.preventDefault();
+  document.getElementById('kbDropZone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if(!file) return;
+  const fake = { target: { files: [file] } };
+  kbHandleFile(fake);
+}
+
+// ── Build system prompt ───────────────
+function _kbSystemPrompt(type, audience, detail){
+  const typeGuides = {
+    troubleshooting: 'Structure as: Overview, Applies To, Symptoms, Prerequisites, Troubleshooting Steps (numbered), Verification, Additional Notes, Related Articles.',
+    howto:           'Structure as: Overview, Applies To, Prerequisites, Procedure (numbered steps), Verification, Troubleshooting Common Issues, Related Articles.',
+    runbook:         'Structure as: Purpose, Scope, Prerequisites, Runbook Steps (numbered with sub-steps), Rollback Procedure, Verification, On-Call Escalation.',
+    reference:       'Structure as: Overview, Quick Reference, Detailed Reference, Common Questions, Related Articles.',
+    escalation:      'Structure as: Purpose, Escalation Triggers, Escalation Path (table), Contact Information, SLA Targets, Communication Templates.',
+    config:          'Structure as: Overview, Prerequisites, Configuration Steps (numbered), Validation Steps, Rollback, Common Issues.',
+  };
+  const audienceGuides = {
+    noc:        'Write for NOC/L1-L2 operators: include exact commands to run, precise thresholds, clear decision trees, and when to escalate. Avoid assuming deep networking knowledge.',
+    l3:         'Write for experienced Network L3 engineers: technical depth is appropriate, include CLI examples, expect familiarity with routing protocols and enterprise networking.',
+    general:    'Write for general IT staff: minimize jargon, explain acronyms, focus on step-by-step clarity.',
+    management: 'Write for management: high-level impact statements, business context, minimal technical commands.',
+  };
+  const detailGuides = {
+    standard: 'Use standard depth — enough context to complete the task independently.',
+    detailed: 'Be comprehensive and thorough — include sub-steps, warnings, expected outputs, and edge cases.',
+    brief:    'Be concise — quick-reference style, bullet points preferred, minimal prose.',
+  };
+  return `You are an expert technical writer for a Network Operations team at a large enterprise (The Home Depot).
+Your task is to write a professional, accurate, and clear Knowledge Base article.
+
+ARTICLE TYPE: ${type}
+${typeGuides[type]||typeGuides.troubleshooting}
+
+AUDIENCE: ${audience}
+${audienceGuides[audience]||audienceGuides.noc}
+
+DETAIL LEVEL: ${detail}
+${detailGuides[detail]||detailGuides.standard}
+
+FORMAT RULES:
+- Use Markdown formatting (headings, bullet lists, numbered steps, code blocks for commands)
+- Use ## for major sections, ### for sub-sections
+- Wrap CLI commands, file paths, hostnames, and interface names in backticks
+- Use **bold** for important warnings, critical steps, and key terms
+- Include a clear article title as # H1
+- Be accurate and professional; do not hallucinate specific IP addresses, hostnames, or device names unless provided
+- Keep the tone direct and action-oriented`;
+}
+
+// ── Generate ──────────────────────────
+async function generateKBArticle(){
+  const apiKey = sessionStorage.getItem('kbApiKey');
+  const errorBox = document.getElementById('kbErrorBox');
+  const output   = document.getElementById('kbOutput');
+  errorBox.style.display = 'none';
+  output.style.display   = 'none';
+
+  if(!apiKey){
+    errorBox.innerHTML = '<strong>No API key.</strong> Click <em>API Settings</em> at the top to enter your Anthropic API key.';
+    errorBox.style.display = 'block';
+    return;
+  }
+
+  const mode   = window._kbMode || 'improve';
+  const type   = document.getElementById('kbArticleType').value;
+  const aud    = document.getElementById('kbAudience').value;
+  const detail = document.getElementById('kbDetail').value;
+
+  let userContent = '';
+  if(mode === 'improve'){
+    const text = document.getElementById('kbExistingText').value.trim();
+    if(!text){ errorBox.innerHTML = 'Please paste your existing KB article text or upload a file.'; errorBox.style.display='block'; return; }
+    userContent = `Please significantly improve and professionally rewrite this existing KB article. Fix structure, clarity, completeness, and formatting. Retain all accurate technical information.\n\n---\n\n${text}`;
+  } else {
+    const prompt = document.getElementById('kbPromptText').value.trim();
+    if(!prompt){ errorBox.innerHTML = 'Please describe what you need the KB article to cover.'; errorBox.style.display='block'; return; }
+    userContent = `Write a complete KB article based on this description:\n\n${prompt}`;
+  }
+
+  // Show loading state
+  const btn = document.getElementById('kbGenerateBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="kb-spin">⟳</span>&nbsp; Generating…';
+
+  output.style.display = 'block';
+  document.getElementById('kbRendered').innerHTML = '<div class="kb-loading-row"><span class="kb-spin" style="font-size:22px">⟳</span><div style="margin-top:12px;font-size:13px">Generating article…</div></div>';
+  document.getElementById('kbRaw').value = '';
+  document.getElementById('kbRaw').style.display = 'none';
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type':      'application/json',
+        'x-api-key':         apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model:      'claude-opus-4-5',
+        max_tokens: 4096,
+        system:     _kbSystemPrompt(type, aud, detail),
+        messages:   [{ role: 'user', content: userContent }],
+      }),
+    });
+
+    if(!resp.ok){
+      const err = await resp.json().catch(()=>({error:{message:resp.statusText}}));
+      throw new Error(err.error?.message || `HTTP ${resp.status}`);
+    }
+
+    const data = await resp.json();
+    const md = data.content?.[0]?.text || '';
+    window._kbLastMd = md;
+    document.getElementById('kbRendered').innerHTML = kbRenderMd(md);
+    document.getElementById('kbRaw').value = md;
+
+  } catch(err) {
+    output.style.display = 'none';
+    let msg = err.message || String(err);
+    if(msg.includes('Failed to fetch') || msg.includes('NetworkError')){
+      msg = 'Network error — the Anthropic API may not allow direct browser requests from this origin. '
+          + 'Try running the dashboard via a local server, or use a CORS proxy. '
+          + 'Original error: ' + msg;
+    }
+    errorBox.innerHTML = `<strong>Generation failed:</strong> ${escHtml(msg)}`;
+    errorBox.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Generate KB Article';
+  }
+}
+
+// ── Copy / Download / Raw toggle ──────
+function kbCopyArticle(){
+  const md = document.getElementById('kbRaw').value;
+  if(!md) return;
+  navigator.clipboard.writeText(md).then(() => {
+    const btn = event.currentTarget;
+    const orig = btn.innerHTML;
+    btn.innerHTML = btn.innerHTML.replace('Copy','Copied!');
+    setTimeout(()=>{ btn.innerHTML = orig; }, 1500);
+  }).catch(()=>{ /* ignore */ });
+}
+function kbDownload(fmt){
+  const md = document.getElementById('kbRaw').value;
+  if(!md) return;
+  const title = (md.match(/^# (.+)$/m)||[])[1] || 'kb-article';
+  const slug  = title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  const ext   = fmt === 'md' ? '.md' : '.txt';
+  const blob  = new Blob([md], { type: 'text/plain' });
+  const a     = document.createElement('a');
+  a.href      = URL.createObjectURL(blob);
+  a.download  = slug + ext;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function kbToggleRaw(){
+  const raw = document.getElementById('kbRaw');
+  const btn = document.querySelector('.kb-raw-bar button');
+  const show = raw.style.display === 'none';
+  raw.style.display = show ? 'block' : 'none';
+  btn.textContent   = show ? 'Hide raw markdown' : 'View raw markdown';
 }
 
 /* ═══════════════════════════════════════
