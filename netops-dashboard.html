@@ -464,6 +464,26 @@ tbody tr:hover td{background:var(--g100)}
   .kb-config-row{grid-template-columns:1fr}
   .kb-rendered{padding:16px}
 }
+/* KB template library */
+.kb-tpl-search{width:100%;padding:9px 12px;border:1px solid var(--g300);border-radius:var(--r8);font-size:13px;font-family:inherit;margin-bottom:16px;box-sizing:border-box;transition:border .15s}
+.kb-tpl-search:focus{outline:none;border-color:var(--orange500);box-shadow:0 0 0 3px rgba(245,148,60,.12)}
+.kb-tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:6px}
+.kb-tpl-card{border:1px solid var(--g200);border-radius:var(--r8);padding:13px 15px;cursor:pointer;transition:all .15s;background:#fff;text-align:left}
+.kb-tpl-card:hover{border-color:var(--orange400);box-shadow:0 2px 10px rgba(245,148,60,.15);transform:translateY(-1px)}
+.kb-tpl-card.selected{border-color:var(--orange500);background:rgba(251,146,60,.04)}
+.kb-tpl-icon{font-size:20px;margin-bottom:7px;display:block}
+.kb-tpl-name{font-size:13px;font-weight:700;color:var(--g800);margin-bottom:3px}
+.kb-tpl-desc{font-size:12px;color:var(--g500);line-height:1.4}
+.kb-tpl-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;margin-bottom:6px;letter-spacing:.03em;text-transform:uppercase}
+.kb-tpl-badge.ts {background:#fef3c7;color:#92400e}
+.kb-tpl-badge.proc{background:#dbeafe;color:#1e40af}
+.kb-tpl-badge.run {background:#dcfce7;color:#166534}
+.kb-tpl-badge.ref {background:#f5f3ff;color:#6b21a8}
+.kb-sec-label{font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin:22px 0 10px}
+.kb-divider-or{display:flex;align-items:center;gap:12px;margin:24px 0 20px;color:var(--g400);font-size:12px}
+.kb-divider-or::before,.kb-divider-or::after{content:'';flex:1;height:1px;background:var(--g200)}
+@media(max-width:768px){.kb-tpl-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.kb-tpl-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -7711,6 +7731,1205 @@ function buildTransMttrCharts(labels,l2Data,l3Data,months){
 //    Get one free (no credit card) at https://console.groq.com
 const _GROQ_KEY = '';
 
+// ── Template library ──────────────────
+const KB_TEMPLATES = [
+  {
+    id:'connectivity-ts',
+    name:'Connectivity & Performance',
+    cat:'Connectivity & Performance',
+    badge:'ts', badgeLabel:'Troubleshooting',
+    icon:'🔗',
+    desc:'Network connectivity loss, high latency, or packet loss',
+    keywords:['connectivity','performance','ping','latency','packet loss','unreachable','bgp','ospf','route','flap','down','slow','timeout','interface'],
+    md:`# Troubleshooting: Connectivity & Performance Issue
+
+> **Audience:** NOC / L1–L2 · **Category:** Connectivity & Performance · **Type:** INC
+
+---
+
+## Overview
+
+Troubleshooting steps for network connectivity loss or performance degradation affecting *(describe affected systems, users, or locations)*.
+
+## Applies To
+
+- **Affected Segment:** *(e.g., store network, DC interconnect, WAN link)*
+- **Environments:** Production
+- **Impact:** *(number of users/systems affected)*
+
+## Symptoms
+
+- [ ] Users unable to reach *(destination)*
+- [ ] High latency or packet loss reported (>*(X)*ms / >*(X)*% loss)
+- [ ] Interface or BGP/OSPF neighbor state change in monitoring
+- [ ] Alerts firing in *(SolarWinds / Nagios / other)*
+
+## Prerequisites
+
+- [ ] SSH/console access to affected devices
+- [ ] Monitoring platform access
+- [ ] Ticket opened with initial impact scope documented
+
+## Troubleshooting Steps
+
+### Step 1: Confirm Scope
+
+1. Run ping and traceroute from NOC jump host:
+   \`\`\`
+   ping <destination> repeat 100
+   traceroute <destination>
+   \`\`\`
+2. Identify if issue is isolated (single device/segment) or widespread
+3. Note exact failure time from monitoring alerts
+
+### Step 2: Check Interface Status
+
+1. Verify physical and protocol state:
+   \`\`\`
+   show interface <interface>
+   show interface status
+   show logging last 50 | include <interface>
+   \`\`\`
+   > **Look for:** \`line protocol is down\`, input/output errors, CRC errors, resets
+
+2. Check error counters for incrementing values
+
+### Step 3: Verify Routing
+
+1. Confirm route is present and pointing to expected next-hop:
+   \`\`\`
+   show ip route <destination>
+   show bgp summary
+   show ip ospf neighbor
+   \`\`\`
+2. Verify no unexpected route changes or missing prefixes
+
+### Step 4: Isolate the Fault Domain
+
+1. Ping from multiple sources toward destination to triangulate
+2. Test in both directions (bidirectional connectivity check)
+3. Check upstream device if local device appears healthy
+
+### Step 5: Review Recent Changes
+
+1. Check ServiceNow for changes in the past 24 hours on affected segment
+2. Review monitoring for correlated events at failure onset time
+
+## Verification
+
+- [ ] Ping succeeds with <5ms latency and 0% loss
+- [ ] Traceroute shows expected path
+- [ ] Monitoring alerts cleared
+- [ ] No incrementing error counters on interface
+- [ ] Affected users confirm restoration
+
+## Escalation
+
+| Level | Team | Trigger |
+|---|---|---|
+| L2 NOC Lead | Network Operations | After 15 min unresolved |
+| L3 Engineering | Network Engineering | After 30 min, or P1 immediately |
+| ISP/Carrier | *(carrier name)* | If circuit-level fault suspected |
+
+## Additional Notes
+
+- Always document findings (commands run, outputs observed) in the ticket before escalating
+- *(Add environment-specific notes or known issues here)*
+
+## Related Articles
+
+- ISP & Fiber Outage Troubleshooting
+- Hardware & Physical Failure Troubleshooting
+- NOC Escalation Procedure`
+  },
+  {
+    id:'vlan-ts',
+    name:'VLAN & Config — Troubleshooting',
+    cat:'VLAN & Config',
+    badge:'ts', badgeLabel:'Troubleshooting',
+    icon:'🏷️',
+    desc:'VLAN misconfiguration, trunk issues, or access port problems',
+    keywords:['vlan','trunk','access','switchport','native','allowed','tagging','802.1q','pvlan','stp','spanning tree'],
+    md:`# Troubleshooting: VLAN & Configuration Issues
+
+> **Audience:** Network L3 Engineers · **Category:** VLAN & Config · **Type:** INC
+
+---
+
+## Overview
+
+Troubleshooting steps for VLAN misconfigurations, trunk negotiation failures, or access port connectivity issues affecting *(describe affected segment or VLAN)*.
+
+## Applies To
+
+- **Affected VLAN(s):** *(VLAN ID(s))*
+- **Affected Switch(es):** *(hostname(s))*
+- **Environments:** Production
+
+## Symptoms
+
+- [ ] Devices on VLAN *(ID)* cannot communicate
+- [ ] Trunk interface not passing expected VLANs
+- [ ] STP topology change causing intermittent drops
+- [ ] Native VLAN mismatch detected
+- [ ] Devices receiving incorrect IP assignment (wrong VLAN)
+
+## Prerequisites
+
+- [ ] SSH access to affected switch(es)
+- [ ] Network diagram or VLAN map for the affected segment
+- [ ] Change record reference (if applicable)
+
+## Troubleshooting Steps
+
+### Step 1: Verify VLAN Exists and Is Active
+
+\`\`\`
+show vlan brief
+show vlan id <vlan-id>
+\`\`\`
+
+> **Check:** VLAN exists in database and status is **active**
+
+### Step 2: Check Trunk Port Configuration
+
+\`\`\`
+show interface trunk
+show interface <interface> trunk
+\`\`\`
+
+> **Check:**
+> - VLAN is in the **VLANs allowed** list
+> - VLAN is in the **VLANs allowed and active in management domain** list
+> - Native VLAN matches on both ends
+
+### Step 3: Check Access Port Assignment
+
+\`\`\`
+show interface <interface> switchport
+show mac address-table vlan <vlan-id>
+\`\`\`
+
+> **Check:** Port is in correct VLAN, mode is \`access\`, port is in connected state
+
+### Step 4: Review STP State
+
+\`\`\`
+show spanning-tree vlan <vlan-id>
+show spanning-tree vlan <vlan-id> detail
+\`\`\`
+
+> **Check:** No unexpected topology changes, root bridge is expected device, no ports in BLK state unexpectedly
+
+### Step 5: Verify L3 Gateway (if applicable)
+
+\`\`\`
+show interface vlan <vlan-id>
+show ip interface brief | include Vlan
+\`\`\`
+
+> **Check:** SVI is up/up and has correct IP address assigned
+
+## Verification
+
+- [ ] \`show vlan brief\` confirms VLAN is active
+- [ ] Trunk shows VLAN in allowed and active list
+- [ ] End device obtains correct IP via DHCP
+- [ ] Ping from device to gateway succeeds
+- [ ] No STP topology changes in last 5 minutes
+
+## Escalation
+
+| Level | Team | Trigger |
+|---|---|---|
+| L3 Network Engineering | Network Engineering | STP loop detected, or widespread VLAN outage |
+
+## Related Articles
+
+- VLAN Configuration Procedure
+- Connectivity & Performance Troubleshooting`
+  },
+  {
+    id:'vlan-proc',
+    name:'VLAN Configuration — Procedure',
+    cat:'VLAN & Config',
+    badge:'proc', badgeLabel:'Procedure',
+    icon:'⚙️',
+    desc:'Step-by-step procedure for configuring a new VLAN',
+    keywords:['vlan','configure','create','add vlan','new vlan','provision','setup vlan'],
+    md:`# Procedure: VLAN Configuration
+
+> **Audience:** Network L3 Engineers · **Category:** VLAN & Config · **Type:** ADR/CHG
+
+---
+
+## Overview
+
+Step-by-step procedure for creating and configuring VLAN *(ID)* — *(VLAN name/purpose)* — on *(switch hostname(s))*.
+
+## Applies To
+
+- **VLAN ID:** *(e.g., 150)*
+- **VLAN Name:** *(e.g., STORE-GUEST)*
+- **Switch(es):** *(list hostnames)*
+- **Change Record:** *(CHG number)*
+
+## Prerequisites
+
+- [ ] Change window approved in ServiceNow
+- [ ] VLAN ID confirmed not in use: \`show vlan brief | include <vlan-id>\`
+- [ ] IP subnet assigned by network team: *(subnet/mask)*
+- [ ] Gateway IP confirmed: *(IP)*
+
+## Configuration Steps
+
+### Step 1: Create VLAN on Switch
+
+\`\`\`
+configure terminal
+ vlan <vlan-id>
+  name <VLAN-NAME>
+ end
+\`\`\`
+
+Verify: \`show vlan id <vlan-id>\`
+
+### Step 2: Configure SVI (L3 Gateway)
+
+\`\`\`
+configure terminal
+ interface vlan <vlan-id>
+  description <description>
+  ip address <gateway-ip> <subnet-mask>
+  no shutdown
+ end
+\`\`\`
+
+### Step 3: Add VLAN to Trunk Ports
+
+For each trunk port that should carry this VLAN:
+\`\`\`
+configure terminal
+ interface <trunk-interface>
+  switchport trunk allowed vlan add <vlan-id>
+ end
+\`\`\`
+
+Verify: \`show interface <trunk-interface> trunk\`
+
+### Step 4: Configure Access Ports (if applicable)
+
+\`\`\`
+configure terminal
+ interface <access-interface>
+  switchport mode access
+  switchport access vlan <vlan-id>
+  spanning-tree portfast
+ end
+\`\`\`
+
+### Step 5: Configure DHCP (if applicable)
+
+\`\`\`
+configure terminal
+ ip dhcp excluded-address <gateway-ip>
+ ip dhcp pool <POOL-NAME>
+  network <subnet> <mask>
+  default-router <gateway-ip>
+  dns-server <dns-ip>
+  lease 1
+ end
+\`\`\`
+
+### Step 6: Save Configuration
+
+\`\`\`
+copy running-config startup-config
+\`\`\`
+
+## Validation
+
+- [ ] \`show vlan id <vlan-id>\` — VLAN active
+- [ ] \`show interface vlan <vlan-id>\` — SVI up/up with correct IP
+- [ ] \`show interface <trunk> trunk\` — VLAN in allowed and active list
+- [ ] End device obtains IP in correct range
+- [ ] Ping from device to gateway succeeds
+- [ ] Ping to external destination succeeds
+
+## Rollback
+
+If the VLAN must be removed:
+\`\`\`
+configure terminal
+ no vlan <vlan-id>
+ no interface vlan <vlan-id>
+ interface <trunk-interface>
+  switchport trunk allowed vlan remove <vlan-id>
+ end
+copy running-config startup-config
+\`\`\`
+
+## Related Articles
+
+- VLAN & Config Troubleshooting
+- Post-Change Verification Checklist`
+  },
+  {
+    id:'monitoring-ts',
+    name:'Monitoring Alert Response',
+    cat:'Monitoring Alerts',
+    badge:'ts', badgeLabel:'Troubleshooting',
+    icon:'🔔',
+    desc:'Responding to and resolving network monitoring alerts',
+    keywords:['monitoring','alert','alarm','threshold','solarwinds','nagios','snmp','trap','node down','interface down','high cpu','high utilization','flapping'],
+    md:`# Troubleshooting: Monitoring Alert Response
+
+> **Audience:** NOC / L1–L2 · **Category:** Monitoring Alerts · **Type:** INC
+
+---
+
+## Overview
+
+Response procedure for monitoring alert: ***(Alert Name/Description)*** on device *(hostname)*.
+
+## Alert Details
+
+| Field | Value |
+|---|---|
+| Alert Name | *(e.g., Interface Down — GigabitEthernet0/1)* |
+| Device | *(hostname / IP)* |
+| Alert Time | *(timestamp)* |
+| Severity | *(Critical / Warning / Info)* |
+| Monitoring System | *(SolarWinds / Nagios / other)* |
+| Ticket | *(INC number)* |
+
+## Initial Triage
+
+### Step 1: Determine if Alert is Real or False Positive
+
+1. Check monitoring system for current device/interface status
+2. Ping the affected device/interface from NOC jump host:
+   \`\`\`
+   ping <device-ip> repeat 20
+   \`\`\`
+3. Check for related/correlated alerts on the same device or segment
+
+### Step 2: Assess Impact
+
+1. Identify what services or users depend on affected device/interface
+2. Check if this is a known maintenance window (verify in ServiceNow)
+3. Determine P1/P2/P3 severity based on impact
+
+### Step 3: Investigate Root Cause
+
+1. SSH to affected device and check status:
+   \`\`\`
+   show interface <interface>
+   show logging last 50
+   show environment all
+   \`\`\`
+2. For high CPU/memory alerts:
+   \`\`\`
+   show processes cpu sorted
+   show processes memory sorted
+   \`\`\`
+3. For node-down alerts — check physical layer, power, and upstream connectivity first
+
+## Resolution Steps
+
+*(Document specific steps taken to resolve this alert)*
+
+1. *(Action taken)*
+2. *(Action taken)*
+3. *(Outcome)*
+
+## Verification
+
+- [ ] Alert cleared in monitoring system
+- [ ] Device/interface shows green in dashboard
+- [ ] No recurring alerts in 10-minute window post-resolution
+- [ ] Root cause documented in ticket
+
+## False Positive / Maintenance Suppression
+
+If alert is due to planned maintenance:
+1. Suppress alert in *(monitoring system)* for maintenance window
+2. Note maintenance CHG number in ticket
+3. Re-enable alerting after maintenance window closes
+
+## Escalation
+
+| Condition | Escalate To | Timeline |
+|---|---|---|
+| Device unreachable, no known maintenance | L3 Network Engineering | Immediately |
+| Recurring false positives | Monitoring team | Next business day |
+| P1 impact (service outage) | NOC Lead + L3 | Immediately |
+
+## Related Articles
+
+- Connectivity & Performance Troubleshooting
+- NOC Escalation Procedure`
+  },
+  {
+    id:'change-monitoring-proc',
+    name:'Change Monitoring & Verification',
+    cat:'Change Monitoring',
+    badge:'run', badgeLabel:'Runbook',
+    icon:'📋',
+    desc:'Monitor network health during and after a change window',
+    keywords:['change','monitoring','maintenance','window','post-change','verify','rollback','chg','maintenance window','change window'],
+    md:`# Runbook: Change Monitoring & Verification
+
+> **Audience:** NOC / L1–L2 · **Category:** Change Monitoring · **Type:** ADR/CHG
+
+---
+
+## Purpose
+
+Provides NOC operators with steps to monitor network health during and immediately after a planned change window for change *(CHG number)*.
+
+## Change Details
+
+| Field | Value |
+|---|---|
+| Change Record | *(CHG number)* |
+| Change Description | *(brief description)* |
+| Change Owner | *(engineer name)* |
+| Maintenance Window | *(start time — end time, timezone)* |
+| Affected Devices | *(list hostnames)* |
+| Expected Disruption | *(e.g., "10-minute interface flap on GigE0/1")* |
+| Rollback Trigger | *(e.g., "BGP not restored within 5 min of step 3")* |
+
+## Pre-Change Checklist
+
+Complete before the maintenance window opens:
+
+- [ ] Confirm change record approved and change owner on-call
+- [ ] Baseline ping/traceroute from NOC jump host to affected destinations
+- [ ] Screenshot or note current monitoring status (green/yellow/red counts)
+- [ ] Suppress monitoring alerts for affected devices in *(monitoring system)* for window duration
+- [ ] Confirm rollback procedure is documented and change owner is ready
+
+## During-Change Monitoring
+
+Monitor every **5 minutes** while change is in progress:
+
+1. Check monitoring dashboard for new alerts on affected segment
+2. Ping critical destinations from jump host:
+   \`\`\`
+   ping <critical-destination> repeat 20
+   \`\`\`
+3. Verify expected disruptions match what was planned
+4. Log any unexpected alerts in the change ticket immediately
+
+> **⚠ Trigger Rollback if:** Any unplanned, unrecoverable impact is observed. Contact change owner immediately.
+
+## Post-Change Verification
+
+Complete within **15 minutes** of change window close:
+
+- [ ] All suppressed alerts re-enabled in monitoring system
+- [ ] No new/unexpected alerts firing
+- [ ] Ping all critical destinations — confirm baseline restored
+- [ ] Traceroute confirms expected path (compare to pre-change baseline)
+- [ ] Change owner confirms work complete and successful
+- [ ] Update change record status to "Implemented"
+
+## Rollback Decision Matrix
+
+| Condition | Action |
+|---|---|
+| Expected disruption resolves within window | Continue — no action |
+| Unexpected disruption, change owner available | Contact owner immediately |
+| Unexpected P1 impact, owner unreachable | Escalate to NOC Lead |
+| Owner requests rollback | Execute per change rollback plan |
+
+## Documentation
+
+After window closes, update ServiceNow ticket with:
+- Actual start/end time
+- Any unexpected events observed
+- Final status (successful / rolled back / partial)
+
+## Related Articles
+
+- NOC Escalation Procedure
+- Post-Change Verification Checklist
+- Connectivity & Performance Troubleshooting`
+  },
+  {
+    id:'circuit-decomm',
+    name:'Circuit Decommission',
+    cat:'Circuit Decommission',
+    badge:'proc', badgeLabel:'Procedure',
+    icon:'🔌',
+    desc:'End-to-end procedure for decommissioning a network circuit',
+    keywords:['circuit','decommission','decomm','disconnect','cancel','remove circuit','retire','wan','mpls','internet circuit'],
+    md:`# Procedure: Circuit Decommission
+
+> **Audience:** Network L3 Engineers · **Category:** Circuit Decommission · **Type:** ADR/CHG
+
+---
+
+## Overview
+
+End-to-end decommission procedure for circuit *(circuit ID / description)* at *(location/site)*. This includes configuration removal, ISP notification, and documentation.
+
+## Circuit Details
+
+| Field | Value |
+|---|---|
+| Circuit ID | *(carrier circuit ID)* |
+| Carrier / ISP | *(carrier name)* |
+| Site / Location | *(site name or address)* |
+| Router/Device | *(hostname)* |
+| Interface | *(interface name)* |
+| Change Record | *(CHG number)* |
+| Decommission Date | *(date)* |
+| Requester | *(name / ticket)* |
+
+## Prerequisites
+
+- [ ] Confirmed circuit is no longer in use — no active traffic for *(X)* days
+- [ ] Replacement circuit (if applicable) is verified as stable
+- [ ] Change record approved with rollback plan
+- [ ] ISP disconnect order placed (Order #: *(order number)*)
+- [ ] Business owner sign-off obtained
+- [ ] IP addresses/subnets noted for reclamation
+
+## Decommission Steps
+
+### Step 1: Verify No Active Traffic
+
+1. Check interface utilization for past 7 days in *(monitoring system)*
+2. Confirm with site/application owner that circuit is not in use
+
+### Step 2: Remove Configuration
+
+1. Back up current device config before changes:
+   \`\`\`
+   show running-config | redirect tftp://<tftp-server>/<hostname>-predecomm.cfg
+   \`\`\`
+
+2. Remove interface configuration:
+   \`\`\`
+   configure terminal
+    no interface <interface>
+    ! Or for sub-interfaces:
+    interface <interface>
+     shutdown
+     no ip address
+     description DECOMMISSIONED - <date>
+    end
+   \`\`\`
+
+3. Remove associated routing (BGP/static):
+   \`\`\`
+   configure terminal
+    no router bgp <asn>       ! if BGP peering
+    no ip route <network> <mask> <next-hop>   ! if static route
+    end
+   \`\`\`
+
+4. Remove from monitoring:
+   - Remove device/interface from *(SolarWinds / Nagios)*
+   - Archive configuration in *(config management system)*
+
+5. Save configuration:
+   \`\`\`
+   copy running-config startup-config
+   \`\`\`
+
+### Step 3: Physical Disconnection
+
+1. Coordinate with site team to physically remove cross-connect/patch
+2. Label demarcation port as DECOMMISSIONED
+3. Photograph demarcation point for records
+
+### Step 4: ISP Confirmation
+
+1. Confirm ISP has completed disconnect on their end
+2. Obtain final confirmation email/ticket from ISP and attach to CHG
+
+## Verification
+
+- [ ] Interface config removed or marked decommissioned
+- [ ] No routing entries referencing decommissioned circuit
+- [ ] Monitoring no longer alerting on this circuit
+- [ ] ISP confirmed disconnect
+- [ ] IP addresses/subnets returned to IP management system
+- [ ] Change record updated and closed
+
+## Rollback
+
+If decommission must be reversed before ISP disconnect:
+1. Re-apply saved pre-decommission config from backup
+2. Restore interface, routing, and monitoring
+3. Contact ISP to cancel disconnect order
+
+## Documentation
+
+Update the following after completion:
+- [ ] Network diagram / Visio
+- [ ] IP address management (IPAM) system
+- [ ] Asset management / CMDB
+- [ ] Site documentation
+
+## Related Articles
+
+- Connectivity & Performance Troubleshooting
+- Post-Change Verification Checklist`
+  },
+  {
+    id:'hardware-ts',
+    name:'Hardware & Physical Failure',
+    cat:'Hardware & Physical',
+    badge:'ts', badgeLabel:'Troubleshooting',
+    icon:'🖥️',
+    desc:'Network device hardware failure, SFP issues, or physical layer problems',
+    keywords:['hardware','physical','sfp','optic','transceiver','cable','fiber','port','power','psu','fan','crash','reload','reboot','module'],
+    md:`# Troubleshooting: Hardware & Physical Failure
+
+> **Audience:** NOC / L1–L2 · **Category:** Hardware & Physical · **Type:** INC
+
+---
+
+## Overview
+
+Troubleshooting steps for suspected hardware failure or physical layer issues on *(device hostname)* at *(location)*.
+
+## Applies To
+
+- **Device:** *(hostname / model)*
+- **Location:** *(site / rack / location)*
+- **Interface / Module:** *(if applicable)*
+- **Impact:** *(describe affected services)*
+
+## Symptoms
+
+- [ ] Device unreachable / not responding to ping
+- [ ] Interface down — physical layer suspected (not config)
+- [ ] SFP / optic module errors or not detected
+- [ ] High error counters on interface (CRC, input errors, giants)
+- [ ] Environmental alerts (temperature, fan, PSU) in monitoring
+- [ ] Device crash / unexpected reload
+
+## Troubleshooting Steps
+
+### Step 1: Verify Physical Layer
+
+1. Check interface physical status:
+   \`\`\`
+   show interface <interface>
+   show interface <interface> counters errors
+   \`\`\`
+   > **Look for:** \`line protocol is down\`, CRC errors, input errors, giants
+
+2. Check SFP/optic health:
+   \`\`\`
+   show interfaces <interface> transceiver
+   show interfaces <interface> transceiver detail
+   \`\`\`
+   > **Check:** Rx/Tx power within acceptable range, no DOM alarms
+
+3. Check hardware environment:
+   \`\`\`
+   show environment all
+   show version
+   show logging last 100 | include ERROR|FAIL|temperature|PSU|fan
+   \`\`\`
+
+### Step 2: Physical Inspection (if on-site or via remote hands)
+
+- [ ] Check physical cable seating (patch cable, fiber connectors)
+- [ ] Check link light on both ends — should be solid green
+- [ ] Inspect SFP for visible damage or contamination
+- [ ] Check device power lights (PSU status)
+- [ ] Check for overheating indicators (fan noise, temperature LEDs)
+
+### Step 3: Isolate and Swap
+
+1. Try a known-good cable on the affected port
+2. Try moving to a different port on the same device
+3. If SFP suspected — swap with a spare of the same type
+4. If device is dual-homed — fail over to secondary path while diagnosing
+
+### Step 4: Check Crash Logs (if device reloaded)
+
+\`\`\`
+show version | include uptime
+show logging | include CRASH|Traceback|%SYS
+show tech-support    ! for TAC engagement
+\`\`\`
+
+## Verification
+
+- [ ] Interface shows as up/up with no incrementing errors
+- [ ] Ping succeeds with no packet loss
+- [ ] No environmental alarms in \`show environment\`
+- [ ] Monitoring alerts cleared
+
+## Escalation
+
+| Condition | Action |
+|---|---|
+| Physical hardware failure confirmed | Open vendor/TAC case; coordinate RMA |
+| Device crash / memory corruption | Engage L3 + vendor TAC |
+| On-site physical work required | Dispatch field tech / remote hands |
+
+## Hardware Replacement Notes
+
+- Document serial numbers before and after replacement
+- Retain failed hardware for RMA per vendor process
+- Update CMDB / asset management after replacement
+
+## Related Articles
+
+- Connectivity & Performance Troubleshooting
+- NOC Escalation Procedure`
+  },
+  {
+    id:'isp-fiber-ts',
+    name:'ISP & Fiber Outage',
+    cat:'ISP & Fiber',
+    badge:'ts', badgeLabel:'Troubleshooting',
+    icon:'📡',
+    desc:'ISP circuit outage, fiber cut, or carrier-side failure',
+    keywords:['isp','fiber','carrier','wan','circuit','internet','provider','bgp','upstream','dark fiber','mpls','broadband','lte','failover'],
+    md:`# Troubleshooting: ISP & Fiber Outage
+
+> **Audience:** NOC / L1–L2 · **Category:** ISP & Fiber · **Type:** INC
+
+---
+
+## Overview
+
+Troubleshooting and ISP escalation steps for circuit outage on *(circuit ID)* provided by *(carrier name)* at *(site/location)*.
+
+## Circuit Details
+
+| Field | Value |
+|---|---|
+| Circuit ID | *(carrier circuit ID)* |
+| Carrier | *(ISP / carrier name)* |
+| Site | *(location)* |
+| Interface | *(router interface)* |
+| Backup Circuit | *(backup circuit ID, if applicable)* |
+| ISP NOC Phone | *(phone number)* |
+| ISP Portal | *(URL or ticket system)* |
+
+## Symptoms
+
+- [ ] WAN interface down — physical or protocol
+- [ ] BGP peer to ISP not established
+- [ ] All traffic on this circuit failing
+- [ ] Latency spike / packet loss toward ISP
+- [ ] ISP monitoring alert or proactive notification received
+
+## Troubleshooting Steps
+
+### Step 1: Verify Local Router Side
+
+1. Check WAN interface status:
+   \`\`\`
+   show interface <wan-interface>
+   show ip bgp summary
+   show logging last 50 | include <wan-interface>
+   \`\`\`
+
+2. Verify physical layer:
+   - Check SFP/optic power levels: \`show interfaces <int> transceiver\`
+   - Confirm patch cable to demarcation is seated
+   - Check for loss of signal (LOS) alarm on interface
+
+### Step 2: Check Demarcation Point
+
+1. Contact site/remote hands to physically inspect demarcation
+2. Verify router to demarc cable is connected
+3. Check for ISP-side lights/LEDs at demarc (if accessible)
+
+### Step 3: Determine Failover Status
+
+1. Verify backup circuit is active and carrying traffic:
+   \`\`\`
+   show ip route
+   show bgp summary
+   \`\`\`
+2. Confirm users are being served via backup path (reduced performance expected)
+3. Note failover time in ticket
+
+### Step 4: Engage ISP NOC
+
+1. Call ISP NOC: *(phone number)*
+2. Provide: Circuit ID, site address, outage start time, symptoms observed
+3. Request: ISP-side status, active ticket number, estimated time to restore (ETR)
+4. Escalate to ISP account manager if no ETR provided within 30 minutes
+
+## ISP Escalation Template
+
+> Circuit ID: *(ID)*
+> Site: *(address)*
+> Outage Start: *(time)*
+> Symptoms: *(WAN interface down / BGP down / packet loss)*
+> Local checks completed: Interface status verified, cable checked, SFP power OK
+> Impact: *(number of users / critical services affected)*
+> Requesting: Current ISP-side status and estimated time to restore.
+
+## Verification
+
+- [ ] WAN interface up/up
+- [ ] BGP peering re-established with ISP
+- [ ] Traffic flowing via primary circuit
+- [ ] Backup circuit (if used) returned to standby
+- [ ] ISP ticket closed / root cause provided
+
+## Escalation
+
+| Level | When | Contact |
+|---|---|---|
+| NOC Lead | Within 15 min if P1 impact | *(contact)* |
+| L3 Engineering | BGP not restored within 30 min | *(contact)* |
+| ISP Account Manager | No ETR from ISP NOC within 30 min | *(contact)* |
+
+## Related Articles
+
+- Connectivity & Performance Troubleshooting
+- NOC Escalation Procedure
+- Hardware & Physical Failure Troubleshooting`
+  },
+  {
+    id:'noc-escalation',
+    name:'NOC Escalation Procedure',
+    cat:'NOC Escalations',
+    badge:'run', badgeLabel:'Runbook',
+    icon:'📞',
+    desc:'When and how to escalate incidents from NOC to L2/L3',
+    keywords:['escalation','escalate','noc','l2','l3','on-call','pager','priority','p1','p2','p3','critical','severity','sla'],
+    md:`# Runbook: NOC Escalation Procedure
+
+> **Audience:** NOC / L1–L2 · **Category:** NOC Escalations · **Type:** Reference
+
+---
+
+## Purpose
+
+Defines when and how NOC operators should escalate incidents to L2/L3 Network Engineering to ensure SLA compliance and appropriate response.
+
+## Escalation Triggers
+
+Escalate immediately when ANY of the following conditions are met:
+
+- **P1 — Critical:** Major outage impacting multiple stores/sites, data center, or critical business systems
+- **P2 — High:** Single site complete outage, or high-impact partial outage not resolved within 30 min
+- **P3 — Medium:** Degraded service (not fully down) not resolved within 1 hour
+- Any confirmed hardware failure requiring RMA or on-site dispatch
+- ISP outage with no ETR from carrier after 30 minutes
+- Security incident suspected (unusual traffic patterns, unauthorized access attempts)
+- Change causing unexpected P1/P2 impact
+
+## Severity Definitions
+
+| Priority | Definition | Initial Response | Update Frequency | Resolution Target |
+|---|---|---|---|---|
+| P1 — Critical | Complete outage, major business impact | 15 min | Every 30 min | 4 hrs |
+| P2 — High | Significant degradation or single-site outage | 30 min | Every 1 hr | 8 hrs |
+| P3 — Medium | Partial degradation, limited impact | 2 hrs | Every 4 hrs | 24 hrs |
+| P4 — Low | Minor issue, no immediate business impact | Next business day | As needed | 5 days |
+
+## Escalation Path
+
+\`\`\`
+NOC Operator (L1)
+     ↓ (15–30 min, or immediately for P1)
+NOC Lead / L2 Network Operations
+     ↓ (30 min unresolved, or immediately for P1)
+L3 Network Engineering (On-Call)
+     ↓ (if vendor/carrier involved)
+ISP NOC / Vendor TAC
+     ↓ (P1 with business impact > 1 hr)
+Network Manager / Leadership
+\`\`\`
+
+## How to Escalate
+
+### Step 1: Document Before Escalating
+
+In the ServiceNow ticket, record:
+- Exact time issue was first observed
+- Symptoms and affected scope (devices, sites, users)
+- All troubleshooting steps taken and results
+- Current status
+
+### Step 2: Contact On-Call Engineer
+
+1. Call on-call L3 engineer: *(phone / pager)*
+2. Send page via *(paging system)*
+3. Bridge line: *(bridge number and passcode)*
+
+### Step 3: Provide Handoff Information
+
+When reaching L3, provide:
+- Ticket number and current status
+- Impact scope and severity assessment
+- Steps already taken
+- Your assessment of root cause (if known)
+- Any time-sensitive dependencies (SLAs, business hours, shift changes)
+
+### Step 4: Stay Engaged
+
+- Do not abandon the ticket after escalating
+- Continue monitoring and update ticket every 30 min (P1) or 1 hr (P2)
+- Handle communications to affected users/teams unless L3 takes over
+- Confirm handoff is complete before end of shift
+
+## Communication Templates
+
+**Initial Stakeholder Notification (P1/P2):**
+> We are currently investigating *(describe issue)* affecting *(scope)*. Impact began at *(time)*. L3 engineering has been engaged. Next update in 30 minutes.
+
+**Resolution Notification:**
+> The issue affecting *(system/site)* has been resolved at *(time)*. Root cause: *(brief summary)*. *(Any follow-up actions if applicable.)*
+
+## After Escalation
+
+- [ ] Ticket updated with all actions and resolution
+- [ ] Root cause documented (even if preliminary)
+- [ ] Problem record opened if recurring issue
+- [ ] Post-incident review scheduled if P1
+
+## Related Articles
+
+- Connectivity & Performance Troubleshooting
+- ISP & Fiber Outage Troubleshooting
+- Change Monitoring Runbook`
+  },
+  {
+    id:'post-change-verify',
+    name:'Post-Change Verification',
+    cat:'Change Monitoring',
+    badge:'run', badgeLabel:'Runbook',
+    icon:'✅',
+    desc:'Checklist to verify network health after any change',
+    keywords:['post-change','verify','verification','after change','rollback','health check','baseline','confirm'],
+    md:`# Runbook: Post-Change Verification Checklist
+
+> **Audience:** NOC / L1–L2 · **Category:** Change Monitoring · **Type:** ADR/CHG
+
+---
+
+## Purpose
+
+Standardized verification checklist to confirm network health is restored after any planned change. Complete within **15 minutes** of change window close.
+
+## Change Reference
+
+| Field | Value |
+|---|---|
+| Change Record | *(CHG number)* |
+| Change Description | *(brief description)* |
+| Change Owner | *(name)* |
+| Change Completed At | *(time)* |
+
+## Verification Checklist
+
+### 1. Connectivity Checks
+
+- [ ] Ping critical destinations from NOC jump host — **0% packet loss**
+   \`\`\`
+   ping <destination-1> repeat 50
+   ping <destination-2> repeat 50
+   \`\`\`
+- [ ] Traceroute confirms expected path (compare to pre-change baseline)
+- [ ] No unexpected routing changes in \`show ip route\`
+
+### 2. Device Health
+
+- [ ] All affected devices responding to management ping
+- [ ] No unexpected interface state changes: \`show interface status | include err|down\`
+- [ ] No incrementing error counters on affected interfaces
+- [ ] CPU/memory within normal range: \`show processes cpu\` / \`show processes memory\`
+
+### 3. Routing Protocol Health
+
+- [ ] BGP neighbors established (if applicable): \`show bgp summary\`
+- [ ] OSPF neighbors in FULL state (if applicable): \`show ip ospf neighbor\`
+- [ ] Routing table matches pre-change baseline
+
+### 4. Monitoring Platform
+
+- [ ] All suppressed alerts re-enabled in *(SolarWinds / Nagios)*
+- [ ] No new unexpected alerts firing after alert suppression lifted
+- [ ] Dashboard shows expected green status for affected devices
+
+### 5. Application / Service Validation
+
+- [ ] *(Application owner / service team)* confirms service is healthy
+- [ ] *(End-to-end test specific to this change — describe here)*
+
+## Pass / Fail Decision
+
+| Result | Action |
+|---|---|
+| All checks pass | Close change as successful. Document in ServiceNow. |
+| Minor issue found | Notify change owner. Open follow-up INC if needed. |
+| Critical issue found | Initiate rollback per change plan. Escalate if P1. |
+
+## Rollback Trigger
+
+Initiate rollback and notify change owner immediately if:
+- Any critical service unreachable after change
+- BGP/OSPF neighbors not restored within 5 minutes
+- Change owner confirms rollback required
+
+## Documentation
+
+Update ServiceNow change record with:
+- [ ] Actual completion time
+- [ ] Verification results (pass/fail per section)
+- [ ] Any anomalies observed
+- [ ] Final status: Successful / Rolled Back / Partially Successful
+
+## Related Articles
+
+- Change Monitoring Runbook
+- NOC Escalation Procedure
+- Connectivity & Performance Troubleshooting`
+  },
+  {
+    id:'general-ts',
+    name:'General Troubleshooting',
+    cat:'Other / General',
+    badge:'ts', badgeLabel:'Troubleshooting',
+    icon:'🔧',
+    desc:'General-purpose network troubleshooting template',
+    keywords:['general','other','issue','problem','outage','incident','network','troubleshoot'],
+    md:`# Troubleshooting: *(Issue Title)*
+
+> **Audience:** NOC / L1–L2 · **Category:** *(category)* · **Type:** INC
+
+---
+
+## Overview
+
+*(Provide a brief description of the issue, what is affected, and the business impact.)*
+
+## Applies To
+
+- **Affected Systems:** *(list devices, systems, or locations)*
+- **Environments:** Production / Non-Production
+- **Impact:** *(number of users / services affected)*
+
+## Symptoms
+
+- [ ] *(Symptom 1)*
+- [ ] *(Symptom 2)*
+- [ ] *(Symptom 3)*
+
+## Prerequisites
+
+- [ ] *(Required access or tools)*
+- [ ] *(Pre-checks to complete before starting)*
+
+## Troubleshooting Steps
+
+### Step 1: Initial Assessment
+
+1. *(First action — e.g., confirm scope of impact)*
+2. *(Second action)*
+3. *(Third action)*
+
+### Step 2: Investigate Root Cause
+
+1. *(Action)*
+   \`\`\`
+   *(command)*
+   \`\`\`
+2. *(Action)*
+
+### Step 3: Apply Resolution
+
+1. *(Resolution step)*
+2. *(Resolution step)*
+
+> **⚠ Warning:** *(Any risk or caution here)*
+
+## Verification
+
+- [ ] *(Check 1 — confirm issue resolved)*
+- [ ] *(Check 2)*
+- [ ] Monitoring alerts cleared
+
+## Escalation
+
+| Level | Team | Trigger |
+|---|---|---|
+| L2 NOC Lead | Network Operations | After 15 min unresolved |
+| L3 Engineering | Network Engineering | After 30 min, or P1 immediately |
+
+## Additional Notes
+
+- *(Any environment-specific context, gotchas, or known issues)*
+
+## Related Articles
+
+- NOC Escalation Procedure
+- Post-Change Verification Checklist`
+  },
+];
+
+// ── Keyword → template matching ───────
+function _kbAutoMatch(text){
+  if(!text) return null;
+  const lower = text.toLowerCase();
+  let best = null, bestScore = 0;
+  for(const tpl of KB_TEMPLATES){
+    const score = tpl.keywords.reduce((s,kw) => s + (lower.includes(kw) ? 1 : 0), 0);
+    if(score > bestScore){ bestScore = score; best = tpl.id; }
+  }
+  return bestScore > 0 ? best : null;
+}
+
+// ── Render template cards ─────────────
+function kbRenderTemplateGrid(filter=''){
+  const lower = filter.toLowerCase();
+  const filtered = KB_TEMPLATES.filter(t =>
+    !lower ||
+    t.name.toLowerCase().includes(lower) ||
+    t.desc.toLowerCase().includes(lower) ||
+    t.cat.toLowerCase().includes(lower) ||
+    t.keywords.some(k => k.includes(lower))
+  );
+  if(!filtered.length) return '<div style="padding:20px;color:var(--g400);font-size:13px">No templates match your search.</div>';
+  return filtered.map(t => `
+    <button class="kb-tpl-card" onclick="kbSelectTemplate('${t.id}')" id="kbtpl-${t.id}">
+      <span class="kb-tpl-icon">${t.icon}</span>
+      <span class="kb-tpl-badge ${t.badge}">${t.badgeLabel}</span>
+      <div class="kb-tpl-name">${t.name}</div>
+      <div class="kb-tpl-desc">${t.desc}</div>
+    </button>`).join('');
+}
+
+// ── Select a template ─────────────────
+function kbSelectTemplate(id){
+  const tpl = KB_TEMPLATES.find(t => t.id === id);
+  if(!tpl) return;
+  // Highlight selected card
+  document.querySelectorAll('.kb-tpl-card').forEach(c => c.classList.remove('selected'));
+  const card = document.getElementById('kbtpl-'+id);
+  if(card) card.classList.add('selected');
+  // Render output
+  const md = tpl.md;
+  window._kbLastMd = md;
+  document.getElementById('kbOutputLabel').textContent = tpl.name + ' — fill in the italicised placeholders';
+  document.getElementById('kbRendered').innerHTML = kbRenderMd(md);
+  document.getElementById('kbRaw').value = md;
+  document.getElementById('kbRaw').style.display = 'none';
+  document.querySelector('.kb-raw-bar button').textContent = 'View raw markdown';
+  document.getElementById('kbErrorBox').style.display = 'none';
+  document.getElementById('kbOutput').style.display = 'block';
+  document.getElementById('kbOutput').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
 // ── Navigation ────────────────────────
 function openKBPage(){
   showView('view-kb','navKB','kb',buildKBView);
@@ -7780,9 +8999,16 @@ function buildKBView(){
   <div class="kb-header">
     <div class="kb-head-text">
       <div class="kb-head-title">KB Article Generator</div>
-      <div class="kb-head-sub" id="kbHeadSub">${_GROQ_KEY ? 'AI-powered · generate a professional KB article in seconds' : 'Smart draft mode — AI not configured &nbsp;<a href="#" onclick="kbShowSetup();return false" style="color:var(--orange600)">set up AI →</a>'}</div>
+      <div class="kb-head-sub" id="kbHeadSub">${_GROQ_KEY ? 'AI-powered · generate a professional KB article in seconds' : 'Pick a template to get started — or describe what you need below'}</div>
     </div>
   </div>
+
+  <!-- Template Library -->
+  <div class="kb-sec-label">Start from a template</div>
+  <input class="kb-tpl-search" type="text" placeholder="Search templates…" oninput="document.getElementById('kbTplGrid').innerHTML=kbRenderTemplateGrid(this.value)">
+  <div class="kb-tpl-grid" id="kbTplGrid">${kbRenderTemplateGrid()}</div>
+
+  <div class="kb-divider-or">or create custom</div>
 
   <!-- Mode toggle -->
   <div class="kb-mode-row">
