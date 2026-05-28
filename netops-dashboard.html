@@ -526,6 +526,59 @@ tbody tr:hover td{background:var(--g100)}
 .kb-divider-or::before,.kb-divider-or::after{content:'';flex:1;height:1px;background:var(--g200)}
 @media(max-width:768px){.kb-tpl-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:480px){.kb-tpl-grid{grid-template-columns:1fr}}
+/* KB Category Cards */
+.kb-hero{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;gap:20px;flex-wrap:wrap}
+.kb-hero-left{}
+.kb-hero-title{font-size:22px;font-weight:700;color:var(--g900);line-height:1.2}
+.kb-hero-sub{font-size:13px;color:var(--g500);margin-top:5px}
+.kb-hero-search{flex:0 0 320px}
+.kb-cat-section-label{font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+.kb-cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:6px}
+.kb-cat-card{border:1.5px solid var(--g200);border-radius:12px;padding:16px 12px;cursor:pointer;transition:all .18s;background:#fff;text-align:center;user-select:none;font-family:inherit;width:100%}
+.kb-cat-card:hover{border-color:var(--orange300);box-shadow:0 4px 16px rgba(245,148,60,.14);transform:translateY(-2px)}
+.kb-cat-card.selected{border-color:var(--orange500);background:rgba(251,146,60,.05);box-shadow:0 4px 20px rgba(245,148,60,.18)}
+.kb-cat-icon-wrap{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#fff7ed,#ffedd5);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;transition:all .18s;color:var(--orange500)}
+.kb-cat-card:hover .kb-cat-icon-wrap,.kb-cat-card.selected .kb-cat-icon-wrap{background:linear-gradient(135deg,#ffedd5,#fed7aa)}
+.kb-cat-name{font-size:11.5px;font-weight:700;color:var(--g800);line-height:1.3;margin-bottom:7px}
+.kb-cat-counts{display:flex;align-items:center;justify-content:center;gap:5px;flex-wrap:wrap}
+.kb-cat-count{font-size:10.5px;font-weight:600;color:var(--g500);background:var(--g100);padding:2px 7px;border-radius:99px}
+.kb-cat-count.hi{color:var(--orange700);background:rgba(251,146,60,.12)}
+/* Category detail panel */
+.kb-cat-panel{margin-bottom:22px}
+.kb-cat-panel-box{border:1px solid var(--g200);border-radius:12px;overflow:hidden;animation:kbPanelIn .2s ease}
+@keyframes kbPanelIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.kb-cat-panel-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--g50);border-bottom:1px solid var(--g200)}
+.kb-cat-panel-title{font-size:13px;font-weight:700;color:var(--g800)}
+.kb-cat-panel-close{background:none;border:none;color:var(--g400);cursor:pointer;font-size:20px;line-height:1;padding:0 4px;border-radius:4px;transition:color .1s}
+.kb-cat-panel-close:hover{color:var(--g700)}
+.kb-cat-panel-body{display:flex;gap:0}
+.kb-cat-panel-left{flex:1;padding:14px 16px;min-width:0;border-right:1px solid var(--g100)}
+.kb-cat-panel-right{width:216px;flex-shrink:0;padding:14px 16px}
+.kb-cat-panel-sub{font-size:10px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:9px}
+.kb-cat-ticket-row{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:7px;cursor:pointer;transition:background .1s}
+.kb-cat-ticket-row:hover{background:var(--g50)}
+.kb-cat-ticket-badge{font-size:10px;font-weight:700;padding:1px 5px;border-radius:3px;white-space:nowrap;flex-shrink:0}
+.kb-cat-ticket-badge.INC{background:#fef3c7;color:#92400e}
+.kb-cat-ticket-badge.ADR{background:#dbeafe;color:#1e40af}
+.kb-cat-ticket-num{font-size:11px;font-weight:700;color:var(--orange600);font-family:monospace;white-space:nowrap;flex-shrink:0;width:88px}
+.kb-cat-ticket-desc{font-size:12px;color:var(--g700);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kb-cat-ticket-kb{background:none;border:none;font-size:11px;color:var(--orange600);font-weight:600;cursor:pointer;padding:0 0 0 4px;white-space:nowrap;text-decoration:underline;flex-shrink:0;font-family:inherit}
+.kb-cat-tpl-btn{display:block;width:100%;text-align:left;border:1px solid var(--g200);border-radius:8px;padding:9px 11px;margin-bottom:7px;cursor:pointer;background:#fff;transition:all .15s;font-family:inherit}
+.kb-cat-tpl-btn:hover{border-color:var(--orange400);background:rgba(251,146,60,.04)}
+.kb-cat-tpl-icon{font-size:15px;margin-bottom:3px;display:block}
+.kb-cat-tpl-name{font-size:12px;font-weight:600;color:var(--g800);margin-bottom:2px}
+.kb-cat-tpl-type{font-size:10.5px;color:var(--g400)}
+.kb-cat-new-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:0;padding:10px;border:1.5px dashed var(--orange300);border-radius:0 0 11px 11px;background:rgba(251,146,60,.02);color:var(--orange600);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;border-top:1px solid var(--g200);border-left:none;border-right:none}
+.kb-cat-new-btn:hover{background:rgba(251,146,60,.07)}
+.kb-cat-empty{padding:20px;text-align:center;color:var(--g400);font-size:13px}
+@media(max-width:768px){
+  .kb-hero{flex-direction:column;align-items:flex-start}
+  .kb-hero-search{width:100%;flex:none}
+  .kb-cat-grid{grid-template-columns:repeat(4,1fr)}
+  .kb-cat-panel-body{flex-direction:column}
+  .kb-cat-panel-right{width:auto;border-top:1px solid var(--g100)}
+}
+@media(max-width:540px){.kb-cat-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -9172,6 +9225,26 @@ Update ServiceNow change record with:
   },
 ];
 
+// ── Category card data (icon SVGs + template links) ────────────
+const KB_CAT_DATA = [
+  { cat:'Other / General',            tplIds:['general-ts','noc-escalation','post-change-verify'],
+    svg:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>' },
+  { cat:'Change Monitoring',          tplIds:['change-monitoring-proc'],
+    svg:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><line x1="6" y1="9" x2="6" y2="21"/></svg>' },
+  { cat:'VLAN & Config',              tplIds:['vlan-ts','vlan-proc'],
+    svg:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>' },
+  { cat:'Connectivity & Performance', tplIds:['connectivity-ts'],
+    svg:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>' },
+  { cat:'Circuit Decommission',       tplIds:['circuit-decomm'],
+    svg:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>' },
+  { cat:'Hardware & Physical',        tplIds:['hardware-ts'],
+    svg:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>' },
+  { cat:'Monitoring Alerts',          tplIds:['monitoring-ts'],
+    svg:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>' },
+  { cat:'ISP & Fiber',                tplIds:['isp-fiber-ts'],
+    svg:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>' },
+];
+
 // ── Keyword → template matching ───────
 function _kbAutoMatch(text){
   if(!text) return null;
@@ -9290,44 +9363,65 @@ function kbRenderMd(md){
 function buildKBView(){
   const page = document.getElementById('kbPage');
   if(!page) return;
+
+  // Category cards
+  const catCards = KB_CAT_DATA.map(c => {
+    const cnt = T.filter(t => t.cat === c.cat).length;
+    const catEsc = escHtml(c.cat).replace(/'/g,"\\'");
+    return `<button class="kb-cat-card" data-cat="${escHtml(c.cat)}" onclick="kbSelectCategory('${catEsc}')">
+  <div class="kb-cat-icon-wrap">${c.svg}</div>
+  <div class="kb-cat-name">${escHtml(c.cat)}</div>
+  <div class="kb-cat-counts">
+    <span class="kb-cat-count hi">${cnt} tickets</span>
+    <span class="kb-cat-count">${c.tplIds.length} tpl</span>
+  </div>
+</button>`;
+  }).join('\n');
+
   page.innerHTML = `
 <div class="kb-wrap">
-  <!-- Header -->
-  <div class="kb-header">
-    <div class="kb-head-text">
-      <div class="kb-head-title">KB Article Generator</div>
-      <div class="kb-head-sub">Generate from a ticket · describe a scenario · or pick a template</div>
+
+  <!-- ── Hero ── -->
+  <div class="kb-hero">
+    <div class="kb-hero-left">
+      <div class="kb-hero-title">KB Article Generator</div>
+      <div class="kb-hero-sub">Browse by category · find a ticket · or describe a scenario</div>
+    </div>
+    <div class="kb-hero-search">
+      <div class="kb-combo-wrap" id="kbComboWrap">
+        <div class="kb-combo-input-row">
+          <span class="kb-combo-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </span>
+          <input class="kb-combo-input" id="kbComboInput" type="text"
+            placeholder="Search by ticket #, description, assignee…"
+            autocomplete="off"
+            oninput="kbComboInput(this.value)"
+            onfocus="kbComboOpen()"
+            onkeydown="kbComboKey(event)">
+          <button class="kb-combo-clear" id="kbComboClear" onclick="kbComboClear()" tabindex="-1">×</button>
+        </div>
+        <div class="kb-combo-dropdown" id="kbComboDropdown">
+          <div id="kbComboList">${kbComboRecent()}</div>
+          <div class="kb-combo-footer">↑↓ navigate · Enter select · Esc close</div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- 1. From a ticket -->
-  <div class="kb-sec-label">1 · From a ticket</div>
-  <div class="kb-combo-wrap" id="kbComboWrap">
-    <div class="kb-combo-input-row">
-      <span class="kb-combo-icon">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      </span>
-      <input class="kb-combo-input" id="kbComboInput" type="text"
-        placeholder="Search tickets by number, description, assignee…"
-        autocomplete="off"
-        oninput="kbComboInput(this.value)"
-        onfocus="kbComboOpen()"
-        onkeydown="kbComboKey(event)">
-      <button class="kb-combo-clear" id="kbComboClear" onclick="kbComboClear()" tabindex="-1">×</button>
-    </div>
-    <div class="kb-combo-dropdown" id="kbComboDropdown">
-      <div id="kbComboList">${kbComboRecent()}</div>
-      <div class="kb-combo-footer">↑↓ navigate · Enter select · Esc close</div>
-    </div>
-  </div>
+  <!-- Selected ticket card (from search) -->
   <div id="kbSelectedTicketCard" style="display:none"></div>
 
-  <div class="kb-divider-or">or describe / improve</div>
+  <!-- ── Category grid ── -->
+  <div class="kb-cat-section-label">Browse by category</div>
+  <div class="kb-cat-grid" id="kbCatGrid">${catCards}</div>
 
-  <!-- 2. From description / improve -->
-  <div class="kb-sec-label">2 · From description or existing article</div>
+  <!-- Category detail panel -->
+  <div class="kb-cat-panel" id="kbCatPanel"></div>
 
-  <!-- Mode toggle -->
+  <!-- ── Write / improve section ── -->
+  <div class="kb-divider-or">or describe / improve an article</div>
+
   <div class="kb-mode-row">
     <button class="kb-mode-btn active" id="kbModeImprove" onclick="setKBMode('improve')">
       ✦ &nbsp;Improve Existing KB
@@ -9337,7 +9431,6 @@ function buildKBView(){
     </button>
   </div>
 
-  <!-- Config row -->
   <div class="kb-config-row">
     <div class="kb-config-group">
       <label>Article Type</label>
@@ -9424,10 +9517,10 @@ function buildKBView(){
       : '<strong>Build Smart Draft</strong> — instant structured template &nbsp;·&nbsp; <strong>Copy Prompt</strong> — paste into <a href="https://claude.ai" target="_blank" style="color:var(--orange600)">Claude.ai</a> or ChatGPT'}
   </div>
 
-  <!-- 3. Template library (collapsed) -->
+  <!-- Template library (collapsed) -->
   <div class="kb-divider-or">or start from a template</div>
   <div class="kb-sec-label" style="cursor:pointer" onclick="kbToggleTemplates()">
-    3 · Template library
+    Template library
     <span id="kbTplToggleIcon" style="margin-left:6px;color:var(--g400)">▶ show</span>
   </div>
   <div id="kbTplSection" style="display:none">
@@ -9438,7 +9531,7 @@ function buildKBView(){
   <!-- Error box -->
   <div id="kbErrorBox" class="kb-error-box" style="display:none"></div>
 
-  <!-- Output -->
+  <!-- ── Output ── -->
   <div id="kbOutput" class="kb-output" style="display:none">
     <div class="kb-output-header">
       <span class="kb-output-label" id="kbOutputLabel">Smart Draft</span>
@@ -9472,10 +9565,90 @@ function buildKBView(){
       </div>
     </div>
   </div>
+
 </div>`;
 
   window._kbMode = window._kbMode || 'improve';
   if(window._kbMode === 'create') setKBMode('create');
+}
+
+// ── Category card interaction ─────────
+function kbSelectCategory(cat){
+  const panel = document.getElementById('kbCatPanel');
+  if(!panel) return;
+  if(window._kbSelectedCat === cat){
+    kbClearCategory();
+    return;
+  }
+  window._kbSelectedCat = cat;
+  document.querySelectorAll('.kb-cat-card').forEach(c => {
+    c.classList.toggle('selected', c.dataset.cat === cat);
+  });
+  panel.innerHTML = kbRenderCategoryPanel(cat);
+  panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function kbClearCategory(){
+  window._kbSelectedCat = null;
+  document.querySelectorAll('.kb-cat-card').forEach(c => c.classList.remove('selected'));
+  const panel = document.getElementById('kbCatPanel');
+  if(panel) panel.innerHTML = '';
+}
+
+function kbRenderCategoryPanel(cat){
+  const catData = KB_CAT_DATA.find(c => c.cat === cat);
+  if(!catData) return '';
+  // Recent tickets (most recent 5 by opened date)
+  const tickets = [...T]
+    .filter(t => t.cat === cat)
+    .sort((a,b) => new Date(b.opened||0) - new Date(a.opened||0))
+    .slice(0,5);
+  const ticketRows = tickets.length
+    ? tickets.map(t => `<div class="kb-cat-ticket-row">
+        <span class="kb-cat-ticket-badge ${t.type}">${t.type}</span>
+        <span class="kb-cat-ticket-num">${escHtml(t.num)}</span>
+        <span class="kb-cat-ticket-desc" title="${escHtml(t.desc)}">${escHtml(t.desc)}</span>
+        <button class="kb-cat-ticket-kb" onclick="event.stopPropagation();openKBFromTicket('${t.num}')">KB ↗</button>
+      </div>`).join('')
+    : '<div class="kb-cat-empty">No tickets in this category</div>';
+  // Matching templates
+  const templates = KB_TEMPLATES.filter(t => catData.tplIds.includes(t.id));
+  const tplBtns = templates.map(t => `<button class="kb-cat-tpl-btn" onclick="kbSelectTemplate('${t.id}')">
+      <span class="kb-cat-tpl-icon">${t.icon}</span>
+      <div class="kb-cat-tpl-name">${escHtml(t.name)}</div>
+      <div class="kb-cat-tpl-type">${escHtml(t.badgeLabel)}</div>
+    </button>`).join('');
+  const catEsc = escHtml(cat).replace(/'/g,"\\'");
+  return `<div class="kb-cat-panel-box">
+  <div class="kb-cat-panel-hdr">
+    <div class="kb-cat-panel-title">${escHtml(cat)}</div>
+    <button class="kb-cat-panel-close" onclick="kbClearCategory()" title="Close">×</button>
+  </div>
+  <div class="kb-cat-panel-body">
+    <div class="kb-cat-panel-left">
+      <div class="kb-cat-panel-sub">Recent tickets</div>
+      ${ticketRows}
+    </div>
+    <div class="kb-cat-panel-right">
+      <div class="kb-cat-panel-sub">Templates</div>
+      ${tplBtns}
+    </div>
+  </div>
+  <button class="kb-cat-new-btn" onclick="kbStartFromCategory('${catEsc}')">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    New ${escHtml(cat)} article from scratch
+  </button>
+</div>`;
+}
+
+function kbStartFromCategory(cat){
+  setKBMode('create');
+  const area = document.getElementById('kbPromptText');
+  if(area && !area.value.trim()){
+    area.value = cat + ' — describe the scenario or issue:\n\n';
+    area.focus();
+  }
+  document.querySelector('.kb-mode-row')?.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 // ── Mode switching ────────────────────
