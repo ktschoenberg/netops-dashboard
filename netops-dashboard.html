@@ -7704,8 +7704,12 @@ function buildTransMttrCharts(labels,l2Data,l3Data,months){
 }
 
 /* ═══════════════════════════════════════
-   KB GENERATOR  (no API required)
+   KB GENERATOR
 ═══════════════════════════════════════ */
+
+// ── Paste your free Groq key here ─────
+//    Get one free (no credit card) at https://console.groq.com
+const _GROQ_KEY = '';
 
 // ── Navigation ────────────────────────
 function openKBPage(){
@@ -7776,7 +7780,7 @@ function buildKBView(){
   <div class="kb-header">
     <div class="kb-head-text">
       <div class="kb-head-title">KB Article Generator</div>
-      <div class="kb-head-sub">Instantly generate a structured KB draft — or build a prompt to paste into Claude.ai / ChatGPT</div>
+      <div class="kb-head-sub" id="kbHeadSub">${_GROQ_KEY ? 'AI-powered · generate a professional KB article in seconds' : 'Smart draft mode — AI not configured &nbsp;<a href="#" onclick="kbShowSetup();return false" style="color:var(--orange600)">set up AI →</a>'}</div>
     </div>
   </div>
 
@@ -7862,18 +7866,19 @@ function buildKBView(){
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
       </svg>
-      Copy AI Prompt
+      Copy Prompt
     </button>
     <button class="btn btn-primary" id="kbGenerateBtn" onclick="generateKBArticle()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
       </svg>
-      Build Smart Draft
+      ${_GROQ_KEY ? 'Generate with AI' : 'Build Smart Draft'}
     </button>
   </div>
-  <div style="font-size:12px;color:var(--g400);text-align:right;margin-top:6px">
-    <strong>Build Smart Draft</strong> — instant structured template, edit inline &nbsp;·&nbsp;
-    <strong>Copy AI Prompt</strong> — paste into <a href="https://claude.ai" target="_blank" style="color:var(--orange600)">Claude.ai</a> or ChatGPT for a polished result
+  <div style="font-size:12px;color:var(--g400);text-align:right;margin-top:6px" id="kbHintText">
+    ${_GROQ_KEY
+      ? '<strong>Generate with AI</strong> — full article via Llama 3 (Groq) &nbsp;·&nbsp; <strong>Copy Prompt</strong> — paste into <a href="https://claude.ai" target="_blank" style="color:var(--orange600)">Claude.ai</a> or ChatGPT'
+      : '<strong>Build Smart Draft</strong> — instant structured template &nbsp;·&nbsp; <strong>Copy Prompt</strong> — paste into <a href="https://claude.ai" target="_blank" style="color:var(--orange600)">Claude.ai</a> or ChatGPT'}
   </div>
 
   <!-- Error box -->
@@ -8122,12 +8127,13 @@ ${content}`;
 }
 
 // ── Main generate function ────────────
-function generateKBArticle(){
+async function generateKBArticle(){
   const mode   = window._kbMode || 'improve';
   const type   = document.getElementById('kbArticleType').value;
   const aud    = document.getElementById('kbAudience').value;
   const detail = document.getElementById('kbDetail').value;
   const errorBox = document.getElementById('kbErrorBox');
+  const btn    = document.getElementById('kbGenerateBtn');
   errorBox.style.display = 'none';
 
   let content = '';
@@ -8139,18 +8145,91 @@ function generateKBArticle(){
     if(!content){ errorBox.innerHTML = 'Please describe what you need the KB article to cover.'; errorBox.style.display='block'; return; }
   }
 
-  const md = mode === 'improve'
-    ? kbImproveTemplate(type, aud, detail, content)
-    : kbCreateTemplate(type, aud, detail, content);
+  // ── No key: fall back to Smart Draft ──
+  if(!_GROQ_KEY){
+    const md = mode === 'improve'
+      ? kbImproveTemplate(type, aud, detail, content)
+      : kbCreateTemplate(type, aud, detail, content);
+    window._kbLastMd = md;
+    document.getElementById('kbOutputLabel').textContent = 'Smart Draft — fill in the italicised placeholders to complete';
+    document.getElementById('kbRendered').innerHTML = kbRenderMd(md);
+    document.getElementById('kbRaw').value = md;
+    document.getElementById('kbRaw').style.display = 'none';
+    document.querySelector('.kb-raw-bar button').textContent = 'View raw markdown';
+    document.getElementById('kbOutput').style.display = 'block';
+    document.getElementById('kbOutput').scrollIntoView({behavior:'smooth',block:'start'});
+    return;
+  }
 
-  window._kbLastMd = md;
-  document.getElementById('kbOutputLabel').textContent = 'Smart Draft — edit the italicised placeholders to complete';
-  document.getElementById('kbRendered').innerHTML = kbRenderMd(md);
-  document.getElementById('kbRaw').value = md;
+  // ── Groq streaming ──
+  const prompt = _kbBuildAIPrompt(mode, type, aud, detail, content);
+  btn.disabled = true;
+  btn.innerHTML = '<span class="kb-spin">⟳</span>&nbsp; Generating…';
+  document.getElementById('kbOutputLabel').textContent = 'AI Article — generating…';
+  document.getElementById('kbRendered').innerHTML = '<div class="kb-loading-row"><span class="kb-spin" style="font-size:22px">⟳</span></div>';
+  document.getElementById('kbRaw').value = '';
   document.getElementById('kbRaw').style.display = 'none';
   document.querySelector('.kb-raw-bar button').textContent = 'View raw markdown';
   document.getElementById('kbOutput').style.display = 'block';
   document.getElementById('kbOutput').scrollIntoView({behavior:'smooth',block:'start'});
+
+  try {
+    const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${_GROQ_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 4096,
+        stream: true,
+      }),
+    });
+
+    if(!resp.ok){
+      const err = await resp.json().catch(()=>({error:{message:resp.statusText}}));
+      throw new Error(err.error?.message || `HTTP ${resp.status}`);
+    }
+
+    const reader  = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let fullMd = '';
+
+    while(true){
+      const { done, value } = await reader.read();
+      if(done) break;
+      const lines = decoder.decode(value, {stream:true}).split('\n');
+      for(const line of lines){
+        if(!line.startsWith('data: ')) continue;
+        const raw = line.slice(6).trim();
+        if(raw === '[DONE]') break;
+        try {
+          const delta = JSON.parse(raw).choices?.[0]?.delta?.content || '';
+          if(delta){
+            fullMd += delta;
+            document.getElementById('kbRendered').innerHTML = kbRenderMd(fullMd);
+          }
+        } catch(e){}
+      }
+    }
+
+    window._kbLastMd = fullMd;
+    document.getElementById('kbRaw').value = fullMd;
+    document.getElementById('kbOutputLabel').textContent = 'AI Article';
+
+  } catch(err){
+    document.getElementById('kbOutput').style.display = 'none';
+    errorBox.innerHTML = `<strong>Generation failed:</strong> ${escHtml(err.message || String(err))}`;
+    errorBox.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Generate with AI';
+  }
+}
+
+// ── Setup helper (shown when key is empty) ──
+function kbShowSetup(){
+  const msg = 'To enable AI generation:\n\n1. Go to https://console.groq.com and sign up free (no credit card)\n2. Create an API key\n3. Open netops-dashboard.html in a text editor\n4. Find the line:  const _GROQ_KEY = \'\'\n5. Paste your key between the quotes and save\n\nEveryone who opens the shared link will then get AI generation automatically.';
+  alert(msg);
 }
 
 // ── Copy AI Prompt ────────────────────
