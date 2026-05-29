@@ -22,8 +22,8 @@
   --green700:#027A48; --green600:#039855; --green500:#12B76A;
   --green100:#D1FADF; --green50:#ECFDF3;
 
-  --orange700:#B54708; --orange600:#DC6803; --orange500:#F79009;
-  --orange100:#FEF0C7; --orange50:#FFFAEB;
+  --orange700:#9E3D00; --orange600:#D95A00; --orange500:#F96302;
+  --orange100:#FFE6D5; --orange50:#FFF4EE;
 
   --red600:#D92D20; --red50:#FEF3F2;
 
@@ -46,8 +46,7 @@ body{font-family:var(--font);background:var(--g100);color:var(--g900);display:fl
 /* ══ SIDEBAR ══ */
 .sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--side-bg);border-right:1px solid var(--side-border);position:fixed;top:0;left:0;height:100vh;display:flex;flex-direction:column;overflow-y:auto;z-index:100}
 .s-logo{display:flex;align-items:center;gap:9px;padding:16px 14px;border-bottom:1px solid var(--side-border)}
-.s-mark{width:32px;height:32px;border-radius:var(--r8);background:linear-gradient(135deg,var(--blue600),#6941C6);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.s-mark svg{width:17px;height:17px}
+.s-mark{width:32px;height:32px;border-radius:var(--r8);background:#F96302;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;font-weight:800;color:#fff;letter-spacing:-.02em}
 .s-appname{font-size:12.5px;font-weight:700;color:var(--white);line-height:1.2}
 .s-appver{font-size:10.5px;color:var(--white)}
 .s-nav{padding:8px 6px;flex:1}
@@ -403,7 +402,7 @@ tbody tr:hover td{background:var(--g100)}
 .kb-settings-panel{background:var(--g50);border:1px solid var(--g200);border-radius:var(--r8);padding:14px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .kb-settings-panel label{font-size:13px;font-weight:600;color:var(--g700);white-space:nowrap}
 .kb-settings-panel input[type=password]{flex:1;min-width:220px;padding:7px 10px;border:1px solid var(--g300);border-radius:var(--r6);font-size:13px;font-family:inherit}
-.kb-settings-panel input[type=password]:focus{outline:none;border-color:var(--orange500);box-shadow:0 0 0 3px rgba(247,144,9,.12)}
+.kb-settings-panel input[type=password]:focus{outline:none;border-color:var(--orange500);box-shadow:0 0 0 3px rgba(249,99,2,.12)}
 .kb-key-status{font-size:12px;padding:3px 8px;border-radius:99px;background:var(--g100);color:var(--g500);white-space:nowrap}
 .kb-key-status.set{background:#dcfce7;color:#16a34a}
 .kb-mode-row{display:flex;gap:4px;margin-bottom:22px;background:var(--g100);padding:4px;border-radius:var(--r8);width:fit-content}
@@ -424,7 +423,7 @@ tbody tr:hover td{background:var(--g100)}
 .kb-divider::before,.kb-divider::after{content:'';position:absolute;top:50%;height:1px;background:var(--g200);width:42%}
 .kb-divider::before{left:0}.kb-divider::after{right:0}
 .kb-textarea{width:100%;padding:12px;border:1px solid var(--g300);border-radius:var(--r8);font-size:13px;line-height:1.65;resize:vertical;font-family:inherit;color:var(--g800);box-sizing:border-box;transition:border .15s}
-.kb-textarea:focus{outline:none;border-color:var(--orange500);box-shadow:0 0 0 3px rgba(247,144,9,.12)}
+.kb-textarea:focus{outline:none;border-color:var(--orange500);box-shadow:0 0 0 3px rgba(249,99,2,.12)}
 .kb-generate-row{display:flex;justify-content:flex-end;padding-top:18px;margin-top:18px;border-top:1px solid var(--g100)}
 .kb-output{margin-top:28px;border:1px solid var(--g200);border-radius:var(--r8);overflow:hidden}
 .kb-output-header{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:var(--g50);border-bottom:1px solid var(--g200)}
@@ -477,7 +476,7 @@ tbody tr:hover td{background:var(--g100)}
 /* KB ticket combobox */
 .kb-combo-wrap{position:relative}
 .kb-combo-input-row{display:flex;align-items:center;gap:0;border:1px solid var(--g300);border-radius:var(--r8);background:#fff;transition:border .15s,box-shadow .15s;overflow:hidden}
-.kb-combo-input-row:focus-within{border-color:var(--orange500);box-shadow:0 0 0 3px rgba(247,144,9,.12)}
+.kb-combo-input-row:focus-within{border-color:var(--orange500);box-shadow:0 0 0 3px rgba(249,99,2,.12)}
 .kb-combo-icon{padding:0 10px 0 12px;color:var(--g400);display:flex;align-items:center;flex-shrink:0}
 .kb-combo-input{flex:1;padding:10px 4px;border:none;font-size:13px;font-family:inherit;color:var(--g800);background:transparent;min-width:0}
 .kb-combo-input:focus{outline:none}
@@ -508,7 +507,7 @@ tbody tr:hover td{background:var(--g100)}
 .kb-create-btn{background:none;border:none;font-size:12px;color:var(--orange600);font-weight:600;cursor:pointer;padding:0;text-decoration:underline}
 /* KB template library */
 .kb-tpl-search{width:100%;padding:9px 12px;border:1px solid var(--g300);border-radius:var(--r8);font-size:13px;font-family:inherit;margin-bottom:16px;box-sizing:border-box;transition:border .15s}
-.kb-tpl-search:focus{outline:none;border-color:var(--orange500);box-shadow:0 0 0 3px rgba(247,144,9,.12)}
+.kb-tpl-search:focus{outline:none;border-color:var(--orange500);box-shadow:0 0 0 3px rgba(249,99,2,.12)}
 .kb-tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:6px}
 .kb-tpl-card{border:1px solid var(--g200);border-radius:var(--r8);padding:13px 15px;cursor:pointer;transition:all .15s;background:#fff;text-align:left}
 .kb-tpl-card:hover{border-color:var(--orange500);box-shadow:0 2px 10px rgba(247,144,9,.13);transform:translateY(-1px)}
@@ -535,7 +534,7 @@ tbody tr:hover td{background:var(--g100)}
 .kb-cat-section-label{font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
 .kb-cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:6px}
 .kb-cat-card{border:1.5px solid var(--g200);border-radius:12px;padding:16px 12px;cursor:pointer;transition:all .18s;background:#fff;text-align:center;user-select:none;font-family:inherit;width:100%}
-.kb-cat-card:hover{border-color:var(--orange100);box-shadow:0 4px 16px rgba(247,144,9,.12);transform:translateY(-2px)}
+.kb-cat-card:hover{border-color:var(--orange100);box-shadow:0 4px 16px rgba(249,99,2,.12);transform:translateY(-2px)}
 .kb-cat-card.selected{border-color:var(--orange500);background:var(--orange50);box-shadow:0 4px 20px rgba(247,144,9,.16)}
 .kb-cat-icon-wrap{width:48px;height:48px;border-radius:12px;background:var(--orange50);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;transition:all .18s;color:var(--orange500)}
 .kb-cat-card:hover .kb-cat-icon-wrap,.kb-cat-card.selected .kb-cat-icon-wrap{background:var(--orange100)}
@@ -615,13 +614,7 @@ tbody tr:hover td{background:var(--g100)}
 <!-- ══ SIDEBAR ══ -->
 <aside class="sidebar">
   <div class="s-logo">
-    <div class="s-mark">
-      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="5" r="2.2"/><circle cx="5" cy="19" r="2.2"/><circle cx="19" cy="19" r="2.2"/>
-        <line x1="12" y1="7.2" x2="5.8" y2="17"/><line x1="12" y1="7.2" x2="18.2" y2="17"/>
-        <line x1="7.2" y1="19" x2="16.8" y2="19"/>
-      </svg>
-    </div>
+    <div class="s-mark">HD</div>
     <div>
       <div class="s-appname">Network Operations</div>
       <div class="s-appver">Report Center</div>
@@ -634,7 +627,7 @@ tbody tr:hover td{background:var(--g100)}
         <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
         <rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
       </svg>
-      Dashboard <em style="font-weight:400;color:#FDB022">(beta)</em>
+      Dashboard <em style="font-weight:400;color:#F96302">(beta)</em>
     </button>
     <button class="s-item" id="navTeam" onclick="openTeamPage()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1466,12 +1459,12 @@ const CHG_DATA = [
   {"num": "CHG1077835", "desc": "Network 2K Switch shutdown / decom", "who": "KHALED SHALATI", "ci": "Network - Data Center", "type": "Major", "project": "IT-09376", "approval": "Approved", "state": "closed", "start": "2025-01-07", "end": "2025-01-07", "month": "2025-01", "workType": "Normal Deployment"},
 ];
 const TEAM_META = [
-  {name:'Jason Candler',           init:'JC', color:'#F79009'},
-  {name:'Khaled Shalati',          init:'KS', color:'#DC6803'},
-  {name:'Patrick Djemba Tchounke', init:'PT', color:'#F79009'},
-  {name:'Yadwinder Singh',         init:'YS', color:'#DC6803'},
-  {name:'Harry Midy',              init:'HM', color:'#F79009'},
-  {name:'Shaun Dees',              init:'SD', color:'#DC6803'},
+  {name:'Jason Candler',           init:'JC', color:'#F96302'},
+  {name:'Khaled Shalati',          init:'KS', color:'#D95A00'},
+  {name:'Patrick Djemba Tchounke', init:'PT', color:'#F96302'},
+  {name:'Yadwinder Singh',         init:'YS', color:'#D95A00'},
+  {name:'Harry Midy',              init:'HM', color:'#F96302'},
+  {name:'Shaun Dees',              init:'SD', color:'#D95A00'},
 ];
 
 const MONTHS = ['2026-02','2026-03','2026-04','2026-05'];
@@ -2019,7 +2012,7 @@ function buildTeamView(){
     const sparkBars=sparkVals.map(function(v,i){
       const h=Math.max(3,Math.round(v/sparkMax*28));
       return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">'
-        +'<div style="width:100%;height:'+h+'px;background:#F79009;border-radius:2px;min-height:3px;align-self:flex-end"></div>'
+        +'<div style="width:100%;height:'+h+'px;background:#F96302;border-radius:2px;min-height:3px;align-self:flex-end"></div>'
         +'<div style="font-size:9px;color:var(--g400)">'+sparkMonthLabels[i].slice(0,1)+'</div>'
         +'</div>';
     }).join('');
@@ -2181,7 +2174,7 @@ function buildTeamHoursChart(){
   const names=TEAM_META.map(m=>shortName(m.name));
   const filtLOA=window._filtLOA||LOA_ENG;
   const hrs=TEAM_META.map(m=>(filtLOA[m.name]||{totalHrs:0}).totalHrs);
-  const colors=TEAM_META.map(()=>'#F79009');
+  const colors=TEAM_META.map(()=>'#F96302');
   Chart.getChart('teamHoursChart')?.destroy();
   window._teamHoursChart=new Chart(document.getElementById('teamHoursChart'),{
     type:'bar',
@@ -2202,7 +2195,7 @@ function buildTeamHoursChart(){
 function setTeamEngFilter(name){
   window._teamEngFilter=(window._teamEngFilter===name)?null:name;
   const f=window._teamEngFilter;
-  const engColors={'Jason Candler':'#F79009','Khaled Shalati':'#2E90FA','Patrick Djemba Tchounke':'#6941C6','Yadwinder Singh':'#12B76A','Harry Midy':'#EE46BC','Shaun Dees':'#667085'};
+  const engColors={'Jason Candler':'#F96302','Khaled Shalati':'#2E90FA','Patrick Djemba Tchounke':'#6941C6','Yadwinder Singh':'#12B76A','Harry Midy':'#EE46BC','Shaun Dees':'#667085'};
   document.querySelectorAll('#teamEffTable tbody tr').forEach(row=>{
     row.style.opacity=(!f||row.dataset.eng===f)?'1':'0.25';
   });
@@ -2212,7 +2205,7 @@ function setTeamEngFilter(name){
   });
   if(window._teamHoursChart){
     window._teamHoursChart.data.datasets[0].backgroundColor=TEAM_META.map(m=>
-      (!f||m.name===f)?'#F79009':'#F7900944'
+      (!f||m.name===f)?'#F96302':'#F9630244'
     );
     window._teamHoursChart.update('none');
   }
@@ -2241,8 +2234,8 @@ function buildTeamTrendChart(){
       labels:trendLabels,
       datasets:[{
         label:'Team Total',data:teamVals,
-        borderColor:'#F79009',backgroundColor:'rgba(247,144,9,.10)',
-        borderWidth:2,pointRadius:3,pointBackgroundColor:'#F79009',fill:true,tension:0.3
+        borderColor:'#F96302',backgroundColor:'rgba(249,99,2,.10)',
+        borderWidth:2,pointRadius:3,pointBackgroundColor:'#F96302',fill:true,tension:0.3
       }]
     },
     options:{
@@ -2277,7 +2270,7 @@ function buildOnCallPage(){
     ['Shaun Dees','Patrick Tchounke','Jason Candler'],
     ['Jason Candler','Harry Midy','Patrick Tchounke'],
   ];
-  const engColors={'Jason Candler':'#F79009','Khaled Shalati':'#2E90FA','Patrick Tchounke':'#6941C6','Yadwinder Singh':'#12B76A','Harry Midy':'#EE46BC','Shaun Dees':'#667085'};
+  const engColors={'Jason Candler':'#F96302','Khaled Shalati':'#2E90FA','Patrick Tchounke':'#6941C6','Yadwinder Singh':'#12B76A','Harry Midy':'#EE46BC','Shaun Dees':'#667085'};
 
   const headerCells=days.map(d=>'<th style="background:var(--g50);font-weight:700;font-size:12px">'+d+'</th>').join('');
   const shiftRows=shifts.map(function(s,si){
@@ -2420,7 +2413,7 @@ function buildChangeSchedulePage(){
   // Type breakdown pills
   const typePills = typeEntries.map(([t,n])=>{
     const pct=Math.round(n/total*100);
-    const barColor=t==='Major'?'#F79009':'#D0D5DD';
+    const barColor=t==='Major'?'#F96302':'#D0D5DD';
     return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'
       +'<div style="width:90px;font-size:12px;color:var(--g700);font-weight:500">'+t+'</div>'
       +'<div style="flex:1;background:var(--g100);border-radius:4px;height:16px">'
@@ -2651,7 +2644,7 @@ function buildTrainingView(){
   const priColor={High:'var(--red600)',Medium:'var(--orange600)',Low:'var(--g500)'};
   const priCardBg={High:'#FFF5F5',Medium:'#FFFAEB',Low:'var(--g50)'};
   const priCardBorder={High:'#FECDCA',Medium:'#FEDF89',Low:'var(--g200)'};
-  const priCardAccent={High:'#D92D20',Medium:'#F79009',Low:'#98A2B3'};
+  const priCardAccent={High:'#D92D20',Medium:'#F96302',Low:'#98A2B3'};
   const priIconBg={High:'#FEE4E2',Medium:'#FEF0C7',Low:'var(--g150)'};
 
   const CAT_TRAINING={
@@ -2860,7 +2853,7 @@ function buildDirectorView(){
   const noiseRatio=Math.round(Tf.filter(t=>t.cat==='Monitoring Alerts').length/Tf.length*100);
   const filtMTTR=closed.length>0?(closed.reduce((s,t)=>s+estMTTR(t),0)/closed.length).toFixed(1):GLOBAL_MTTR;
   const stabScore=Math.min(100,Math.round(parseFloat(resRate)*0.4+30+(parseFloat(filtMTTR)<=4?20:10)+(noiseRatio<=25?10:5)));
-  const gaugeColor=stabScore>=90?'#12B76A':stabScore>=75?'#F79009':'#D92D20';
+  const gaugeColor=stabScore>=90?'#12B76A':stabScore>=75?'#F96302':'#D92D20';
   const stabLabel=stabScore>=90?'Excellent':stabScore>=75?'Good':'Needs Attention';
 
   const showMoM = (window._dateRange==='all');
@@ -3129,7 +3122,7 @@ function buildMTTRChart(){
   Chart.getChart('mttrChart')?.destroy();
   new Chart(document.getElementById('mttrChart'),{
     type:'bar',
-    data:{labels:names,datasets:[{label:'Avg MTTR (days)',data:vals,backgroundColor:'#F79009',borderRadius:4,borderSkipped:false}]},
+    data:{labels:names,datasets:[{label:'Avg MTTR (days)',data:vals,backgroundColor:'#F96302',borderRadius:4,borderSkipped:false}]},
     options:{
       indexAxis:'y',responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{...TT}},
@@ -3157,7 +3150,7 @@ function buildRatioDonut(){
     type:'doughnut',
     data:{
       labels:['INC – Incidents','ADR – Changes'],
-      datasets:[{data:[inc,adr],backgroundColor:['#F79009','#EAECF0'],borderColor:['#F79009','#D0D5DD'],borderWidth:1}]
+      datasets:[{data:[inc,adr],backgroundColor:['#F96302','#EAECF0'],borderColor:['#F96302','#D0D5DD'],borderWidth:1}]
     },
     options:{
       responsive:true,maintainAspectRatio:false,cutout:'68%',
@@ -3183,8 +3176,8 @@ function buildCapacityChart(){
       labels,
       datasets:[{
         label:'Tickets',data:totals,
-        borderColor:'#F79009',backgroundColor:'rgba(247,144,9,0.08)',
-        borderWidth:2,pointBackgroundColor:'#F79009',pointRadius:4,tension:0.35,fill:true
+        borderColor:'#F96302',backgroundColor:'rgba(249,99,2,0.08)',
+        borderWidth:2,pointBackgroundColor:'#F96302',pointRadius:4,tension:0.35,fill:true
       }]
     },
     options:{
@@ -3219,7 +3212,7 @@ function buildDirVolumeChart(){
     data:{
       labels,
       datasets:[
-        {label:'INC',data:months.map(m=>monthMap[m].INC||0),backgroundColor:'#F79009',borderRadius:{topLeft:4,topRight:4},borderSkipped:false},
+        {label:'INC',data:months.map(m=>monthMap[m].INC||0),backgroundColor:'#F96302',borderRadius:{topLeft:4,topRight:4},borderSkipped:false},
         {label:'ADR',data:months.map(m=>monthMap[m].ADR||0),backgroundColor:'#EAECF0',borderRadius:{topLeft:4,topRight:4},borderSkipped:false}
       ]
     },
@@ -3253,7 +3246,7 @@ function buildDirCatChart(){
   Chart.getChart('dirCatChart')?.destroy();
   new Chart(document.getElementById('dirCatChart'),{
     type:'bar',
-    data:{labels,datasets:[{label:'Tickets',data,backgroundColor:'#F79009',borderRadius:4,borderSkipped:false}]},
+    data:{labels,datasets:[{label:'Tickets',data,backgroundColor:'#F96302',borderRadius:4,borderSkipped:false}]},
     options:{
       indexAxis:'y',responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{...TT}},
@@ -7478,9 +7471,9 @@ function rebuildTransMttr(){
   const l3Avg=l3Vals.length?(l3Vals.reduce((a,b)=>a+b,0)/l3Vals.length).toFixed(1):'—';
   document.getElementById('transMttrContent').innerHTML=
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">'
-    +'<div class="digest-card"><div class="d-label">Average MTTR &ndash; <span style="color:#F79009">L2</span></div><div class="d-num">'+l2Avg+'h</div>'
+    +'<div class="digest-card"><div class="d-label">Average MTTR &ndash; <span style="color:#F96302">L2</span></div><div class="d-num">'+l2Avg+'h</div>'
     +'<div class="d-change"><span class="good">Live · ITO Network L2</span></div></div>'
-    +'<div class="digest-card"><div class="d-label">Average MTTR &ndash; <span style="color:#F79009">L3</span></div><div class="d-num">'+l3Avg+'d</div>'
+    +'<div class="digest-card"><div class="d-label">Average MTTR &ndash; <span style="color:#F96302">L3</span></div><div class="d-num">'+l3Avg+'d</div>'
     +'<div class="d-change"><span class="good">Live · ITO Network L3</span></div></div>'
     +'</div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px">'
@@ -7495,7 +7488,7 @@ function rebuildTransMttr(){
 }
 function buildTransVolChart(filtMonths,filtLabels){
   const configs=[
-    {id:'transVolInc',color:'#F79009',data:filtMonths.map(m=>TRANS_VOL[m]?.inc||0)},
+    {id:'transVolInc',color:'#F96302',data:filtMonths.map(m=>TRANS_VOL[m]?.inc||0)},
     {id:'transVolAdr',color:'#98A2B3',data:filtMonths.map(m=>TRANS_VOL[m]?.adrRitm||0)},
     {id:'transVolChg',color:'#D0D5DD',data:filtMonths.map(m=>TRANS_VOL[m]?.chg||0)}
   ];
@@ -7526,7 +7519,7 @@ function buildTransCategoryChart(incCats,adrCats){
   if(!sorted.length){const el=document.getElementById('transCatChart');if(el)el.parentElement.innerHTML='<div style="text-align:center;color:var(--g400);font-size:12px;padding:40px">No data in range</div>';return;}
   new Chart(document.getElementById('transCatChart'),{
     type:'bar',
-    data:{labels,datasets:[{label:'INC',data:incData,backgroundColor:'#F79009',borderRadius:3,borderSkipped:false}]},
+    data:{labels,datasets:[{label:'INC',data:incData,backgroundColor:'#F96302',borderRadius:3,borderSkipped:false}]},
     options:{
       indexAxis:'y',responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{...TT}},
@@ -7616,7 +7609,7 @@ function openTransVolPanel(month,label){
           <th style="padding:8px 10px;font-size:11px;color:var(--g500);text-align:right;font-weight:500">Closed</th>
         </tr></thead>
         <tbody>
-          ${row('Incidents (INC)',d.inc||0,d.incOpen||0,(d.inc||0)-(d.incOpen||0),'#F79009')}
+          ${row('Incidents (INC)',d.inc||0,d.incOpen||0,(d.inc||0)-(d.incOpen||0),'#F96302')}
           ${row('ADR / RITM',d.adrRitm||0,d.adrRitmOpen||0,(d.adrRitm||0)-(d.adrRitmOpen||0),'#98A2B3')}
           ${row('Changes (CHG)',d.chg||0,d.chgOpen||0,(d.chg||0)-(d.chgOpen||0),'#D0D5DD')}
         </tbody>
@@ -7682,7 +7675,7 @@ function openTransEscPanel(month,label,months){
     const badge=isOpen
       ?'<span style="font-size:10px;font-weight:600;background:#FEF3C7;color:#B45309;border-radius:3px;padding:1px 5px;flex-shrink:0">Open</span>'
       :'<span style="font-size:10px;font-weight:600;background:#ECFDF5;color:#065F46;border-radius:3px;padding:1px 5px;flex-shrink:0">Closed</span>';
-    const typeColor=t.num.startsWith('INC')?'#F79009':'#98A2B3';
+    const typeColor=t.num.startsWith('INC')?'#F96302':'#98A2B3';
     return `<div style="padding:10px 12px;border-bottom:1px solid #F2F4F7">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
         <span style="font-size:11px;font-weight:700;color:${typeColor};font-family:monospace">${t.num}</span>
@@ -7713,7 +7706,7 @@ function renderNocTicketList(tickets){
   if(!tickets.length) return '<div style="text-align:center;padding:40px;color:var(--g400);font-size:12px">No tickets in this range</div>';
   return tickets.map(t=>{
     const [num,opened,tp,st,ci,bi]=t;
-    const numColor=tp===0?'#F79009':'#98A2B3';
+    const numColor=tp===0?'#F96302':'#98A2B3';
     const cat=ci>=0?TNOC_CATS[ci]:'';
     const badge=st===0?'<span class="badge b-open"><span class="b-dot"></span>Open</span>':'<span class="badge b-closed"><span class="b-dot"></span>Closed</span>';
     const tbadge=tp===0?'<span class="badge b-inc">INC</span>':'<span class="badge b-adr">ADR</span>';
@@ -7738,7 +7731,7 @@ function openTransMttrPanel(month,label,months){
     return `<tr style="border-bottom:1px solid #F2F4F7${m===month?';background:#FFF9F0':''}">
       <td style="padding:7px 10px;font-size:12px;color:var(--g700);${m===month?'font-weight:600':''}">
         ${m===month?'▶ ':''}${lbl}</td>
-      <td style="padding:7px 10px;font-size:12px;color:#F79009;text-align:right;font-weight:${m===month?700:400}">${TRANS_L2_MTTR[m]?.toFixed(1)??'—'}h</td>
+      <td style="padding:7px 10px;font-size:12px;color:#F96302;text-align:right;font-weight:${m===month?700:400}">${TRANS_L2_MTTR[m]?.toFixed(1)??'—'}h</td>
       <td style="padding:7px 10px;font-size:12px;color:#98A2B3;text-align:right;font-weight:${m===month?700:400}">${TRANS_L3_MTTR[m]?.toFixed(1)??'—'}d</td>
     </tr>`;
   }).join('');
@@ -7772,7 +7765,7 @@ function buildTransBizChart(bizMap){
   if(!labels.length){const el=document.getElementById('transCIChart');if(el)el.parentElement.innerHTML='<div style="text-align:center;color:var(--g400);font-size:12px;padding:40px">No data in range</div>';return;}
   new Chart(document.getElementById('transCIChart'),{
     type:'bar',
-    data:{labels,datasets:[{label:'INC',data,backgroundColor:'#F79009',borderRadius:3,borderSkipped:false}]},
+    data:{labels,datasets:[{label:'INC',data,backgroundColor:'#F96302',borderRadius:3,borderSkipped:false}]},
     options:{
       indexAxis:'y',responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{...TT}},
@@ -7787,7 +7780,7 @@ function buildTransBizChart(bizMap){
 }
 
 function buildTransLoeCharts(incTTW,adrTTW){
-  [['transLoeInc',incTTW,'#F79009'],['transLoeAdr',adrTTW,'#D0D5DD']].forEach(([id,loe,color])=>{
+  [['transLoeInc',incTTW,'#F96302'],['transLoeAdr',adrTTW,'#D0D5DD']].forEach(([id,loe,color])=>{
     const type=id==='transLoeInc'?'inc':'adr';
     const sorted=Object.entries(loe).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).slice(0,12);
     Chart.getChart(id)?.destroy();
@@ -7810,7 +7803,7 @@ function buildTransLoeCharts(incTTW,adrTTW){
 }
 
 function buildTransEscCharts(labels,incData,adrData,months){
-  [['transEscInc',incData,'#F79009'],['transEscAdr',adrData,'#D0D5DD']].forEach(([id,data,color])=>{
+  [['transEscInc',incData,'#F96302'],['transEscAdr',adrData,'#D0D5DD']].forEach(([id,data,color])=>{
     Chart.getChart(id)?.destroy();
     new Chart(document.getElementById(id),{
       type:'bar',
@@ -7830,7 +7823,7 @@ function buildTransEscCharts(labels,incData,adrData,months){
 }
 
 function buildTransMttrCharts(labels,l2Data,l3Data,months){
-  [['transMttrL2',l2Data,'#F79009','h'],['transMttrL3',l3Data,'#D0D5DD','d']].forEach(([id,data,color,unit])=>{
+  [['transMttrL2',l2Data,'#F96302','h'],['transMttrL3',l3Data,'#D0D5DD','d']].forEach(([id,data,color,unit])=>{
     Chart.getChart(id)?.destroy();
     new Chart(document.getElementById(id),{
       type:'bar',
@@ -7872,7 +7865,7 @@ function openKBFromTicket(num){
 let _kbComboIdx = -1;
 
 function kbComboRows(list, sectionLabel){
-  const catColors={'Connectivity & Performance':'#F79009','VLAN & Config':'#3b82f6','Monitoring Alerts':'#eab308','Change Monitoring':'#8b5cf6','Circuit Decommission':'#ec4899','Hardware & Physical':'#6b7280','ISP & Fiber':'#10b981','Other / General':'#94a3b8'};
+  const catColors={'Connectivity & Performance':'#F96302','VLAN & Config':'#3b82f6','Monitoring Alerts':'#eab308','Change Monitoring':'#8b5cf6','Circuit Decommission':'#ec4899','Hardware & Physical':'#6b7280','ISP & Fiber':'#10b981','Other / General':'#94a3b8'};
   const rows = list.map(t=>`
     <div class="kb-combo-row" data-num="${t.num}" onclick="kbComboSelect('${t.num}')">
       <span class="kb-combo-badge ${t.type}">${t.type}</span>
@@ -7962,7 +7955,7 @@ function kbComboSelect(num){
 function kbSelectTicketRow(num){ kbComboSelect(num); }
 
 function kbApplySelectedTicket(ticket){
-  const catColors={'Connectivity & Performance':'#F79009','VLAN & Config':'#3b82f6','Monitoring Alerts':'#eab308','Change Monitoring':'#8b5cf6','Circuit Decommission':'#ec4899','Hardware & Physical':'#6b7280','ISP & Fiber':'#10b981','Other / General':'#94a3b8'};
+  const catColors={'Connectivity & Performance':'#F96302','VLAN & Config':'#3b82f6','Monitoring Alerts':'#eab308','Change Monitoring':'#8b5cf6','Circuit Decommission':'#ec4899','Hardware & Physical':'#6b7280','ISP & Fiber':'#10b981','Other / General':'#94a3b8'};
   const color = catColors[ticket.cat]||'#94a3b8';
   const dateStr = ticket.opened ? new Date(ticket.opened+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
   const card = document.getElementById('kbSelectedTicketCard');
@@ -10202,7 +10195,7 @@ function kbDownloadPDF(){
   *{box-sizing:border-box}
   body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;line-height:1.75;color:#111827;max-width:780px;margin:0 auto;padding:0}
   h1{font-size:22px;font-weight:800;color:#0f172a;border-bottom:2px solid #e5e7eb;padding-bottom:12px;margin:0 0 20px}
-  h2{font-size:14px;font-weight:700;color:#1e293b;margin:24px 0 9px;border-left:3px solid #F79009;padding-left:10px}
+  h2{font-size:14px;font-weight:700;color:#1e293b;margin:24px 0 9px;border-left:3px solid #F96302;padding-left:10px}
   h3{font-size:13px;font-weight:700;color:#374151;margin:16px 0 7px}
   p{margin:0 0 10px;color:#374151}
   ul,ol{margin:0 0 10px;padding-left:20px}
@@ -10211,7 +10204,7 @@ function kbDownloadPDF(){
   code{background:#f3f4f6;padding:1px 5px;border-radius:3px;font-family:'SFMono-Regular',Consolas,monospace;font-size:11.5px;color:#c2410c}
   pre{background:#1e293b;color:#e2e8f0;padding:14px 16px;border-radius:6px;margin:12px 0;font-size:11.5px;line-height:1.55;overflow-x:auto;page-break-inside:avoid}
   pre code{background:none;color:inherit;padding:0}
-  blockquote{border-left:3px solid #F79009;padding:6px 14px;margin:10px 0;background:#FFFAEB;color:#B54708;border-radius:0 4px 4px 0}
+  blockquote{border-left:3px solid #F96302;padding:6px 14px;margin:10px 0;background:#FFFAEB;color:#B54708;border-radius:0 4px 4px 0}
   table{width:100%;border-collapse:collapse;margin:0 0 14px;font-size:12px;page-break-inside:avoid}
   th{background:#f9fafb;padding:7px 10px;text-align:left;font-weight:700;border:1px solid #e5e7eb;color:#374151}
   td{padding:6px 10px;border:1px solid #e5e7eb;color:#374151}
