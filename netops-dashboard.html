@@ -775,7 +775,48 @@ tbody tr:hover td{background:var(--g100)}
 /* ═══════════════════════════════════════
    DATA — L3 tickets
 ═══════════════════════════════════════ */
-const T = [
+/* ═══════════════════════════════════════════════════════════════
+   SERVICENOW LIVE DATA CONFIG
+   ─────────────────────────────────────────────────────────────
+   1. Deploy the Azure Function proxy (see instructions below)
+   2. Paste the function URL into SNOW_ENDPOINT
+   3. Save — the dashboard will fetch live data on every load
+
+   Leave SNOW_ENDPOINT empty to use the built-in demo dataset.
+═══════════════════════════════════════════════════════════════ */
+const SNOW_ENDPOINT = '';
+// e.g. 'https://your-func.azurewebsites.net/api/snow-tickets'
+
+// Map ServiceNow REST API fields → dashboard ticket fields.
+// Adjust field names to match your ServiceNow table/view.
+const SNOW_FIELD_MAP = {
+  num:    r => r.number?.value    ?? r.number    ?? '',
+  desc:   r => r.short_description?.display_value ?? r.short_description ?? '',
+  who:    r => r.assigned_to?.display_value       ?? r.assigned_to       ?? 'Unassigned',
+  opened: r => (r.opened_at?.display_value ?? r.opened_at ?? '').slice(0,10),
+  state:  r => (r.state?.display_value     ?? r.state     ?? '').toLowerCase(),
+};
+
+function _snowType(r){
+  return (r.number?.value ?? r.number ?? '').startsWith('INC') ? 'INC' : 'ADR';
+}
+
+function _snowCat(r){
+  const sub = (r.subcategory?.display_value ?? r.subcategory ?? '').toLowerCase();
+  const cat = (r.category?.display_value    ?? r.category    ?? '').toLowerCase();
+  const all = sub + ' ' + cat;
+  if(/vlan|config|switch/.test(all))                              return 'VLAN & Config';
+  if(/bgp|ospf|connectivity|performance|latency|packet|loss/.test(all)) return 'Connectivity & Performance';
+  if(/alert|monitor|nagios|threshold/.test(all))                  return 'Monitoring Alerts';
+  if(/change monitor|post.change|verification/.test(all))         return 'Change Monitoring';
+  if(/decomm|decommission|circuit remov/.test(all))               return 'Circuit Decommission';
+  if(/hardware|physical|sfp|transceiver|optic|server|chassis/.test(all)) return 'Hardware & Physical';
+  if(/isp|fiber|circuit|wan|lumen|att |centurylink/.test(all))    return 'ISP & Fiber';
+  if(cat.includes('change'))                                       return 'Change Monitoring';
+  return 'Other / General';
+}
+
+const DEMO_T = [
   {num:'ADR2057625', type:'ADR', desc:'Circuit Decommission Notice', who:'Jason Candler', opened:'2026-05-12', month:'2026-05', state:'restored', cat:'Circuit Decommission'},
   {num:'INC50226827', type:'INC', desc:'Entity Name: Ethernet4/19 · Lumen Primary Circuit To Ssc 440732038Entity Url:', who:'Jason Candler', opened:'2026-05-12', month:'2026-05', state:'restored', cat:'ISP & Fiber'},
   {num:'INC50103649', type:'INC', desc:'Reseat/Replace Sfp On  Aus-Qa-Pod01-Lf66', who:'Patrick Djemba Tchounke', opened:'2026-04-28', month:'2026-04', state:'closed', cat:'Hardware & Physical'},
@@ -1303,6 +1344,9 @@ const T = [
   {num:'INC39528643', type:'INC', desc:'Ashburn (East 4) Connectivity Issue To Voltage App', who:'Yadwinder Singh', opened:'2024-05-21', month:'2024-05', state:'closed', cat:'Connectivity & Performance'},
   {num:'INC39518917', type:'INC', desc:'Atl-Pod02-Lf25 Stopped Responding', who:'Khaled Shalati', opened:'2024-05-20', month:'2024-05', state:'closed', cat:'Other / General'},
 ];
+
+// Active dataset — reassigned to live ServiceNow data when SNOW_ENDPOINT is set
+let T = DEMO_T;
 
 /* ── LOE (Level of Effort) Sep 2024 – May 2026 ── */
 const LOA_MONTHS = ["2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05"];
@@ -10227,9 +10271,38 @@ ${body}
 }
 
 /* ═══════════════════════════════════════
-   INIT
+   SERVICENOW FETCH + INIT
 ═══════════════════════════════════════ */
-buildDirectorView();
+async function initDashboard(){
+  if(SNOW_ENDPOINT){
+    try{
+      const resp = await fetch(SNOW_ENDPOINT);
+      if(!resp.ok) throw new Error('HTTP ' + resp.status);
+      const json = await resp.json();
+      const raw  = Array.isArray(json) ? json : (json.result ?? []);
+
+      T = raw.map(r => {
+        const t = {};
+        for(const [k, fn] of Object.entries(SNOW_FIELD_MAP)) t[k] = fn(r);
+        t.type  = _snowType(r);
+        t.cat   = _snowCat(r);
+        t.month = t.opened.slice(0, 7);
+        return t;
+      }).filter(t => t.num);
+
+      // Swap live-pill to "LIVE · ServiceNow"
+      const pill = document.querySelector('.live-pill');
+      if(pill) pill.innerHTML =
+        `<span class="live-dot"></span><span style="color:var(--green700);font-weight:600">LIVE · ServiceNow</span>`;
+
+      console.info(`[SNOW] Loaded ${T.length} tickets from ${SNOW_ENDPOINT}`);
+    } catch(err){
+      console.warn('[SNOW] Fetch failed — falling back to demo data.', err.message);
+    }
+  }
+  buildDirectorView();
+}
+initDashboard();
 </script>
 </body>
 </html>
