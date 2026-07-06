@@ -10381,31 +10381,34 @@ function gateSubmitCode(){
    SERVICENOW FETCH + INIT
 ═══════════════════════════════════════ */
 async function initDashboard(){
-  if(SNOW_ENDPOINT){
-    try{
-      const resp = await fetch(SNOW_ENDPOINT);
-      if(!resp.ok) throw new Error('HTTP ' + resp.status);
-      const json = await resp.json();
-      const raw  = Array.isArray(json) ? json : (json.result ?? []);
-
-      T = raw.map(r => {
-        const t = {};
-        for(const [k, fn] of Object.entries(SNOW_FIELD_MAP)) t[k] = fn(r);
-        t.type  = _snowType(r);
-        t.cat   = _snowCat(r);
-        t.month = t.opened.slice(0, 7);
-        return t;
-      }).filter(t => t.num);
-
-      // Swap live-pill to "LIVE · ServiceNow"
-      const pill = document.querySelector('.live-pill');
-      if(pill) pill.innerHTML =
-        `<span class="live-dot"></span><span style="color:var(--green700);font-weight:600">LIVE · ServiceNow</span>`;
-
-      console.info(`[SNOW] Loaded ${T.length} tickets from ${SNOW_ENDPOINT}`);
-    } catch(err){
-      console.warn('[SNOW] Fetch failed — falling back to demo data.', err.message);
+  try{
+    const resp = await fetch('data.json');
+    if(resp.ok){
+      const raw = await resp.json();
+      if(Array.isArray(raw) && raw.length > 0){
+        if(raw[0].num !== undefined){
+          // pre-processed format from GitHub Action
+          T = raw;
+        } else {
+          // raw ServiceNow format — use field map
+          const src = Array.isArray(raw) ? raw : (raw.result ?? []);
+          T = src.map(r => {
+            const t = {};
+            for(const [k, fn] of Object.entries(SNOW_FIELD_MAP)) t[k] = fn(r);
+            t.type  = _snowType(r);
+            t.cat   = _snowCat(r);
+            t.month = t.opened.slice(0, 7);
+            return t;
+          }).filter(t => t.num);
+        }
+        const pill = document.querySelector('.live-pill');
+        if(pill) pill.innerHTML =
+          `<span class="live-dot"></span><span style="color:var(--green700);font-weight:600">LIVE · ServiceNow</span>`;
+        console.info(`[SNOW] Loaded ${T.length} tickets from data.json`);
+      }
     }
+  } catch(err){
+    console.info('[SNOW] No live data — using demo data.');
   }
   buildDirectorView();
 }

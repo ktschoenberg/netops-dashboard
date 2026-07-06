@@ -1,0 +1,100 @@
+name: Sync ServiceNow Data
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'   # every 15 minutes
+  workflow_dispatch:          # allow manual trigger from GitHub Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch and transform ServiceNow incidents
+        env:
+          SNOW_USER: ${{ secrets.SNOW_USER }}
+          SNOW_PASS: ${{ secrets.SNOW_PASS }}
+        run: |
+          python3 << 'PYEOF'
+          import urllib.request, json, base64, os, sys
+
+          user = os.environ['SNOW_USER']
+          pwd  = os.environ['SNOW_PASS']
+
+          url = (
+            'https://homedepot.service-now.com/api/now/table/incident'
+            '?sysparm_query=assignment_group.name%3DITO_Network_L3'
+            '&sysparm_fields=number,short_description,assigned_to,opened_at,state,subcategory,category'
+            '&sysparm_limit=1000'
+            '&sysparm_display_value=true'
+          )
+
+          creds = base64.b64encode(f'{user}:{pwd}'.encode()).decode()
+          req = urllib.request.Request(url, headers={
+              'Authorization': f'Basic {creds}',
+              'Accept': 'application/json',
+          })
+
+          try:
+              with urllib.request.urlopen(req, timeout=30) as resp:
+                  data = json.loads(resp.read())
+          except Exception as e:
+              print(f'Fetch failed: {e}', file=sys.stderr)
+              sys.exit(1)
+
+          CAT_RULES = [
+              ('VLAN & Config',              ['vlan', 'config']),
+              ('Connectivity & Performance', ['connect', 'performance', 'latency', 'bandwidth', 'packet']),
+              ('Circuit Decommission',       ['circuit', 'decomm']),
+              ('Hardware & Physical',        ['hardware', 'physical', 'device', 'port', 'optic']),
+              ('Monitoring Alerts',          ['monitor', 'alert', 'threshold']),
+              ('ISP & Fiber',                ['isp', 'fiber', 'wan', 'provider']),
+              ('Change Monitoring',          ['change']),
+          ]
+
+          STATE_MAP = {
+              '1': 'new',          'new': 'new',
+              '2': 'in progress',  'in progress': 'in progress',
+              '3': 'on hold',      'on hold': 'on hold',
+              '6': 'resolved',     'resolved': 'resolved',
+              '7': 'closed',       'closed': 'closed',
+              '8': 'cancelled',    'cancelled': 'cancelled',
+          }
+
+          tickets = []
+          for r in data.get('result', []):
+              num = r.get('number', '')
+              if not num:
+                  continue
+              opened  = r.get('opened_at', '')[:10]
+              combined = (r.get('subcategory', '') + ' ' + r.get('category', '')).lower()
+              cat = next((c for c, keys in CAT_RULES if any(k in combined for k in keys)), 'Other / General')
+              tickets.append({
+                  'num':    num,
+                  'desc':   r.get('short_description', ''),
+                  'who':    r.get('assigned_to', 'Unassigned'),
+                  'opened': opened,
+                  'state':  STATE_MAP.get(r.get('state', '').lower(), r.get('state', '').lower()),
+                  'type':   'INC' if num.startswith('INC') else 'ADR',
+                  'cat':    cat,
+                  'month':  opened[:7],
+              })
+
+          with open('data.json', 'w') as f:
+              json.dump(tickets, f, separators=(',', ':'))
+
+          print(f'Saved {len(tickets)} tickets to data.json')
+          PYEOF
+
+      - name: Commit updated data
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data.json
+          git diff --staged --quiet || git commit -m "chore: refresh ServiceNow data [skip ci]"
+          git push
