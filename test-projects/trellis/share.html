@@ -251,12 +251,12 @@ a{color:inherit;text-decoration:none}
 .ai-note-ico svg{width:17px;height:17px;stroke-width:2}
 .ai-note-t{font-size:10px;font-weight:700;color:var(--orange700);margin-bottom:5px;text-transform:uppercase;letter-spacing:.09em}
 .ai-note-p{font-size:13px;color:var(--g700);line-height:1.6}
-.hero-grid{display:grid;grid-template-columns:1fr 380px;gap:40px;align-items:center}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 520px;gap:36px;align-items:center}
 .hero-stats{display:flex;gap:40px;margin-top:26px;flex-wrap:wrap}
 .hero-viz{background:var(--g100);border:1px solid var(--g200);border-radius:var(--r12);padding:16px 18px 12px}
 .hero-viz-t{font-size:12.5px;font-weight:700;color:var(--g900)}
 .hero-viz-s{font-size:11px;color:var(--g500);margin:2px 0 8px}
-@media(max-width:1040px){.hero-grid{grid-template-columns:1fr;gap:24px}}
+@media(max-width:1120px){.hero-grid{grid-template-columns:1fr;gap:24px}}
 @media(max-width:1100px){.ai-items{grid-template-columns:1fr}}
 
 /* PROFILE */
@@ -387,6 +387,28 @@ a{color:inherit;text-decoration:none}
 .as-res-av{width:60px;height:60px;border-radius:var(--rfull);background:var(--g900);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;flex-shrink:0}
 .as-actions{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
 @media(max-width:768px){.as-card{padding:24px 20px}.as-caps{grid-template-columns:1fr}}
+.rm{display:grid;grid-template-columns:0.8fr 1fr 1fr 1fr;gap:16px;align-items:start}
+.rm-col{min-width:0}
+.rm-h{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:6px 12px;border-radius:var(--rfull);display:inline-block;margin-bottom:12px}
+.rm-h.cur-h{background:var(--g900);color:#fff}
+.rm-h.ready{background:var(--orange50);color:var(--orange700)}
+.rm-h.next{background:var(--blue50);color:var(--blue700)}
+.rm-h.stretch{background:var(--g150);color:var(--g600)}
+.rm-card{background:var(--white);border:1px solid var(--g200);border-radius:var(--r12);padding:14px 15px;margin-bottom:12px;box-shadow:var(--sh-xs);transition:box-shadow .15s,transform .15s}
+.rm-card:hover{box-shadow:var(--sh-md);transform:translateY(-2px)}
+.rm-card.cur{background:var(--g900);border-color:var(--g900)}
+.rm-card.cur:hover{transform:none;box-shadow:var(--sh-xs)}
+.rm-name{font-size:13.5px;font-weight:700;color:var(--g900);letter-spacing:-.01em;line-height:1.25}
+.rm-card.cur .rm-name{color:#fff}
+.rm-org{font-size:11px;color:var(--g500);margin-top:3px}
+.rm-card.cur .rm-org{color:rgba(255,255,255,.6)}
+.rm-m{font-family:var(--font-display);font-weight:700;font-size:19px;letter-spacing:-.02em;margin-top:9px}
+.rm-m.ready{color:var(--orange600)} .rm-m.next{color:var(--blue600)} .rm-m.stretch{color:var(--g500)}
+.rm-pct{font-size:11px;font-weight:600;color:var(--g400);letter-spacing:0}
+.rm-via{display:inline-block;font-size:10.5px;font-weight:600;color:var(--g600);background:var(--g150);border-radius:var(--rfull);padding:2px 9px;margin-top:9px}
+.rm-dev{font-size:11px;color:var(--g500);margin-top:9px;line-height:1.45}
+.rm-empty{font-size:12px;color:var(--g400);padding:16px;border:1px dashed var(--g300);border-radius:var(--r12);line-height:1.4}
+@media(max-width:900px){.rm{grid-template-columns:1fr}}
 .hidden{display:none!important}
 .sidebar-mask{display:none;position:fixed;inset:0;background:rgba(30,27,24,.4);z-index:99}
 
@@ -638,6 +660,7 @@ function nav(v){
   if(v==='match') renderSlate();
   if(v==='profile') initProfile();
   if(v==='assessment') initAssessment();
+  if(v==='pathways') initPathways();
   if(v==='marketplace') renderMktGrid();
   if(v==='overview') initOverview();
   if(window.innerWidth<=768){ $('sidebar').classList.remove('open'); $('mask').classList.remove('on'); }
@@ -976,18 +999,133 @@ function renderMktGrid(){
 }
 
 /* ============ PATHWAYS ============ */
-function renderPathways(){
-  return `
-  <div class="sec-head"><div><div class="sec-title">Where your talents can take you</div>
-    <div class="sec-sub">Roles you're 1\u20132 measured capabilities away from \u2014 the internal moves the resume would never surface</div></div></div>
-  <div class="path-legend">
-    <span><span class="lg-dot" style="background:var(--g900)"></span>Current role</span>
-    <span><span class="lg-dot" style="background:var(--orange500)"></span>Ready now (85%+ match)</span>
-    <span><span class="lg-dot" style="background:var(--blue500)"></span>1 capability away</span>
-    <span><span class="lg-dot" style="background:var(--g300)"></span>Stretch / 2 away</span>
+const TMPL={
+  DATA:{AR:.24,DF:.30,ST:.18,PD:.14,CO:.08,PL:.06},
+  SUPPLY:{AR:.25,DF:.22,ST:.22,PD:.15,CO:.10,PL:.06},
+  FINANCE:{AR:.28,DF:.24,ST:.18,PD:.14,CO:.10,PL:.06},
+  CUSTOMER:{AR:.18,DF:.16,ST:.14,PD:.12,CO:.30,PL:.10},
+  MERCH:{AR:.22,DF:.22,ST:.16,PD:.16,CO:.18,PL:.06},
+  PROCESS:{AR:.18,DF:.14,ST:.22,PD:.30,CO:.10,PL:.06},
+  LOGISTICS:{AR:.20,DF:.18,ST:.24,PD:.24,CO:.08,PL:.06},
+  LEADS:{AR:.12,DF:.10,ST:.18,PD:.18,CO:.20,PL:.22},
+  LEADC:{AR:.16,DF:.14,ST:.20,PD:.16,CO:.14,PL:.20},
+  PMO:{AR:.18,DF:.16,ST:.22,PD:.24,CO:.10,PL:.10}
+};
+const ROADMAP_ROLES=[
+  {n:'Inventory Data Analyst',o:'Merchandising \u00b7 Atlanta SSC',focus:'analyze',sub:'data',lead:false,tmpl:'DATA'},
+  {n:'Demand Planning Analyst',o:'Supply Chain \u00b7 Atlanta SSC',focus:'analyze',sub:'supply',lead:false,tmpl:'SUPPLY'},
+  {n:'Sr. Analyst, Supply Chain Optimization',o:'Supply Chain \u00b7 Atlanta SSC',focus:'analyze',sub:'supply',lead:false,tmpl:'SUPPLY'},
+  {n:'Business Analyst',o:'Corporate \u00b7 Atlanta SSC',focus:'analyze',sub:'finance',lead:false,tmpl:'FINANCE'},
+  {n:'Financial Analyst',o:'Finance \u00b7 Atlanta SSC',focus:'analyze',sub:'finance',lead:false,tmpl:'FINANCE'},
+  {n:'Analytics Team Lead',o:'Data & Analytics \u00b7 Atlanta SSC',focus:'analyze',sub:'data',lead:true,tmpl:'LEADC'},
+  {n:'Department Supervisor',o:'Store \u00b7 Field',focus:'lead',sub:'store',lead:true,tmpl:'LEADS'},
+  {n:'Front End Team Lead',o:'Store \u00b7 Field',focus:'lead',sub:'store',lead:true,tmpl:'LEADS'},
+  {n:'DC Operations Lead',o:'Distribution \u00b7 Field',focus:'lead',sub:'dc',lead:true,tmpl:'LEADS'},
+  {n:'Operations Manager',o:'Store \u00b7 Field',focus:'lead',sub:'store',lead:true,tmpl:'LEADC'},
+  {n:'Supply Chain Manager',o:'Supply Chain \u00b7 Atlanta SSC',focus:'lead',sub:'corp',lead:true,tmpl:'LEADC'},
+  {n:'Customer Experience Analyst',o:'Online \u00b7 Atlanta SSC',focus:'customer',sub:'online',lead:false,tmpl:'CUSTOMER'},
+  {n:'Online Experience Specialist',o:'Online \u00b7 Atlanta SSC',focus:'customer',sub:'online',lead:false,tmpl:'CUSTOMER'},
+  {n:'Merchandise Planner',o:'Merchandising \u00b7 Atlanta SSC',focus:'customer',sub:'merch',lead:false,tmpl:'MERCH'},
+  {n:'Assortment Analyst',o:'Merchandising \u00b7 Atlanta SSC',focus:'customer',sub:'merch',lead:false,tmpl:'MERCH'},
+  {n:'Customer Insights Lead',o:'Online \u00b7 Atlanta SSC',focus:'customer',sub:'online',lead:true,tmpl:'LEADC'},
+  {n:'Process Improvement Specialist',o:'Store Operations \u00b7 Field',focus:'process',sub:'storeops',lead:false,tmpl:'PROCESS'},
+  {n:'Ops Excellence Analyst',o:'Store Operations \u00b7 Field',focus:'process',sub:'storeops',lead:false,tmpl:'PROCESS'},
+  {n:'Logistics Optimization Analyst',o:'Supply Chain \u00b7 Atlanta SSC',focus:'process',sub:'logistics',lead:false,tmpl:'LOGISTICS'},
+  {n:'PMO Analyst',o:'Enterprise PMO \u00b7 Atlanta SSC',focus:'process',sub:'pmo',lead:false,tmpl:'PMO'},
+  {n:'Continuous Improvement Lead',o:'Supply Chain \u00b7 Atlanta SSC',focus:'process',sub:'logistics',lead:true,tmpl:'LEADC'},
+  {n:'Program Manager',o:'Enterprise PMO \u00b7 Atlanta SSC',focus:'process',sub:'pmo',lead:true,tmpl:'LEADC'}
+];
+ROADMAP_ROLES.forEach(r=>r.weights=TMPL[r.tmpl]);
+const DEV={AR:'a case-based analytical-reasoning module',DF:'a data-storytelling / SQL-basics course',ST:'a systems-thinking workshop',PD:'a process-mapping / Lean intro',CO:'a customer-journey mapping exercise',PL:'a team-lead rotation or peer-mentoring'};
+
+let pathState={done:false,step:0,answers:{}};
+function renderPathways(){ return `<div id="pathRoot"></div>`; }
+function initPathways(){ paintPath(); }
+function pathQuestions(){
+  const a=pathState.answers;
+  const q1={id:'focus',cap:'Step 1 \u00b7 Focus',q:'What kind of work energizes you most?',o:[
+    {k:'analyze',t:'Analyzing & optimizing',d:'data, numbers, efficiency'},
+    {k:'lead',t:'Leading & developing people',d:'coaching, running a team'},
+    {k:'customer',t:'Serving & understanding customers',d:'experience, merchandising'},
+    {k:'process',t:'Building & improving processes',d:'operations, logistics, PMO'}]};
+  const branch={
+    analyze:[{k:'data',t:'Data & forecasting'},{k:'supply',t:'Supply-chain optimization'},{k:'finance',t:'Business & financial analysis'}],
+    lead:[{k:'store',t:'A store team'},{k:'dc',t:'A DC / operations team'},{k:'corp',t:'A corporate team'}],
+    customer:[{k:'online',t:'Online / omnichannel'},{k:'merch',t:'Merchandising & assortment'},{k:'instore',t:'In-store experience'}],
+    process:[{k:'storeops',t:'Store operations'},{k:'logistics',t:'Supply chain & logistics'},{k:'pmo',t:'Enterprise process / PMO'}]
+  };
+  const q2={id:'refine',cap:'Step 2 \u00b7 Direction',q:'Narrow it down \u2014 which pulls you most?',o:branch[a.focus]||[]};
+  const q3={id:'timeline',cap:'Step 3 \u00b7 Timeline',q:'What is your appetite for a move?',o:[
+    {k:'now',t:'Ready to move now',d:'find my best-fit next role'},
+    {k:'build',t:'Building over 1\u20132 years',d:'a plan with a couple of steps'},
+    {k:'stretch',t:'Aiming for a bigger leap',d:'show me the stretch path'}]};
+  const q4={id:'leadership',cap:'Step 4 \u00b7 Leadership',q:'Where do you want to grow?',o:[
+    {k:'manage',t:'Toward managing people',d:'a leadership track'},
+    {k:'ic',t:'Toward deep expertise',d:'individual-contributor track'},
+    {k:'either',t:'Open to either',d:'show me both'}]};
+  return [q1,q2,q3,q4];
+}
+function pathAnswer(id,k){ pathState.answers[id]=k; pathState.step++; if(pathState.step>=4) pathState.done=true; paintPath(); }
+function pathBack(){ if(pathState.step>0){ pathState.step--; pathState.done=false; paintPath(); } }
+function pathRedo(){ pathState={done:false,step:0,answers:{}}; paintPath(); }
+function genRoadmap(){
+  const a=pathState.answers, sk=activeProfile().skills;
+  let pool=ROADMAP_ROLES.filter(r=>r.focus===a.focus);
+  let poolL = a.leadership==='ic' ? pool.filter(r=>!r.lead) : pool;
+  if(poolL.length<3) poolL=pool;
+  pool=poolL;
+  pool.forEach(r=>{
+    r._m=oppMatch(r.weights, sk);
+    r._boost=(r.sub===a.refine)?6:0;
+    const top=SKILLS.map(s=>({k:s.k,label:s.label,w:r.weights[s.k]||0})).sort((x,y)=>y.w-x.w).slice(0,3);
+    r._bridge=top.map(t=>({k:t.k,label:t.label,v:sk[t.k]})).sort((x,y)=>x.v-y.v)[0];
+  });
+  pool.sort((x,y)=>(y._m+y._boost)-(x._m+x._boost));
+  const now=pool.filter(r=>r._m>=84).slice(0,2);
+  const next=pool.filter(r=>r._m>=76&&r._m<84).slice(0,2);
+  let stretch=pool.filter(r=>r._m<76).slice(0,2);
+  if(a.leadership==='manage'){ const lead=pool.find(r=>r.lead&&!now.includes(r)&&!next.includes(r)&&!stretch.includes(r)); if(lead) stretch=[lead,...stretch].slice(0,2); }
+  return {now,next,stretch};
+}
+function paintPath(){
+  const root=document.getElementById('pathRoot'); if(!root) return;
+  if(!pathState.done){
+    const qs=pathQuestions(), i=pathState.step, q=qs[i], a=pathState.answers;
+    root.innerHTML=`
+    <div class="sec-head"><div><div class="sec-title">Build your opportunity roadmap</div><div class="sec-sub">Answer four quick questions. Combined with ${SESSION&&SESSION.resumeName?'your resume and ':''}your assessed capabilities, Trellis maps the internal moves that fit you \u2014 now, next, and stretch.</div></div></div>
+    <div class="as-wrap"><div class="as-card">
+      <div class="as-progress"><div class="as-ptrack"><div class="as-pfill" style="width:${Math.round((i+1)/4*100)}%"></div></div><div class="as-pnum">${i+1} / 4</div></div>
+      <div class="as-qcap">${q.cap}</div>
+      <div class="as-q">${q.q}</div>
+      <div class="as-opts">${q.o.map(op=>`<button class="as-opt ${a[q.id]===op.k?'sel':''}" onclick="pathAnswer('${q.id}','${op.k}')"><span class="dot"></span><span>${op.t}${op.d?` <span style="color:var(--g500);font-weight:400">\u2014 ${op.d}</span>`:''}</span></button>`).join('')}</div>
+      ${i>0?'<button class="as-back" onclick="pathBack()">\u2190 Back</button>':''}
+    </div></div>`;
+    return;
+  }
+  const R=genRoadmap(), U=activeProfile(), a=pathState.answers;
+  const avg=Math.round(SKILLS.reduce((x,s)=>x+U.skills[s.k],0)/SKILLS.length);
+  const focusLabel={analyze:'analytical & optimization',lead:'people-leadership',customer:'customer & merchandising',process:'process & operations'}[a.focus];
+  const basis = (SESSION&&SESSION.resumeName)?`your resume, your assessment, and your answers`:`your assessment and your answers`;
+  const low=SKILLS.map(s=>({s,v:U.skills[s.k]})).sort((x,y)=>x.v-y.v)[0];
+  const card=(r,cls)=>`<div class="rm-card"><div class="rm-name">${r.n}</div><div class="rm-org">${r.o}</div><div class="rm-m ${cls}">${r._m}<span class="rm-pct">% match</span></div><div class="rm-via">via ${r._bridge.label}</div><div class="rm-dev">${r._m>=84?'Strong fit \u2014 ready to apply now.':'Grow '+r._bridge.label+' with '+DEV[r._bridge.k]+'.'}</div></div>`;
+  const col=(title,cls,arr)=>`<div class="rm-col"><div class="rm-h ${cls}">${title}</div>${arr.length?arr.map(r=>card(r,cls)).join(''):'<div class="rm-empty">Keep building capability to open roles here.</div>'}</div>`;
+  const first = R.now[0]||R.next[0]||R.stretch[0];
+  const leadNote = a.leadership==='manage'?`Your leadership goal points to ${(R.stretch.find(r=>r.lead)||R.next.find(r=>r.lead)||{n:'a manager-track role'}).n} \u2014 build People Leadership to get there.`:(a.leadership==='ic'?'On the expert track, depth in your top capabilities compounds fastest.':'You are open to either track \u2014 the roadmap shows both IC and leadership routes.');
+  root.innerHTML=`
+  <div class="sec-head"><div><div class="sec-title">Your opportunity roadmap</div><div class="sec-sub">A ${focusLabel} track, generated from ${basis}. <button class="lnk" onclick="pathRedo()">Redo the questions</button></div></div></div>
+  <div class="path-svg-wrap" style="padding:22px 20px">
+    <div class="rm">
+      <div class="rm-col"><div class="rm-h cur-h">You are here</div><div class="rm-card cur"><div class="rm-name">${U.name}</div><div class="rm-org">${U.session?('Assessed \u00b7 avg capability '+avg):'Store Ops Associate \u00b7 3 yrs'}</div></div></div>
+      ${col('Ready now','ready',R.now)}
+      ${col('Next \u00b7 1\u20132 yrs','next',R.next)}
+      ${col('Stretch','stretch',R.stretch)}
+    </div>
   </div>
-  <div class="path-svg-wrap">${pathwaySVG()}</div>
-  ${aiCard("Your fastest routes, ranked",[{ic:IC.spark,t:"Two moves you're ready for now",p:"Sr. Analyst (86%) and Inventory Data Analyst (84%) need no new credential."},{ic:IC.path,t:"One capability from a third",p:"Process Improvement opens at <strong>82%</strong> with a short Process Design module."},{ic:IC.users,t:"Leadership unlocks the stretch tier",p:"Building People Leadership bridges you to manager-track roles within 18 months."}])}`;
+  ${aiCard("Your roadmap, read by the engine",[
+    {ic:IC.spark,t:"Your fastest move",p: first?`<strong>${first.n} \u2014 ${first._m}%</strong>${first._m>=84?', ready to apply now.':', your closest fit.'}`:'Build capability to open your first move.'},
+    {ic:IC.path,t:"The one skill to grow",p:`<strong>${low.s.label}</strong> is your lowest capability (${low.v}). ${DEV[low.s.k].charAt(0).toUpperCase()+DEV[low.s.k].slice(1)} unlocks the next tier.`},
+    {ic:IC.users,t:"Leadership direction",p:leadNote}
+  ])}`;
 }
 function pathwaySVG(){
   // three columns: current -> ready-now -> next
@@ -1102,6 +1240,7 @@ function activeProfile(){
   if(SESSION && SESSION.scores) return {name:SESSION.name, email:SESSION.email, date:SESSION.date, skills:SESSION.scores, session:true};
   return ME;
 }
+function oppMatch(w,sk){ let s=0; for(const k in w) s+=w[k]*sk[k]; return Math.round(s); }
 function refreshOppMatches(){ const sk=activeProfile().skills; OPPS.forEach(o=>{ let s=0; for(const k in o.weights) s+=o.weights[k]*sk[k]; o.match=Math.round(s); }); }
 function renderUser(){
   const el=document.getElementById('sUser'); if(!el) return;
