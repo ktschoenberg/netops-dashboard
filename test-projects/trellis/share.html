@@ -320,6 +320,29 @@ a{color:inherit;text-decoration:none}
 .hero-viz svg:hover .slope-line{opacity:.2!important}
 .hero-viz svg .slope-line:hover{opacity:1!important;stroke-width:3.4}
 @media (prefers-reduced-motion:reduce){.slope-line{animation:none;stroke-dashoffset:0}.cand{transition:none!important}}
+.cmp-note{font-size:12.5px;color:var(--g600);background:var(--g100);border:1px solid var(--g200);border-radius:var(--r8);padding:11px 15px;margin-bottom:16px}
+.cmp-note b{color:var(--g900);font-weight:600}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cmp-col{background:var(--white);border:1px solid var(--g200);border-radius:var(--r16);box-shadow:var(--sh-xs);overflow:hidden}
+.cmp-col-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--g200);font-size:13px;font-weight:700;color:var(--g900)}
+.cmp-col-head span:first-child{display:inline-flex;align-items:center;gap:7px}
+.cmp-col.talent .cmp-col-head{color:var(--orange700)}
+.cmp-col-sub{font-size:11px;font-weight:500;color:var(--g500)}
+.cmp-row{display:flex;align-items:center;gap:12px;padding:10px 18px;border-bottom:1px solid var(--g150);cursor:pointer;transition:background .12s}
+.cmp-row:last-child{border-bottom:none}
+.cmp-row:hover,.cmp-row.hl{background:var(--orange50)}
+.cmp-rank{font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--g300);width:22px;text-align:center;flex-shrink:0}
+.cmp-rank.org{color:var(--orange500)}
+.cmp-av{width:32px;height:32px;border-radius:var(--rfull);background:var(--g100);border:1px solid var(--g200);color:var(--g700);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.cmp-av.org{background:var(--g900);color:#fff;border-color:var(--g900)}
+.cmp-id{flex:1;min-width:0}
+.cmp-name{font-size:12.5px;font-weight:600;color:var(--g900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmp-sub{font-size:10.5px;color:var(--g500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmp-mv{font-size:10.5px;font-weight:700;flex-shrink:0;width:26px;text-align:right}
+.cmp-mv.up{color:var(--green600)} .cmp-mv.down{color:var(--g400)}
+.cmp-score{font-size:15px;font-weight:700;color:var(--g800);width:30px;text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums}
+.cmp-score.org{color:var(--orange600)}
+@media(max-width:900px){.cmp{grid-template-columns:1fr}}
 .hidden{display:none!important}
 .sidebar-mask{display:none;position:fixed;inset:0;background:rgba(30,27,24,.4);z-index:99}
 
@@ -582,6 +605,25 @@ function toggleSidebar(){ $('sidebar').classList.toggle('open'); $('mask').class
 /* ============ MATCH ENGINE ============ */
 let engineMode = 'talent'; // 'resume' | 'talent'
 
+function countUp(el,to,dur){
+  dur=dur||650;
+  if(window.matchMedia('(prefers-reduced-motion:reduce)').matches){ el.textContent=to; return; }
+  const start=performance.now();
+  function tick(now){ const t=Math.min(1,(now-start)/dur); const e=1-Math.pow(1-t,3);
+    el.textContent=Math.round(to*e); if(t<1) requestAnimationFrame(tick); }
+  requestAnimationFrame(tick);
+}
+function hlCand(id){ document.querySelectorAll('#slate .cmp-row').forEach(r=>r.classList.toggle('hl', id!==null && r.dataset.id===id)); }
+function renderCompare(){
+  $('calloutStrip').innerHTML = `<div class="cmp-note">The same 10 people, ranked by each lens. <b>Hover a name</b> to trace where they land \u00b7 click to open a profile.</div>`;
+  const resume=[...CANDIDATES].sort((a,b)=>a.resumeRank-b.resumeRank);
+  const talent=[...CANDIDATES].sort((a,b)=>a.talentRank-b.talentRank);
+  const rrow=c=>`<div class="cmp-row" data-id="${c.id}" onclick="openCand('${c.id}')" onmouseenter="hlCand('${c.id}')" onmouseleave="hlCand(null)"><div class="cmp-rank">${c.resumeRank}</div><div class="cmp-av">${c.id}</div><div class="cmp-id"><div class="cmp-name">${c.name}</div><div class="cmp-sub">${c.role}</div></div><div class="cmp-score">${Math.round(c.resume)}</div></div>`;
+  const trow=c=>{const gem=c.jump>=3;const mv=c.jump>0?`<span class="cmp-mv up">\u25b2${c.jump}</span>`:(c.jump<0?`<span class="cmp-mv down">\u25bc${-c.jump}</span>`:'<span class="cmp-mv"></span>');
+    return `<div class="cmp-row ${gem?'gem':''}" data-id="${c.id}" onclick="openCand('${c.id}')" onmouseenter="hlCand('${c.id}')" onmouseleave="hlCand(null)"><div class="cmp-rank ${gem?'org':''}">${c.talentRank}</div><div class="cmp-av ${gem?'org':''}">${c.id}</div><div class="cmp-id"><div class="cmp-name">${c.name}${gem?' <span class="badge b-gem" style="padding:1px 6px;font-size:9px">gem</span>':''}</div><div class="cmp-sub">${c.role}</div></div>${mv}<div class="cmp-score org" data-to="${Math.round(c.match)}">${Math.round(c.match)}</div></div>`;};
+  $('slate').innerHTML = `<div class="cmp"><div class="cmp-col"><div class="cmp-col-head"><span>${svg(IC.user,14)} Resume Screen</span><span class="cmp-col-sub">by credentials</span></div>${resume.map(rrow).join('')}</div><div class="cmp-col talent"><div class="cmp-col-head"><span>${svg(IC.spark,14)} Talent Match</span><span class="cmp-col-sub">by measured capability</span></div>${talent.map(trow).join('')}</div></div>`;
+  document.querySelectorAll('#slate .cmp-score[data-to]').forEach(el=>countUp(el,+el.dataset.to));
+}
 function slopeGraph(){
   const W=380,H=248,lx=54,rx=286,top=36,bot=222;
   const y=r=>top+(r-1)/9*(bot-top);
@@ -637,13 +679,14 @@ function renderMatch(){
       </div>
     </div>
     <div class="seg-ctrl" id="segCtrl">
-      <button class="seg-btn ${engineMode==='resume'?'active':''}" onclick="setMode('resume')">${svg(IC.user,15)} Resume Screen</button>
-      <button class="seg-btn talent ${engineMode==='talent'?'active talent':''}" onclick="setMode('talent')">${svg(IC.spark,15)} Talent Match</button>
+      <button class="seg-btn ${engineMode==='resume'?'active':''}" data-mode="resume" onclick="setMode('resume')">${svg(IC.user,15)} Resume Screen</button>
+      <button class="seg-btn ${engineMode==='talent'?'active talent':''}" data-mode="talent" onclick="setMode('talent')">${svg(IC.spark,15)} Talent Match</button>
+      <button class="seg-btn ${engineMode==='compare'?'active':''}" data-mode="compare" onclick="setMode('compare')">${svg(IC.grid,15)} Compare</button>
     </div>
   </div>
 
   <div id="calloutStrip"></div>
-  <div class="hs-cap">Middle strip shows each candidate's six assessed capabilities \u00b7 Analytical \u00b7 Data \u00b7 Systems \u00b7 Process \u00b7 Customer \u00b7 Leadership</div>
+  <div class="hs-cap" id="hsCap">Middle strip shows each candidate's six assessed capabilities \u00b7 Analytical \u00b7 Data \u00b7 Systems \u00b7 Process \u00b7 Customer \u00b7 Leadership</div>
   <div class="slate" id="slate"></div>
   ${aiCard("Generated from the skills index \u00b7 updated live",[{ic:IC.spark,t:"4 hidden gems the resume buried",p:"Store &amp; DC associates in the top four by capability \u2014 bottom four by resume screen."},{ic:IC.trend,t:"Best predicted performer: Marcus Bell",p:"<strong>86% match \u00b7 94 potential</strong> \u2014 the highest combined score in the pool."},{ic:IC.users,t:"A wider, higher-fit slate",p:"Talent-first ranking lifts slate diversity <strong>~40%</strong> with no drop in fit."}])}
   `;
@@ -652,16 +695,16 @@ function renderMatch(){
 function setMode(m){
   if(m===engineMode) return;
   engineMode=m;
-  const seg=$('segCtrl');
-  seg.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active','talent'));
-  seg.children[0].classList.toggle('active', m==='resume');
-  if(m==='talent'){ seg.children[1].classList.add('active','talent'); }
+  document.querySelectorAll('#segCtrl .seg-btn').forEach(b=>{ const on=b.dataset.mode===m;
+    b.classList.toggle('active',on); b.classList.toggle('talent', on && m==='talent'); });
   renderSlate();
 }
 
 function renderSlate(){
   // callouts
   const gems = CANDIDATES.filter(c=>c.jump>=3).length;
+  const cap=document.getElementById('hsCap'); if(cap) cap.style.display = engineMode==='compare'?'none':'';
+  if(engineMode==='compare'){ renderCompare(); return; }
   const strip = engineMode==='talent' ? `
     <div class="callout-strip">
       <div class="callout"><div class="co-ico">${svg(IC.spark,18)}</div><div><div class="co-num">${gems} hidden gems</div><div class="co-lbl">surfaced that resume screening buried</div></div></div>
@@ -702,11 +745,12 @@ function renderSlate(){
       </div>
       ${hs}
       ${move||'<div class="cand-move"></div>'}
-      <div class="cand-score"><div class="cs-num ${engineMode==='talent'?'orange':'grey'}">${score}</div><div class="cs-lbl">${scoreLbl}</div></div>
+      <div class="cand-score"><div class="cs-num ${engineMode==='talent'?'orange':'grey'}" data-to="${score}">${score}</div><div class="cs-lbl">${scoreLbl}</div></div>
       <div class="cand-chev">${svg(IC.chev,18)}</div>
     </div>`;
   }).join('');
   flipSlate(prevPos);
+  document.querySelectorAll('#slate .cs-num').forEach(el=>countUp(el,+el.dataset.to));
 }
 function flipSlate(prevPos){
   if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
@@ -750,9 +794,9 @@ function openCand(id){
       </div>
     </div>
     <div class="pp-scorebar">
-      <div class="pp-sc"><div class="pp-sc-num orange">${Math.round(c.match)}</div><div class="pp-sc-lbl">Skills match</div></div>
-      <div class="pp-sc"><div class="pp-sc-num">${c.potential}</div><div class="pp-sc-lbl">Potential</div></div>
-      <div class="pp-sc"><div class="pp-sc-num">${c.adjacency}</div><div class="pp-sc-lbl">Role adjacency</div></div>
+      <div class="pp-sc"><div class="pp-sc-num orange" data-to="${Math.round(c.match)}">${Math.round(c.match)}</div><div class="pp-sc-lbl">Skills match</div></div>
+      <div class="pp-sc"><div class="pp-sc-num" data-to="${c.potential}">${c.potential}</div><div class="pp-sc-lbl">Potential</div></div>
+      <div class="pp-sc"><div class="pp-sc-num" data-to="${c.adjacency}">${c.adjacency}</div><div class="pp-sc-lbl">Role adjacency</div></div>
     </div>
     <div style="display:flex;gap:12px;font-size:12px;color:var(--g500);margin-top:10px">
       <div>Resume rank: <strong style="color:var(--g700)">#${c.resumeRank}</strong></div>
@@ -767,6 +811,7 @@ function openCand(id){
       <button class="btn btn-orange" style="flex:1;justify-content:center" onclick="closePanel()">Advance to interview</button>
       <button class="btn btn-ghost" onclick="closePanel()">Save to slate</button>
     </div>`;
+  document.querySelectorAll('#panelBody .pp-sc-num').forEach(el=>countUp(el,+el.dataset.to));
   $('overlay').classList.add('on');
   $('panel').classList.add('on');
 }
