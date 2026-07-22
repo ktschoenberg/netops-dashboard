@@ -143,7 +143,7 @@ a{color:inherit;text-decoration:none}
 .card-sub{font-size:12.5px;color:var(--g500);margin-top:3px}
 
 /* HERO */
-.hero{background:var(--white);border:1px solid var(--g200);border-radius:var(--r16);padding:40px 44px;margin-bottom:26px;
+.hero{background:var(--white);border:1px solid var(--g200);border-radius:var(--r16);padding:34px 40px;margin-bottom:24px;
   position:relative;overflow:hidden;box-shadow:var(--sh-xs)}
 .hero-eye{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.16em;color:var(--orange600);margin-bottom:14px}
 .hero-h{font-family:var(--font-display);font-size:40px;font-weight:700;letter-spacing:-.025em;line-height:1.04;margin-bottom:14px;color:var(--g900);text-wrap:balance}
@@ -200,7 +200,7 @@ a{color:inherit;text-decoration:none}
 .cand-av{width:44px;height:44px;border-radius:var(--rfull);background:var(--g100);border:1px solid var(--g200);color:var(--g700);
   display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;flex-shrink:0}
 .cand.gem .cand-av{background:var(--g900);color:#fff;border-color:var(--g900)}
-.cand-id{flex:1;min-width:0}
+.cand-id{width:240px;flex:0 1 240px;min-width:120px}
 .cand-name{font-size:14.5px;font-weight:600;color:var(--g900);display:flex;align-items:center;gap:9px;letter-spacing:-.01em}
 .cand-role{font-size:12px;color:var(--g500);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cand-mid{width:150px;flex-shrink:0}
@@ -317,6 +317,14 @@ a{color:inherit;text-decoration:none}
 .footer svg{width:13px;height:13px;stroke-width:2;color:var(--g300);flex-shrink:0}
 .footer strong{color:var(--g600);font-weight:600}
 
+.hs{flex:1;display:flex;gap:5px;min-width:0;height:26px;align-items:stretch}
+.hs-cell{flex:1;border-radius:5px;border:1px solid rgba(30,27,24,.05)}
+.hs-cap{font-size:11px;color:var(--g500);margin:0 2px 12px}
+.slope-line{cursor:pointer;stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.1s cubic-bezier(.22,1,.36,1) forwards;transition:opacity .15s,stroke-width .15s}
+@keyframes draw{to{stroke-dashoffset:0}}
+.hero-viz svg:hover .slope-line{opacity:.2!important}
+.hero-viz svg .slope-line:hover{opacity:1!important;stroke-width:3.4}
+@media (prefers-reduced-motion:reduce){.slope-line{animation:none;stroke-dashoffset:0}.cand{transition:none!important}}
 .hidden{display:none!important}
 .sidebar-mask{display:none;position:fixed;inset:0;background:rgba(30,27,24,.4);z-index:99}
 
@@ -333,7 +341,7 @@ a{color:inherit;text-decoration:none}
   .ham-btn{display:flex}
   .live-pill{display:none}
   .kpi-grid{grid-template-columns:repeat(2,1fr)}
-  .cand-role,.cand-mid,.cand-move{display:none}
+  .cand-mid,.hs,.cand-move{display:none}
   .page{padding:20px 16px}
   .topbar{padding:0 16px}
   .hero{padding:28px 24px}
@@ -561,10 +569,10 @@ function slopeGraph(){
   const W=380,H=248,lx=54,rx=286,top=36,bot=222;
   const y=r=>top+(r-1)/9*(bot-top);
   let lines='',dots='';
-  CANDIDATES.forEach(c=>{
+  CANDIDATES.forEach((c,i)=>{
     const y1=y(c.resumeRank),y2=y(c.talentRank),gem=c.jump>=3;
     const col=gem?'#F96302':'#D8D6D2',w=gem?2.4:1.3,op=gem?1:.6,dc=gem?'#F96302':'#A6A39D',r=gem?4:2.8;
-    lines+=`<path d="M${lx} ${y1} C ${(lx+rx)/2} ${y1}, ${(lx+rx)/2} ${y2}, ${rx} ${y2}" fill="none" stroke="${col}" stroke-width="${w}" opacity="${op}"/>`;
+    lines+=`<path class="slope-line" data-id="${c.id}" pathLength="1" style="animation-delay:${(i*0.06).toFixed(2)}s" onclick="event.stopPropagation();openCand('${c.id}')" d="M${lx} ${y1} C ${(lx+rx)/2} ${y1}, ${(lx+rx)/2} ${y2}, ${rx} ${y2}" fill="none" stroke="${col}" stroke-width="${w}" opacity="${op}"><title>${c.name} — resume #${c.resumeRank} \u2192 talent #${c.talentRank}</title></path>`;
     dots+=`<circle cx="${lx}" cy="${y1}" r="${r}" fill="${dc}"/><circle cx="${rx}" cy="${y2}" r="${r}" fill="${dc}"/>`;
   });
   const t1=CANDIDATES.find(c=>c.talentRank===1);
@@ -597,7 +605,7 @@ function renderMatch(){
       </div>
       <div class="hero-viz">
         <div class="hero-viz-t">Same pool, ranked two ways</div>
-        <div class="hero-viz-s">Each line is one candidate · orange = hidden gems who rose</div>
+        <div class="hero-viz-s">Each line is one candidate · orange = hidden gems who rose · hover or tap a line</div>
         ${slopeGraph()}
       </div>
     </div>
@@ -618,6 +626,7 @@ function renderMatch(){
   </div>
 
   <div id="calloutStrip"></div>
+  <div class="hs-cap">Middle strip shows each candidate's six assessed capabilities · Analytical · Data · Systems · Process · Customer · Leadership</div>
   <div class="slate" id="slate"></div>
   ${aiCard("Generated from the skills index · updated live",[{ic:IC.spark,t:"4 hidden gems the resume buried",p:"Store &amp; DC associates in the top four by capability — bottom four by resume screen."},{ic:IC.trend,t:"Best predicted performer: Marcus Bell",p:"<strong>86% match · 94 potential</strong> — the highest combined score in the pool."},{ic:IC.users,t:"A wider, higher-fit slate",p:"Talent-first ranking lifts slate diversity <strong>~40%</strong> with no drop in fit."}])}
   `;
@@ -653,6 +662,7 @@ function renderSlate(){
     ? [...CANDIDATES].sort((a,b)=>a.resumeRank-b.resumeRank)
     : [...CANDIDATES].sort((a,b)=>a.talentRank-b.talentRank);
 
+  const prevPos={}; document.querySelectorAll('#slate .cand').forEach(el=>{prevPos[el.dataset.id]=el.getBoundingClientRect().top;});
   $('slate').innerHTML = list.map(c=>{
     const rank = engineMode==='resume'? c.resumeRank : c.talentRank;
     const score = engineMode==='resume'? Math.round(c.resume) : Math.round(c.match);
@@ -664,28 +674,30 @@ function renderSlate(){
       else if(c.jump<0) move=`<div class="cand-move move-down">▼ ${-c.jump} <span style="color:var(--g400);font-weight:500">from #${c.resumeRank}</span></div>`;
       else move=`<div class="cand-move move-flat">—</div>`;
     }
-    const bar = engineMode==='talent'
-      ? `<div class="mbar-track"><div class="mbar-fill" style="width:0" data-w="${Math.round(c.match)}%"></div></div>`
-      : `<div class="mbar-track"><div class="mbar-fill blue" style="width:0" data-w="${Math.round(c.resume)}%"></div></div>`;
+    const hs = `<div class="hs">${SKILLS.map(s=>{const v=c.skills[s.k];let bg;if(v>=75){const t=Math.min(1,(v-75)/22);bg=`rgba(249,99,2,${(0.42+0.55*t).toFixed(2)})`;}else{const t=Math.max(0,(v-55)/20);bg=`rgba(120,113,108,${(0.12+0.16*t).toFixed(2)})`;}return `<div class="hs-cell" title="${s.label}: ${v}" style="background:${bg}"></div>`;}).join('')}</div>`;
     return `
-    <div class="cand ${isGem?'gem':''}" onclick="openCand('${c.id}')">
+    <div class="cand ${isGem?'gem':''}" data-id="${c.id}" onclick="openCand('${c.id}')">
       <div class="cand-rank">${rank}</div>
       <div class="cand-av">${c.id}</div>
       <div class="cand-id">
         <div class="cand-name">${c.name} ${isGem?'<span class="badge b-gem">'+svg(IC.spark,11)+' Hidden gem</span>':''}</div>
         <div class="cand-role">${c.role} · ${c.tenure}</div>
       </div>
-      <div class="cand-mid">${bar}</div>
+      ${hs}
       ${move||'<div class="cand-move"></div>'}
       <div class="cand-score"><div class="cs-num ${engineMode==='talent'?'orange':'grey'}">${score}</div><div class="cs-lbl">${scoreLbl}</div></div>
       <div class="cand-chev">${svg(IC.chev,18)}</div>
     </div>`;
   }).join('');
-  animateBars();
+  flipSlate(prevPos);
 }
-function animateBars(){
-  requestAnimationFrame(()=>{
-    document.querySelectorAll('#slate .mbar-fill').forEach(f=>{ f.style.width=f.dataset.w; });
+function flipSlate(prevPos){
+  if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  document.querySelectorAll('#slate .cand').forEach(el=>{
+    const oldTop=prevPos[el.dataset.id]; if(oldTop==null) return;
+    const dy=oldTop-el.getBoundingClientRect().top; if(!dy) return;
+    el.style.transition='none'; el.style.transform=`translateY(${dy}px)`;
+    requestAnimationFrame(()=>{ el.style.transition='transform .55s cubic-bezier(.22,1,.36,1)'; el.style.transform=''; });
   });
 }
 
