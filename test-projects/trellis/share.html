@@ -343,6 +343,50 @@ a{color:inherit;text-decoration:none}
 .cmp-score{font-size:15px;font-weight:700;color:var(--g800);width:30px;text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums}
 .cmp-score.org{color:var(--orange600)}
 @media(max-width:900px){.cmp{grid-template-columns:1fr}}
+.prof-banner{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--g600);background:var(--g100);border:1px solid var(--g200);border-radius:var(--r12);padding:11px 15px;margin-bottom:18px}
+.prof-banner.ok{background:var(--green50);border-color:var(--green100);color:var(--green700)}
+.prof-banner svg{flex-shrink:0;color:var(--orange600)}
+.prof-banner.ok svg{color:var(--green600)}
+.lnk{background:none;border:none;color:var(--orange600);font-weight:700;cursor:pointer;font-family:var(--font);font-size:inherit;text-decoration:underline;padding:0}
+.as-page{padding-top:4px}
+.as-wrap{max-width:780px;margin:0 auto}
+.as-card{background:var(--white);border:1px solid var(--g200);border-radius:var(--r16);box-shadow:var(--sh-sm);padding:34px 36px}
+.as-eyebrow{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--orange600);margin-bottom:12px}
+.as-h{font-size:26px;font-weight:700;letter-spacing:-.025em;color:var(--g900);margin-bottom:8px}
+.as-sub{font-size:14px;color:var(--g600);line-height:1.55;margin-bottom:24px}
+.as-field{margin-bottom:14px}
+.as-label{font-size:12px;font-weight:600;color:var(--g700);margin-bottom:6px;display:block}
+.as-input{width:100%;height:44px;padding:0 14px;border:1px solid var(--g300);border-radius:var(--r8);font-size:14px;font-family:var(--font);color:var(--g900);outline:none;transition:all .15s;box-sizing:border-box}
+.as-input:focus{border-color:var(--orange500);box-shadow:0 0 0 3px var(--orange50)}
+.as-note{font-size:11.5px;color:var(--g500);margin-top:16px;display:flex;gap:7px;align-items:flex-start;line-height:1.5}
+.as-note svg{flex-shrink:0;color:var(--g400);margin-top:1px}
+.as-caps{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:18px 0 24px}
+.as-cap{display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid var(--g200);border-radius:var(--r8);font-size:13px;font-weight:600;color:var(--g800)}
+.as-cap .ci{width:28px;height:28px;border-radius:var(--r6);background:var(--orange50);color:var(--orange600);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.as-drop{display:block;border:1.5px dashed var(--g300);border-radius:var(--r12);padding:22px;text-align:center;cursor:pointer;transition:all .15s;background:var(--g100)}
+.as-drop:hover{border-color:var(--orange500);background:var(--orange50)}
+.as-drop.has{border-style:solid;border-color:var(--orange100);background:var(--orange50)}
+.as-drop-ico{color:var(--g400);display:flex;justify-content:center;margin-bottom:8px}
+.as-drop.has .as-drop-ico{color:var(--orange500)}
+.as-progress{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.as-ptrack{flex:1;height:8px;background:var(--g150);border-radius:99px;overflow:hidden}
+.as-pfill{height:100%;background:var(--orange500);border-radius:99px;transition:width .4s cubic-bezier(.22,1,.36,1)}
+.as-pnum{font-size:12px;font-weight:700;color:var(--g500);white-space:nowrap;font-variant-numeric:tabular-nums}
+.as-qcap{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--orange600);margin-bottom:10px}
+.as-q{font-size:19px;font-weight:600;color:var(--g900);line-height:1.35;margin-bottom:22px;letter-spacing:-.01em}
+.as-opts{display:flex;flex-direction:column;gap:11px}
+.as-opt{text-align:left;padding:15px 17px;border:1px solid var(--g300);border-radius:var(--r12);background:var(--white);font-size:14px;color:var(--g800);cursor:pointer;transition:all .14s;display:flex;align-items:center;gap:13px;font-family:var(--font);line-height:1.4}
+.as-opt:hover{border-color:var(--orange500);background:var(--orange50)}
+.as-opt.sel{border-color:var(--orange500);background:var(--orange50)}
+.as-opt .dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--g300);flex-shrink:0;transition:all .14s}
+.as-opt:hover .dot{border-color:var(--orange500)}
+.as-opt.sel .dot{border-color:var(--orange500);background:var(--orange500);box-shadow:inset 0 0 0 3px var(--white)}
+.as-back{margin-top:20px;background:none;border:none;color:var(--g500);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)}
+.as-back:hover{color:var(--g800)}
+.as-res-head{display:flex;align-items:center;gap:16px}
+.as-res-av{width:60px;height:60px;border-radius:var(--rfull);background:var(--g900);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;flex-shrink:0}
+.as-actions{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+@media(max-width:768px){.as-card{padding:24px 20px}.as-caps{grid-template-columns:1fr}}
 .hidden{display:none!important}
 .sidebar-mask{display:none;position:fixed;inset:0;background:rgba(30,27,24,.4);z-index:99}
 
@@ -386,13 +430,7 @@ a{color:inherit;text-decoration:none}
   </div>
   <nav class="s-nav" id="snav"></nav>
   <div class="s-foot">
-    <div class="s-user">
-      <div class="s-av">MB</div>
-      <div>
-        <div class="s-uname">Marcus Bell</div>
-        <div class="s-urole">Store Ops Associate &#183; #2104</div>
-      </div>
-    </div>
+    <div class="s-user" id="sUser"></div>
   </div>
 </aside>
 
@@ -561,7 +599,10 @@ const IC = {
   clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
   target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
   send:'<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>',
-  chev:'<polyline points="9 18 15 12 9 6"/>'
+  chev:'<polyline points="9 18 15 12 9 6"/>',
+  check:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
+  upload:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>',
+  doc:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>'
 };
 const svg = (p,w=16)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="${w}" height="${w}">${p}</svg>`;
 
@@ -569,11 +610,12 @@ const svg = (p,w=16)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor
 const NAV = [
   {v:'match', label:'Match Engine', ic:IC.engine, pill:'beta'},
   {v:'profile', label:'My Talent Profile', ic:IC.user},
+  {v:'assessment', label:'Take Assessment', ic:IC.check, pill:'new'},
   {v:'marketplace', label:'Opportunity Marketplace', ic:IC.grid, pill:'128', green:true},
   {v:'pathways', label:'Career Pathways', ic:IC.path},
   {v:'overview', label:'Org Command Center', ic:IC.chart}
 ];
-const TITLES = {match:'Match Engine <em>beta</em>', profile:'My Talent Profile', marketplace:'Opportunity Marketplace', pathways:'Career Pathways', overview:'Org Command Center'};
+const TITLES = {match:'Match Engine <em>beta</em>', profile:'My Talent Profile', assessment:'Assessment', marketplace:'Opportunity Marketplace', pathways:'Career Pathways', overview:'Org Command Center'};
 
 function renderNav(active){
   $('snav').innerHTML = NAV.map(n=>`
@@ -591,10 +633,11 @@ function nav(v){
   closePanel();
   renderNav(v);
   $('tbTitle').innerHTML = TITLES[v];
-  const r = {match:renderMatch, profile:renderProfile, marketplace:renderMarketplace, pathways:renderPathways, overview:renderOverview}[v];
+  const r = {match:renderMatch, profile:renderProfile, assessment:renderAssessment, marketplace:renderMarketplace, pathways:renderPathways, overview:renderOverview}[v];
   $('page').innerHTML = r();
   if(v==='match') renderSlate();
   if(v==='profile') initProfile();
+  if(v==='assessment') initAssessment();
   if(v==='marketplace') renderMktGrid();
   if(v==='overview') initOverview();
   if(window.innerWidth<=768){ $('sidebar').classList.remove('open'); $('mask').classList.remove('on'); }
@@ -819,15 +862,24 @@ function closePanel(){ $('overlay').classList.remove('on'); $('panel').classList
 
 /* ============ PROFILE ============ */
 function renderProfile(){
+  refreshOppMatches();
+  const U=activeProfile();
   const topOpps = [...OPPS].sort((a,b)=>b.match-a.match).slice(0,4);
-  const gap = SKILLS.map(s=>({s, v:ME.skills[s.k]})).sort((a,b)=>a.v-b.v)[0];
+  const ranked = SKILLS.map(s=>({s, v:U.skills[s.k]})).sort((a,b)=>a.v-b.v);
+  const gap = ranked[0], high = ranked[ranked.length-1];
+  const avg = Math.round(SKILLS.reduce((a,s)=>a+U.skills[s.k],0)/SKILLS.length);
+  const band = avg>=82?'High-potential':avg>=70?'Strong performer':'Developing';
+  const banner = U.session
+    ? `<div class="prof-banner ok">${svg(IC.check,15)} Your results, from the assessment you completed${U.date?' on '+U.date:''}. <button class="lnk" onclick="nav('assessment')">Review</button></div>`
+    : `<div class="prof-banner">${svg(IC.spark,15)} This is a sample profile. <button class="lnk" onclick="nav('assessment')">Take the assessment</button> to generate your own Talent DNA.</div>`;
   return `
+  ${banner}
   <div class="dna-hero">
-    <div class="dna-av">MB</div>
+    <div class="dna-av">${initials(U.name).toUpperCase()}</div>
     <div>
-      <div class="dna-name">Marcus Bell</div>
-      <div class="dna-role">Store Ops Associate \u00b7 Store #2104 \u00b7 Marietta, GA \u00b7 3 yrs</div>
-      <div class="pband">${svg(IC.spark,13)} High-potential \u00b7 Top 5% assessed capability</div>
+      <div class="dna-name">${U.name}</div>
+      <div class="dna-role">${U.session ? (U.email||'Assessed via Trellis') : 'Store Ops Associate \u00b7 Store #2104 \u00b7 Marietta, GA \u00b7 3 yrs'}</div>
+      <div class="pband">${svg(IC.spark,13)} ${band} \u00b7 avg capability ${avg}</div>
     </div>
   </div>
 
@@ -837,7 +889,7 @@ function renderProfile(){
         <span class="badge b-verified"><span class="b-dot"></span>4 assessments verified</span></div>
       <div class="chart-box"><canvas id="dnaChart"></canvas></div>
     </div>
-    ${aiCard("What your assessments say",[{ic:IC.trend,t:"Ready for a grade-6 analyst move",p:"Your 86% match to Supply Chain Optimization is <strong>#1 of 10</strong> in that pool."},{ic:IC.spark,t:"Your edge: Analytical Reasoning",p:"Top-5% assessed \u2014 paired with Data Fluency it clears <strong>4 open roles</strong>."},{ic:IC.path,t:"Close one gap to unlock more",p:"People Leadership is your lowest capability; a team-lead rotation opens 3 more paths."}],true)}
+    ${aiCard("What your assessments say",[{ic:IC.trend,t:"Your strongest match",p:`<strong>${topOpps[0].name} \u2014 ${topOpps[0].match}%</strong>, computed from your measured capability.`},{ic:IC.spark,t:`Your edge: ${high.s.label}`,p:`Assessed at <strong>${high.v}</strong> \u2014 your top capability of the six.`},{ic:IC.path,t:"Close one gap to unlock more",p:`${gap.s.label} is your lowest (${gap.v}); developing it broadens your matches.`}],true)}
   </div>
 
   <div class="card card-pad">
@@ -866,7 +918,7 @@ function initProfile(){
     type:'radar',
     data:{labels:SKILLS.map(s=>s.label),
       datasets:[
-        {label:'Marcus (assessed)', data:SKILLS.map(s=>ME.skills[s.k]),
+        {label:(activeProfile().session?'You (assessed)':'Marcus (assessed)'), data:SKILLS.map(s=>activeProfile().skills[s.k]),
           backgroundColor:'rgba(249,99,2,.15)', borderColor:'#F96302', borderWidth:2,
           pointBackgroundColor:'#F96302', pointRadius:3},
         {label:'Role benchmark', data:SKILLS.map(s=>Math.round(ROLE.weights[s.k]*100*4+45)),
@@ -883,6 +935,7 @@ function initProfile(){
 /* ============ MARKETPLACE ============ */
 let mktFilter='All';
 function renderMarketplace(){
+  refreshOppMatches();
   const cats=['All','Supply Chain','Data & Analytics','Operations'];
   return `
   <div class="sec-head"><div><div class="sec-title">Browse by capability, not title</div>
@@ -895,6 +948,7 @@ function renderMarketplace(){
 }
 function setFilter(c){ mktFilter=c; document.querySelectorAll('#filtRow .pill').forEach(p=>p.classList.toggle('active',p.textContent===c)); renderMktGrid(); }
 function renderMktGrid(){
+  const sk=activeProfile().skills;
   const list = [...OPPS].filter(o=>mktFilter==='All'||o.cat===mktFilter).sort((a,b)=>b.match-a.match);
   $('mktGrid').innerHTML = list.map(o=>{
     const top3 = SKILLS.map(s=>({s,w:o.weights[s.k]||0})).sort((a,b)=>b.w-a.w).slice(0,3);
@@ -911,7 +965,7 @@ function renderMktGrid(){
         </div>
       </div>
       <div class="mkt-skills">
-        ${top3.map(t=>`<span class="skchip ${ME.skills[t.s.k]>=78?'hit':''}">${t.s.label}</span>`).join('')}
+        ${top3.map(t=>`<span class="skchip ${sk[t.s.k]>=72?'hit':''}">${t.s.label}</span>`).join('')}
       </div>
       <div class="mkt-foot">
         <span class="mkt-type"><span class="badge b-blue"><span class="b-dot"></span>${o.type}</span></span>
@@ -1039,7 +1093,160 @@ Chart.defaults.font.family = "'Inter', sans-serif";
 const TT = {backgroundColor:'#1E1B18',titleColor:'#FFFFFF',bodyColor:'#B9B3AB',borderColor:'#33302B',
   borderWidth:1,padding:11,cornerRadius:10,displayColors:true,boxWidth:8,boxHeight:8,boxPadding:3};
 
+/* ============ AUTH + ASSESSMENT ============ */
+let SESSION=null;
+try{ const s=localStorage.getItem('trellis_user'); if(s) SESSION=JSON.parse(s); }catch(e){}
+function saveSession(){ try{ localStorage.setItem('trellis_user', JSON.stringify(SESSION)); }catch(e){} }
+function initials(n){ const p=(n||'?').trim().split(/\s+/); return ((p[0]||'')[0]||'')+((p[1]||'')[0]||''); }
+function activeProfile(){
+  if(SESSION && SESSION.scores) return {name:SESSION.name, email:SESSION.email, date:SESSION.date, skills:SESSION.scores, session:true};
+  return ME;
+}
+function refreshOppMatches(){ const sk=activeProfile().skills; OPPS.forEach(o=>{ let s=0; for(const k in o.weights) s+=o.weights[k]*sk[k]; o.match=Math.round(s); }); }
+function renderUser(){
+  const el=document.getElementById('sUser'); if(!el) return;
+  if(SESSION && SESSION.name){
+    el.innerHTML=`<div class="s-av">${initials(SESSION.name).toUpperCase()}</div><div><div class="s-uname">${SESSION.name}</div><div class="s-urole">${SESSION.scores?'You \u00b7 assessed':'Signed in'}</div></div>`;
+  } else {
+    el.innerHTML=`<div class="s-av">MB</div><div><div class="s-uname">Marcus Bell</div><div class="s-urole">Store Ops Associate \u00b7 #2104 (demo)</div></div>`;
+  }
+}
+
+// 18 scored items across the six capabilities
+const ASSESS=[
+ {cap:'AR',q:'A store\u2019s units sold doubled but revenue rose only 50%. The average selling price most likely\u2026',o:[['Fell',100],['Rose',0],['Stayed the same',15],['Cannot be determined',55]]},
+ {cap:'DF',q:'Conversion went from 2.0% to 2.5%. The most precise way to describe that is\u2026',o:[['A 25% relative increase',100],['A 0.5-point increase',70],['A 20% increase',10],['It doubled',0]]},
+ {cap:'ST',q:'Checkout lines are consistently slow. Your first move is to\u2026',o:[['Map the end-to-end flow to find the real bottleneck',100],['Add more registers',50],['Tell cashiers to move faster',20],['Buy a new POS system',30]]},
+ {cap:'PD',q:'The most effective first step to improve any process is to\u2026',o:[['Document the current steps and measure them',100],['Automate it immediately',40],['Remove the approvals',35],['Add a checklist',55]]},
+ {cap:'CO',q:'A customer is upset an item is out of stock. Best response?',o:[['Acknowledge it, check nearby/online, and offer an alternative',100],['Explain it\u2019s not your fault',0],['Suggest they check back later',30],['Point them to the aisle',40]]},
+ {cap:'PL',q:'A teammate is underperforming. Your first step is to\u2026',o:[['Have a private, specific, supportive conversation',100],['Report it to your manager',35],['Quietly do their work for them',20],['Address it in front of the team',0]]},
+ {cap:'AR',q:'Complete the sequence: 2, 6, 12, 20, 30, __',o:[['42',100],['40',20],['36',0],['44',10]]},
+ {cap:'DF',q:'The median order value is far below the mean. This most likely means\u2026',o:[['A few very large orders pull the average up',100],['The data is wrong',10],['Most orders are large',0],['Orders are evenly spread',10]]},
+ {cap:'ST',q:'You fix one issue and a new problem appears elsewhere. This suggests\u2026',o:[['Interconnected parts \u2014 trace the whole system',100],['Bad luck',10],['You need to work harder',10],['An isolated, unrelated bug',30]]},
+ {cap:'PD',q:'A workflow step requires a signature but adds no value. You should\u2026',o:[['Eliminate or streamline it',100],['Keep it for tradition',0],['Add a second approver to be safe',5],['Leave it and move on',20]]},
+ {cap:'CO',q:'You realize a store policy frustrates many customers. You\u2026',o:[['Gather specific examples and propose a change',100],['Enforce it strictly anyway',10],['Ignore it \u2014 not your call',25],['Vent about it to coworkers',10]]},
+ {cap:'PL',q:'Your team just hit a tough goal. You\u2026',o:[['Credit the team specifically and share what worked',100],['Take the credit with leadership',0],['Say nothing and move on',20],['Only tell your own boss',35]]},
+ {cap:'AR',q:'SKU A sells 100/wk at $4 margin; SKU B sells 40/wk at $9 margin. A 20% unit lift on which grows weekly margin most?',o:[['SKU A',100],['SKU B',45],['They are equal',10],['Not enough information',30]]},
+ {cap:'DF',q:'To fairly compare sales across stores of very different sizes, the best metric is\u2026',o:[['Sales per square foot',100],['Total sales',25],['Number of transactions',45],['Headcount',10]]},
+ {cap:'ST',q:'The most sustainable way to reduce stockouts is to\u2026',o:[['Improve the demand-forecast and replenishment loop',100],['Order extra of everything',30],['Push the problem to suppliers',0],['Count inventory manually every day',40]]},
+ {cap:'PD',q:'Standardizing a repeated task mainly helps by\u2026',o:[['Reducing variation and errors',100],['Making the work slower',0],['Adding paperwork',10],['Limiting who can do it',20]]},
+ {cap:'CO',q:'The best measure of a customer-facing team\u2019s success is\u2026',o:[['Needs solved and repeat satisfaction',100],['Speed of service alone',45],['Transaction count alone',30],['Upsell revenue alone',20]]},
+ {cap:'PL',q:'A new process is unpopular with your team. You\u2026',o:[['Explain the why, invite input, and adjust what you can',100],['Mandate it \u2014 no discussion',20],['Drop it to keep everyone happy',15],['Let people quietly ignore it',10]]}
+];
+
+let asState={phase:'login',step:0,answers:{}};
+function renderAssessment(){ return `<div class="as-page" id="assessRoot"></div>`; }
+function initAssessment(){
+  if(SESSION && SESSION.scores) asState={phase:'results',step:0,answers:{}};
+  else if(SESSION && SESSION.name) asState={phase:'intro',step:0,answers:{}};
+  else asState={phase:'login',step:0,answers:{}};
+  paintAssess();
+}
+function computeScores(){
+  const by={}; SKILLS.forEach(s=>by[s.k]=[]);
+  ASSESS.forEach((q,i)=>{ const oi=asState.answers[i]; if(oi!=null) by[q.cap].push(q.o[oi][1]); });
+  const sc={}; SKILLS.forEach(s=>{ const a=by[s.k]; sc[s.k]=a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length):0; });
+  return sc;
+}
+function asLogin(){
+  const n=document.getElementById('asName').value.trim(), e=document.getElementById('asEmail').value.trim();
+  if(!n){ document.getElementById('asName').focus(); return; }
+  SESSION={name:n,email:e}; saveSession(); renderUser();
+  asState.phase='intro'; paintAssess();
+}
+function asFile(input){ const f=input.files&&input.files[0]; if(!f) return; SESSION=SESSION||{}; SESSION.resumeName=f.name; saveSession(); paintAssess(); }
+function asBegin(){ asState={phase:'quiz',step:0,answers:{}}; paintAssess(); }
+function asAnswer(i,oi){ asState.answers[i]=oi; paintAssess(); setTimeout(()=>{ if(i>=ASSESS.length-1) asFinish(); else { asState.step=i+1; paintAssess(); } }, 300); }
+function asBack(){ if(asState.step>0){ asState.step--; paintAssess(); } }
+function asFinish(){ SESSION=SESSION||{name:'You'}; SESSION.scores=computeScores(); SESSION.date=fmtToday(); saveSession(); renderUser(); refreshOppMatches(); asState.phase='results'; paintAssess(); }
+function asRetake(){ if(SESSION) delete SESSION.scores; saveSession(); asState={phase:'intro',step:0,answers:{}}; renderUser(); paintAssess(); }
+function asSignOut(){ SESSION=null; try{localStorage.removeItem('trellis_user');}catch(e){} renderUser(); asState={phase:'login',step:0,answers:{}}; paintAssess(); }
+function fmtToday(){ try{ return new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }catch(e){ return ''; } }
+
+function paintAssess(){
+  const root=document.getElementById('assessRoot'); if(!root) return;
+  const P=asState.phase;
+  if(P==='login'){
+    root.innerHTML=`<div class="as-wrap"><div class="as-card">
+      <div class="as-eyebrow">Trellis \u00b7 Talent Assessment</div>
+      <div class="as-h">Sign in to begin</div>
+      <div class="as-sub">Create your Trellis profile, then take a short assessment that measures six work capabilities \u2014 the same signal that powers your Talent DNA and role matches.</div>
+      <div class="as-field"><label class="as-label" for="asName">Full name</label><input class="as-input" id="asName" placeholder="e.g. Jordan Rivera" autocomplete="name"></div>
+      <div class="as-field"><label class="as-label" for="asEmail">Work email</label><input class="as-input" id="asEmail" placeholder="you@homedepot.com" autocomplete="email"></div>
+      <button class="btn btn-orange" style="width:100%;justify-content:center;height:44px;margin-top:6px" onclick="asLogin()">Continue</button>
+      <div class="as-note">${svg(IC.check,14)} <span>Prototype sign-in \u2014 no password. Your profile and responses stay in this browser only (no server).</span></div>
+    </div></div>`;
+    return;
+  }
+  if(P==='intro'){
+    const cap=SKILLS.map(s=>`<div class="as-cap"><span class="ci">${svg(IC.spark,15)}</span>${s.label}</div>`).join('');
+    const hasR=SESSION&&SESSION.resumeName;
+    root.innerHTML=`<div class="as-wrap"><div class="as-card">
+      <div class="as-eyebrow">Welcome, ${SESSION.name.split(' ')[0]}</div>
+      <div class="as-h">Two steps to your Talent DNA</div>
+      <div class="as-sub">This takes about 5 minutes. You'll answer 18 short questions \u2014 three for each capability below. There are no trick questions; pick the response closest to how you'd actually think or act.</div>
+      <div class="as-caps">${cap}</div>
+      <div class="as-label" style="margin-bottom:8px">Step 1 \u00b7 Attach your resume <span style="color:var(--g400);font-weight:500">(optional)</span></div>
+      <label class="as-drop ${hasR?'has':''}" for="asResume">
+        <div class="as-drop-ico">${svg(hasR?IC.doc:IC.upload,26)}</div>
+        <div style="font-size:13px;font-weight:600;color:var(--g800)">${hasR?SESSION.resumeName:'Click to upload (PDF, DOC, TXT)'}</div>
+        <div style="font-size:11.5px;color:var(--g500);margin-top:4px">${hasR?'Attached \u00b7 for reference only':'Resume Second \u2014 kept for reference, your score comes from the assessment'}</div>
+        <input type="file" id="asResume" accept=".pdf,.doc,.docx,.txt" style="display:none" onchange="asFile(this)">
+      </label>
+      <div class="as-label" style="margin:20px 0 8px">Step 2 \u00b7 The assessment</div>
+      <button class="btn btn-orange" style="width:100%;justify-content:center;height:46px" onclick="asBegin()">${svg(IC.spark,16)} Start assessment</button>
+      <div class="as-note" style="justify-content:center"><button class="lnk" onclick="asSignOut()">Sign out</button></div>
+    </div></div>`;
+    return;
+  }
+  if(P==='quiz'){
+    const total=ASSESS.length, i=asState.step, q=ASSESS[i];
+    const capName=SKILLS.find(s=>s.k===q.cap).label;
+    root.innerHTML=`<div class="as-wrap"><div class="as-card">
+      <div class="as-progress"><div class="as-ptrack"><div class="as-pfill" style="width:${Math.round((i+1)/total*100)}%"></div></div><div class="as-pnum">${i+1} / ${total}</div></div>
+      <div class="as-qcap">${capName}</div>
+      <div class="as-q">${q.q}</div>
+      <div class="as-opts">${q.o.map((op,oi)=>`<button class="as-opt ${asState.answers[i]===oi?'sel':''}" onclick="asAnswer(${i},${oi})"><span class="dot"></span><span>${op[0]}</span></button>`).join('')}</div>
+      ${i>0?'<button class="as-back" onclick="asBack()">\u2190 Back</button>':''}
+    </div></div>`;
+    return;
+  }
+  if(P==='results'){
+    destroyCharts();
+    refreshOppMatches();
+    const U=activeProfile();
+    const tops=[...OPPS].sort((a,b)=>b.match-a.match).slice(0,3);
+    const ranked=SKILLS.map(s=>({s,v:U.skills[s.k]})).sort((a,b)=>b.v-a.v);
+    const avg=Math.round(SKILLS.reduce((a,s)=>a+U.skills[s.k],0)/SKILLS.length);
+    const band=avg>=82?'High-potential':avg>=70?'Strong performer':'Developing';
+    const bars=ranked.map(r=>`<div class="mbar-row"><div class="mbar-lbl">${r.s.label}</div><div class="mbar-track"><div class="mbar-fill" style="width:${r.v}%"></div></div><div class="mbar-val">${r.v}</div></div>`).join('');
+    const opps=tops.map(o=>`<div class="opp-card" onclick="nav('marketplace')"><div class="opp-top"><div><div class="opp-name">${o.name}</div><div class="opp-org">${o.org}</div></div><div class="opp-pct">${o.match}<small>%</small></div></div><div class="mbar-track" style="margin-top:8px"><div class="mbar-fill" style="width:${o.match}%"></div></div></div>`).join('');
+    root.innerHTML=`<div class="as-wrap" style="max-width:900px">
+      <div class="as-res-head"><div class="as-res-av">${initials(U.name).toUpperCase()}</div><div><div class="as-h" style="margin:0">Your Talent DNA is ready, ${U.name.split(' ')[0]}</div><div class="as-sub" style="margin:4px 0 0">${band} \u00b7 average capability ${avg} \u00b7 measured across 6 dimensions</div></div></div>
+      <div class="prof-grid" style="margin-top:22px">
+        <div class="card card-pad"><div class="card-title" style="margin-bottom:2px">Your Talent DNA</div><div class="card-sub" style="margin-bottom:8px">From your assessment \u2014 not your resume</div><div class="chart-box"><canvas id="asRadar"></canvas></div></div>
+        <div class="card card-pad"><div class="card-title" style="margin-bottom:14px">Capability scores</div>${bars}</div>
+      </div>
+      <div class="card card-pad" style="margin-top:22px"><div class="card-title" style="margin-bottom:4px">Your top matches</div><div class="card-sub" style="margin-bottom:14px">Roles where your measured capability fits best right now</div><div class="mkt-grid">${opps}</div></div>
+      <div class="as-actions">
+        <button class="btn btn-orange" onclick="nav('profile')">${svg(IC.user,15)} View my full profile</button>
+        <button class="btn btn-ghost" onclick="nav('marketplace')">${svg(IC.grid,15)} Browse matched roles</button>
+        <button class="btn btn-ghost" onclick="asRetake()">Retake</button>
+        <button class="btn btn-ghost" onclick="asSignOut()">Sign out</button>
+      </div>
+    </div>`;
+    charts.push(new Chart(document.getElementById('asRadar').getContext('2d'),{
+      type:'radar',
+      data:{labels:SKILLS.map(s=>s.label),datasets:[{label:'You (assessed)',data:SKILLS.map(s=>U.skills[s.k]),backgroundColor:'rgba(249,99,2,.15)',borderColor:'#F96302',borderWidth:2,pointBackgroundColor:'#F96302',pointRadius:3}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:TT},
+        scales:{r:{suggestedMin:0,suggestedMax:100,angleLines:{color:'#EAE9E6'},grid:{color:'#F1F0EE'},pointLabels:{color:'#635F59',font:{size:11,weight:'500'}},ticks:{display:false,stepSize:25}}}}
+    }));
+    return;
+  }
+}
+
 /* ============ BOOT ============ */
+renderUser();
 renderNav('match');
 $('page').innerHTML = renderMatch();
 renderSlate();
