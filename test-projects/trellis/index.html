@@ -237,10 +237,32 @@ a{color:inherit;text-decoration:none}
 .pp-sc-lbl{font-size:10px;color:var(--g500);text-transform:uppercase;letter-spacing:.08em;margin-top:4px}
 .panel-sec-t{font-size:11px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.1em;margin:26px 0 14px}
 
-.claire-note{background:var(--g100);border:1px solid var(--g200);border-radius:var(--r12);padding:16px 18px;display:flex;gap:13px;margin-bottom:20px}
-.claire-av{width:34px;height:34px;border-radius:var(--rfull);background:var(--g900);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;flex-shrink:0;font-family:var(--font-display)}
-.claire-note-t{font-size:11px;font-weight:700;color:var(--orange700);margin-bottom:5px;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.06em}
-.claire-note-p{font-size:13px;color:var(--g700);line-height:1.6}
+.ai-card{background:var(--g100);border:1px solid var(--g200);border-radius:var(--r16);padding:20px 22px;margin-bottom:22px}
+.ai-head{display:flex;align-items:center;gap:11px;margin-bottom:16px;flex-wrap:wrap}
+.ai-badge{display:inline-flex;align-items:center;gap:6px;background:var(--orange50);color:var(--orange700);border:1px solid var(--orange100);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:4px 10px;border-radius:var(--rfull)}
+.ai-badge svg{width:13px;height:13px;stroke-width:2}
+.ai-sub{font-size:11.5px;color:var(--g500)}
+.ai-items{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.ai-card.vert .ai-items{grid-template-columns:1fr;gap:16px}
+.prof-grid>.ai-card{margin-bottom:0}
+.ai-item{display:flex;gap:12px;align-items:flex-start}
+.ai-ico{width:32px;height:32px;border-radius:var(--r8);background:var(--white);border:1px solid var(--g200);color:var(--orange600);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-ico svg{width:16px;height:16px;stroke-width:1.8}
+.ai-it-t{font-size:13px;font-weight:600;color:var(--g900);line-height:1.3;margin-bottom:3px}
+.ai-it-p{font-size:12px;color:var(--g600);line-height:1.5}
+.ai-it-p strong{color:var(--orange700);font-weight:600}
+.ai-note{background:var(--g100);border:1px solid var(--g200);border-radius:var(--r12);padding:15px 17px;display:flex;gap:13px;margin-bottom:20px}
+.ai-note-ico{width:32px;height:32px;border-radius:var(--r8);background:var(--orange50);border:1px solid var(--orange100);color:var(--orange600);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-note-ico svg{width:17px;height:17px;stroke-width:2}
+.ai-note-t{font-size:10px;font-weight:700;color:var(--orange700);margin-bottom:5px;text-transform:uppercase;letter-spacing:.09em}
+.ai-note-p{font-size:13px;color:var(--g700);line-height:1.6}
+.hero-grid{display:grid;grid-template-columns:1fr 380px;gap:40px;align-items:center}
+.hero-stats{display:flex;gap:40px;margin-top:26px;flex-wrap:wrap}
+.hero-viz{background:var(--g100);border:1px solid var(--g200);border-radius:var(--r12);padding:16px 18px 12px}
+.hero-viz-t{font-size:12.5px;font-weight:700;color:var(--g900)}
+.hero-viz-s{font-size:11px;color:var(--g500);margin:2px 0 8px}
+@media(max-width:1040px){.hero-grid{grid-template-columns:1fr;gap:24px}}
+@media(max-width:1100px){.ai-items{grid-template-columns:1fr}}
 
 /* PROFILE */
 .prof-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:22px;margin-bottom:22px}
@@ -259,19 +281,6 @@ a{color:inherit;text-decoration:none}
 .opp-pct{font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--orange600);letter-spacing:-.03em;flex-shrink:0;font-variant-numeric:tabular-nums}
 .opp-pct small{font-size:11px;font-weight:600;color:var(--g400)}
 
-.chat-wrap{display:flex;flex-direction:column;height:100%}
-.chat-msgs{display:flex;flex-direction:column;gap:9px;padding:4px 2px;flex:1;overflow-y:auto;max-height:290px}
-.msg-bubble{padding:10px 14px;border-radius:var(--r12);font-size:13px;line-height:1.55;max-width:88%}
-.msg-bubble.user{background:var(--orange500);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
-.msg-bubble.claire{background:var(--g100);color:var(--g700);border:1px solid var(--g200);align-self:flex-start;border-bottom-left-radius:4px}
-.chat-input-row{display:flex;align-items:flex-end;gap:9px;margin-top:14px;border-top:1px solid var(--g200);padding-top:14px}
-.chat-input{flex:1;resize:none;border:1px solid var(--g300);border-radius:var(--r8);padding:10px 13px;font-size:13px;font-family:var(--font);
-  color:var(--g800);outline:none;line-height:1.5;max-height:90px;transition:all .16s}
-.chat-input:focus{border-color:var(--orange500);box-shadow:0 0 0 3px var(--orange50)}
-.send-btn{width:36px;height:36px;border-radius:var(--r8);border:none;background:var(--g150);color:var(--g400);cursor:pointer;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;transition:all .16s}
-.send-btn.ready{background:var(--orange500);color:#fff;box-shadow:0 2px 8px rgba(249,99,2,.3)}
-.send-btn svg{width:17px;height:17px;stroke-width:2}
 
 /* MARKETPLACE */
 .filt-row{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:20px}
@@ -548,16 +557,49 @@ function toggleSidebar(){ $('sidebar').classList.toggle('open'); $('mask').class
 /* ============ MATCH ENGINE ============ */
 let engineMode = 'talent'; // 'resume' | 'talent'
 
+function slopeGraph(){
+  const W=380,H=248,lx=54,rx=286,top=36,bot=222;
+  const y=r=>top+(r-1)/9*(bot-top);
+  let lines='',dots='';
+  CANDIDATES.forEach(c=>{
+    const y1=y(c.resumeRank),y2=y(c.talentRank),gem=c.jump>=3;
+    const col=gem?'#F96302':'#D8D6D2',w=gem?2.4:1.3,op=gem?1:.6,dc=gem?'#F96302':'#A6A39D',r=gem?4:2.8;
+    lines+=`<path d="M${lx} ${y1} C ${(lx+rx)/2} ${y1}, ${(lx+rx)/2} ${y2}, ${rx} ${y2}" fill="none" stroke="${col}" stroke-width="${w}" opacity="${op}"/>`;
+    dots+=`<circle cx="${lx}" cy="${y1}" r="${r}" fill="${dc}"/><circle cx="${rx}" cy="${y2}" r="${r}" fill="${dc}"/>`;
+  });
+  const t1=CANDIDATES.find(c=>c.talentRank===1);
+  const nm=t1.name.split(' ')[0]+' '+t1.name.split(' ')[1][0]+'.';
+  const axis=`<line x1="${lx}" y1="${top-4}" x2="${lx}" y2="${bot+6}" stroke="#EAE9E6"/><line x1="${rx}" y1="${top-4}" x2="${rx}" y2="${bot+6}" stroke="#EAE9E6"/>`;
+  const head=`<text x="${lx}" y="20" text-anchor="middle" font-size="10" font-weight="700" fill="#837F79" letter-spacing="1">RESUME</text><text x="${rx}" y="20" text-anchor="middle" font-size="10" font-weight="700" fill="#B4470A" letter-spacing="1">TALENT</text>`;
+  const guide=`<text x="${lx-12}" y="${y(1)+3}" text-anchor="end" font-size="9" fill="#A6A39D">#1</text><text x="${lx-12}" y="${y(10)+3}" text-anchor="end" font-size="9" fill="#A6A39D">#10</text>`;
+  const label=`<text x="${rx+9}" y="${y(1)+4}" font-size="10.5" font-weight="700" fill="#1E1B18">${nm}</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" font-family="Helvetica Neue,Helvetica,Arial,sans-serif">${axis}${head}${guide}${lines}${dots}${label}</svg>`;
+}
+function aiCard(sub,items,vert){
+  return `<div class="ai-card${vert?' vert':''}">
+    <div class="ai-head"><span class="ai-badge">${svg(IC.spark,13)} AI Insights</span>${sub?`<span class="ai-sub">${sub}</span>`:''}</div>
+    <div class="ai-items">${items.map(it=>`<div class="ai-item"><div class="ai-ico">${svg(it.ic,16)}</div><div><div class="ai-it-t">${it.t}</div><div class="ai-it-p">${it.p}</div></div></div>`).join('')}</div>
+  </div>`;
+}
 function renderMatch(){
   return `
   <div class="hero">
-    <div class="hero-eye">The operating thesis</div>
-    <div class="hero-h">Talent First, <span class="amp">Resume Second.</span></div>
-    <div class="hero-p">The same candidate pool for one open role — ranked the way we screen today (credentials &amp; resume) versus a scientific, skills-based match on measured capability and potential. Flip the toggle and watch who rises.</div>
-    <div class="hero-metrics">
-      <div><div class="hm-num">10</div><div class="hm-lbl">Candidates assessed</div></div>
-      <div><div class="hm-num">6</div><div class="hm-lbl">Capabilities measured</div></div>
-      <div><div class="hm-num" style="color:var(--orange500)">+9</div><div class="hm-lbl">Rank jump for top hidden gem</div></div>
+    <div class="hero-grid">
+      <div>
+        <div class="hero-eye">The operating thesis</div>
+        <div class="hero-h">Talent First, <span class="amp">Resume Second.</span></div>
+        <div class="hero-p">The same candidate pool for one open role — ranked the way we screen today versus a scientific, skills-based match on measured capability. Watch who rises.</div>
+        <div class="hero-stats">
+          <div><div class="hm-num">10</div><div class="hm-lbl">Candidates assessed</div></div>
+          <div><div class="hm-num">6</div><div class="hm-lbl">Capabilities measured</div></div>
+          <div><div class="hm-num" style="color:var(--orange500)">+9</div><div class="hm-lbl">Top gem's rank jump</div></div>
+        </div>
+      </div>
+      <div class="hero-viz">
+        <div class="hero-viz-t">Same pool, ranked two ways</div>
+        <div class="hero-viz-s">Each line is one candidate · orange = hidden gems who rose</div>
+        ${slopeGraph()}
+      </div>
     </div>
   </div>
 
@@ -577,6 +619,7 @@ function renderMatch(){
 
   <div id="calloutStrip"></div>
   <div class="slate" id="slate"></div>
+  ${aiCard("Generated from the skills index · updated live",[{ic:IC.spark,t:"4 hidden gems the resume buried",p:"Store &amp; DC associates in the top four by capability — bottom four by resume screen."},{ic:IC.trend,t:"Best predicted performer: Marcus Bell",p:"<strong>86% match · 94 potential</strong> — the highest combined score in the pool."},{ic:IC.users,t:"A wider, higher-fit slate",p:"Talent-first ranking lifts slate diversity <strong>~40%</strong> with no drop in fit."}])}
   `;
 }
 
@@ -670,11 +713,11 @@ function openCand(id){
       <div class="mbar-val">${v}</div></div>`;
   }).join('');
   $('panelBody').innerHTML = `
-    <div class="claire-note">
-      <div class="claire-av">C</div>
+    <div class="ai-note">
+      <div class="ai-note-ico">${svg(IC.spark,17)}</div>
       <div>
-        <div class="claire-note-t">${svg(IC.spark,12)} Claire · Talent read</div>
-        <div class="claire-note-p">${c.note}</div>
+        <div class="ai-note-t">AI talent read</div>
+        <div class="ai-note-p">${c.note}</div>
       </div>
     </div>
     <div class="pp-scorebar">
@@ -720,17 +763,7 @@ function renderProfile(){
         <span class="badge b-verified"><span class="b-dot"></span>4 assessments verified</span></div>
       <div class="chart-box"><canvas id="dnaChart"></canvas></div>
     </div>
-    <div class="card card-pad" style="display:flex;flex-direction:column">
-      <div class="card-title" style="margin-bottom:4px">Chat with Claire</div>
-      <div class="card-sub" style="margin-bottom:12px">Your AI career coach — ask about a match or a next step</div>
-      <div class="chat-wrap">
-        <div class="chat-msgs" id="chatMsgs"></div>
-        <div class="chat-input-row">
-          <textarea class="chat-input" id="chatInput" rows="1" placeholder="Ask Claire anything…"></textarea>
-          <button class="send-btn" id="sendBtn" onclick="sendChat()">${svg(IC.send,17)}</button>
-        </div>
-      </div>
-    </div>
+    ${aiCard("What your assessments say",[{ic:IC.trend,t:"Ready for a grade-6 analyst move",p:"Your 86% match to Supply Chain Optimization is <strong>#1 of 10</strong> in that pool."},{ic:IC.spark,t:"Your edge: Analytical Reasoning",p:"Top-5% assessed — paired with Data Fluency it clears <strong>4 open roles</strong>."},{ic:IC.path,t:"Close one gap to unlock more",p:"People Leadership is your lowest capability; a team-lead rotation opens 3 more paths."}],true)}
   </div>
 
   <div class="card card-pad">
@@ -771,32 +804,6 @@ function initProfile(){
       scales:{r:{suggestedMin:0,suggestedMax:100,angleLines:{color:'#EAE9E6'},grid:{color:'#F1F0EE'},
         pointLabels:{color:'#635F59',font:{size:11,weight:'500'}},ticks:{display:false,stepSize:25}}}}
   }));
-  seedChat();
-  const ta=$('chatInput');
-  ta.addEventListener('input',()=>{ $('sendBtn').classList.toggle('ready', ta.value.trim().length>0);
-    ta.style.height='auto'; ta.style.height=Math.min(ta.scrollHeight,90)+'px'; });
-  ta.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();} });
-}
-function seedChat(){
-  $('chatMsgs').innerHTML='';
-  addMsg('claire',"Hi Marcus — I've been looking at your assessments. Your analytical reasoning and data fluency are in the top 5% of everyone I've measured. That's a real signal.");
-  addMsg('claire',"You're an 86% match for the Sr. Analyst, Supply Chain Optimization role. Want me to walk you through what that path looks like?");
-}
-function addMsg(who,text){
-  const d=document.createElement('div'); d.className='msg-bubble '+who; d.textContent=text;
-  $('chatMsgs').appendChild(d); $('chatMsgs').scrollTop=$('chatMsgs').scrollHeight;
-}
-const CLAIRE_REPLIES = [
-  "Great question. Based on your profile, the fastest bridge is the Assortment Analytics Rotation — it closes your people-leadership gap while you're already strong on the analytical side.",
-  "You don't need a new degree for this. The role weights measured capability at 82% — and yours is excellent. I'd focus your energy on one thing: a short data-storytelling module.",
-  "I'd express interest now. Hiring managers on Trellis see your assessed capability first, not your title — that's exactly why you rank #1 on this slate.",
-  "Let's build a plan. Step one is a 12-week stretch gig in Ops Excellence to get supply-chain reps on your record. I can line that up for you."
-];
-let replyIdx=0;
-function sendChat(){
-  const ta=$('chatInput'); const v=ta.value.trim(); if(!v) return;
-  addMsg('user',v); ta.value=''; ta.style.height='auto'; $('sendBtn').classList.remove('ready');
-  setTimeout(()=>{ addMsg('claire', CLAIRE_REPLIES[replyIdx % CLAIRE_REPLIES.length]); replyIdx++; }, 500);
 }
 
 /* ============ MARKETPLACE ============ */
@@ -806,6 +813,7 @@ function renderMarketplace(){
   return `
   <div class="sec-head"><div><div class="sec-title">Browse by capability, not title</div>
     <div class="sec-sub">Every opportunity shows your live match — computed from your assessed skills</div></div></div>
+  ${aiCard("Matched to your assessed skills",[{ic:IC.target,t:"8 roles match you above 80%",p:"Ranked by measured capability, not title — 3 sit outside your current function."},{ic:IC.spark,t:"Strongest fit right now",p:"<strong>Customer Experience Analyst — 87%</strong>, driven by your Customer Obsession score."},{ic:IC.trend,t:"Fastest-growing demand",p:"Data &amp; Analytics roles up <strong>22%</strong> this quarter — your Data Fluency is already there."}])}
   <div class="filt-row" id="filtRow">
     ${cats.map(c=>`<button class="pill ${c===mktFilter?'active':''}" onclick="setFilter('${c.replace(/'/g,"\\'")}')">${c}</button>`).join('')}
   </div>
@@ -850,7 +858,8 @@ function renderPathways(){
     <span><span class="lg-dot" style="background:var(--blue500)"></span>1 capability away</span>
     <span><span class="lg-dot" style="background:var(--g300)"></span>Stretch / 2 away</span>
   </div>
-  <div class="path-svg-wrap">${pathwaySVG()}</div>`;
+  <div class="path-svg-wrap">${pathwaySVG()}</div>
+  ${aiCard("Your fastest routes, ranked",[{ic:IC.spark,t:"Two moves you're ready for now",p:"Sr. Analyst (86%) and Inventory Data Analyst (84%) need no new credential."},{ic:IC.path,t:"One capability from a third",p:"Process Improvement opens at <strong>82%</strong> with a short Process Design module."},{ic:IC.users,t:"Leadership unlocks the stretch tier",p:"Building People Leadership bridges you to manager-track roles within 18 months."}])}`;
 }
 function pathwaySVG(){
   // three columns: current -> ready-now -> next
@@ -881,7 +890,7 @@ function pathwaySVG(){
       <text x="${n.x+14}" y="${n.y+41}" font-size="10.5" fill="${n.sc}">${n.s}</text>
     </g>`;
   }).join('');
-  return `<svg viewBox="0 0 840 340" width="100%" style="min-width:820px" font-family="Inter,sans-serif">${e}${ns}</svg>`;
+  return `<svg viewBox="0 0 840 340" width="100%" style="min-width:820px" font-family="Helvetica Neue,Helvetica,Arial,sans-serif">${e}${ns}</svg>`;
 }
 
 /* ============ OVERVIEW ============ */
@@ -909,6 +918,7 @@ function renderOverview(){
       <div class="chart-box sm"><canvas id="orgBar"></canvas></div>
     </div>
   </div>
+  ${aiCard("Read across the associate base",[{ic:IC.spark,t:"1,240 hidden-talent associates surfaced",p:"High assessments, non-obvious resumes — invisible to keyword screening."},{ic:IC.trend,t:"Fill from within up, time-to-fill down",p:"<strong>+12 pts</strong> internal fill · <strong>-31%</strong> time-to-fill this year."},{ic:IC.target,t:"Coverage is the lever",p:"At 68% assessment coverage, each 10-pt gain surfaces ~400 more matches."}])}
   <div class="card card-pad">
     <div class="card-title" style="margin-bottom:4px">The shift, in one line</div>
     <div style="font-size:13px;color:var(--g600);line-height:1.6">Under resume screening, <strong style="color:var(--g900)">3 of our 4 strongest candidates for the Supply Chain Analyst role never reached a recruiter</strong> — they lacked the title and the degree. Trellis ranks them #1, #2, and #4 on measured capability. That is the entire thesis, made operational.</div>
